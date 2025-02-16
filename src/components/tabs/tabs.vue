@@ -207,7 +207,7 @@ defineExpose({
   background: #ffffff;
   display: flex;
   align-items: center;
-  height: 42px;
+  padding: 4px 0;
 }
 
 .v-tabs-before-extend {
@@ -234,7 +234,7 @@ defineExpose({
   width: 160px;
 }
 .v-tabs-item:hover .v-tabs-item-content {
-  background: #adc6f9;
+  background: #f0f0f0;
 }
 .v-tabs-item-content {
   padding: 4px 8px;
@@ -277,6 +277,8 @@ defineExpose({
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  height: 24px;
+  line-height: 24px;
 }
 .v-tabs-item-content-close {
   display: flex;
@@ -301,7 +303,7 @@ defineExpose({
 
 .v-tabs-item-active .v-tabs-item-content,
 .v-tabs-item-active:hover .v-tabs-item-content {
-  background: #409eff;
+  background: #3e74fd;
   color: #fff;
 }
 

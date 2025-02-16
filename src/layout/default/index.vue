@@ -79,6 +79,11 @@ for (let i = 0; i < 10; i++) {
     <div class="menu">
       <div class="main-menu">
         <div class="main-menu-logo">Logo</div>
+        <div class="main-menu-content">
+          <div class="main-menu-item" v-for="item in 20" :key="item">
+            <div class="main-menu-item-content"></div>
+          </div>
+        </div>
       </div>
       <div class="secondary-menu">
         <div class="secondary-menu-title">NiuMa Admin</div>
@@ -117,10 +122,12 @@ for (let i = 0; i < 10; i++) {
 }
 .main-menu {
   display: flex;
+  flex-direction: column;
   flex: none;
-  width: 60px;
+  /* width: 60px; */
   background: #24272e;
 }
+
 .main-menu-logo {
   flex: none;
   display: flex;
@@ -129,6 +136,40 @@ for (let i = 0; i < 10; i++) {
   align-items: center;
   justify-content: center;
   background: #cd9b56;
+}
+.main-menu-content {
+  flex: 1;
+  overflow: auto;
+}
+/* 滚动条整体样式 */
+.main-menu-content::-webkit-scrollbar {
+  width: 4px; /* 竖向滚动条宽度 */
+  height: 4px; /* 横向滚动条高度 */
+  background-color: transparent; /* 轨道背景透明 */
+}
+
+/* 滚动条滑块 */
+.main-menu-content::-webkit-scrollbar-thumb {
+  background-color: #ffffff; /* 半透明灰色 */
+  border-radius: 2px; /* 圆角 */
+  border: 1px solid transparent; /* 透明边框 */
+  background-clip: content-box; /* 限制背景作用区域 */
+}
+
+/* 滑块悬停效果 */
+.main-menu-content::-webkit-scrollbar-thumb:hover {
+  background-color: #f5f5f5;
+}
+.main-menu-item {
+  width: 60px;
+  height: 60px;
+  padding: 8px;
+}
+.main-menu-item-content {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  background: #3e74fd;
 }
 .secondary-menu {
   flex: none;
@@ -178,5 +219,6 @@ for (let i = 0; i < 10; i++) {
 .content-body {
   flex: 1;
   overflow: auto;
+  background: var(--border-color);
 }
 </style>

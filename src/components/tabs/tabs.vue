@@ -298,7 +298,7 @@ defineExpose({
   font-size: 10px;
 }
 .v-tabs-item-content-close-icon:hover {
-  background-color: #f5f5f5;
+  background-color: #ffffff;
 }
 
 .v-tabs-item-active .v-tabs-item-content,

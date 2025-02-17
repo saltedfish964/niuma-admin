@@ -1,85 +1,26 @@
 <script setup>
-import { ref, h } from 'vue';
+import { useLayoutStore } from '@src/store/modules/layout';
 import VTabs from '@src/components/tabs/tabs.vue';
 import VIcon from '@src/components/icon/icon.vue';
 
-const items = ref([
-  {
-    key: 'mail',
-    label: 'Navigation One',
-    title: 'Navigation One',
-    icon: () => h(VIcon, { name: 'material-symbols-icon-10k-outline' }),
-  },
-  {
-    key: 'app',
-    label: 'Navigation Two',
-    title: 'Navigation Two',
-    icon: () => h(VIcon, { name: 'custom-icon-vite' }),
-  },
-  {
-    key: 'sub1',
-    label: 'Navigation Three - Submenu',
-    title: 'Navigation Three - Submenu',
-    icon: h(VIcon, { name: 'custom-icon-vue' }),
-    children: [
-      {
-        type: 'group',
-        label: 'Item 1',
-        children: [
-          {
-            label: 'Option 1',
-            key: 'setting:1',
-          },
-          {
-            label: 'Option 2',
-            key: 'setting:2',
-          },
-        ],
-      },
-      {
-        type: 'group',
-        label: 'Item 2',
-        children: [
-          {
-            label: 'Option 3',
-            key: 'setting:3',
-          },
-          {
-            label: 'Option 4',
-            key: 'setting:4',
-          },
-        ],
-      },
-    ],
-  },
-  // {
-  //   key: 'alipay',
-  //   label: h(
-  //     'a',
-  //     { href: 'https://antdv.com', target: '_blank' },
-  //     'Navigation Four - Link',
-  //   ),
-  //   title: 'Navigation Four - Link',
-  // },
-]);
-const collapsed = ref(false);
+const layoutStore = useLayoutStore();
 
-const activeTabKey = ref('home');
-const tabs = ref([
-  { key: 'home', name: '首页' },
-  { key: 'long', name: '这是一个很长的 Tabs 名字' },
-]);
-for (let i = 0; i < 10; i++) {
-  tabs.value.push({
-    key: `tab${i}`,
-    name: `Tab ${i} - ${Math.random()
-      .toString(36)
-      .slice(3, Math.random() * 20 + 3)}`,
-  });
+function mainMenuClickHandler(menu) {
+  if (menu.key === layoutStore.menuActiveKey) {
+    return;
+  }
+  layoutStore.setMenuActiveKey(menu.key);
 }
 
-function toggleMenuHandler() {
-  collapsed.value = !collapsed.value;
+function tabsChangeHandler(val) {
+  if (val === layoutStore.activeTabKey) {
+    return;
+  }
+  layoutStore.setActiveTabKey(val);
+}
+
+function secondaryMenuSelectHandler({ keyPath }) {
+  layoutStore.setSecondaryMenuActiveKey(keyPath);
 }
 </script>
 
@@ -89,16 +30,25 @@ function toggleMenuHandler() {
       <div class="main-menu">
         <div class="main-menu-logo">Logo</div>
         <div class="main-menu-content mini-scroll-white">
-          <div class="main-menu-item" v-for="item in 20" :key="item">
+          <div
+            class="main-menu-item"
+            v-for="menu in layoutStore.menuList"
+            :key="menu.key"
+          >
             <div
               class="main-menu-item-content"
-              :class="[item === 1 ? 'main-menu-item-content-active' : '']"
+              :class="[
+                layoutStore.menuActiveKey === menu.key
+                  ? 'main-menu-item-content-active'
+                  : '',
+              ]"
+              @click="mainMenuClickHandler(menu)"
             >
-              <div>
+              <div class="main-menu-item-content-container">
                 <div class="main-menu-item-content-icon">
-                  <v-icon name="flat-color-icons-icon-home" size="20"></v-icon>
+                  <component :is="menu.icon"></component>
                 </div>
-                <div>菜单</div>
+                <div class="main-menu-item-content-name">{{ menu.title }}</div>
               </div>
             </div>
           </div>
@@ -106,17 +56,20 @@ function toggleMenuHandler() {
       </div>
       <div
         class="secondary-menu"
-        :style="{ width: collapsed ? '81px' : '240px' }"
+        :style="{ width: layoutStore.menuCollapsed ? '81px' : '240px' }"
       >
         <div class="secondary-menu-title">
           <transition name="slide-up">
-            <div v-if="!collapsed" class="secondary-menu-title-text">
+            <div
+              v-if="!layoutStore.menuCollapsed"
+              class="secondary-menu-title-text"
+            >
               NiuMa Admin
             </div>
             <div
               v-else
               class="collapsed-btn-container"
-              @click="toggleMenuHandler"
+              @click="layoutStore.toggleMenuCollapsed"
             >
               <v-icon
                 name="ant-design-icon-menu-unfold-outlined"
@@ -128,15 +81,20 @@ function toggleMenuHandler() {
         <div class="secondary-menu-content mini-scroll-black">
           <a-menu
             mode="inline"
-            :items="items"
-            :inline-collapsed="collapsed"
+            :items="layoutStore.secondaryMenuList"
+            :inline-collapsed="layoutStore.menuCollapsed"
+            :selected-keys="layoutStore.secondaryMenuActiveKey"
+            @select="secondaryMenuSelectHandler"
           ></a-menu>
         </div>
         <div class="secondary-menu-footer">
-          <div class="collapsed-btn-container" @click="toggleMenuHandler">
+          <div
+            class="collapsed-btn-container"
+            @click="layoutStore.toggleMenuCollapsed"
+          >
             <v-icon
               :name="
-                collapsed
+                layoutStore.menuCollapsed
                   ? 'ant-design-icon-menu-unfold-outlined'
                   : 'ant-design-icon-menu-fold-outlined'
               "
@@ -151,8 +109,9 @@ function toggleMenuHandler() {
       <div class="content-tabs">
         <div class="content-tabs-container">
           <v-tabs
-            v-model:active-tab-key="activeTabKey"
-            :init-data="tabs"
+            :active-tab-key="layoutStore.activeTabKey"
+            :init-data="layoutStore.tabsConfig"
+            @update:active-tab-key="tabsChangeHandler"
           ></v-tabs>
         </div>
       </div>
@@ -193,15 +152,17 @@ function toggleMenuHandler() {
 .main-menu-content {
   flex: 1;
   overflow: auto;
+  padding-top: 8px;
 }
 .main-menu-item {
   width: 70px;
-  height: 70px;
-  padding: 8px;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 8px;
 }
 .main-menu-item-content {
-  width: 100%;
-  height: 100%;
+  width: 54px;
+  height: 54px;
   border-radius: 4px;
   background: #061529;
   display: flex;
@@ -218,10 +179,22 @@ function toggleMenuHandler() {
 .main-menu-item-content-active:hover {
   background: #5271fb;
 }
+.main-menu-item-content-container {
+  width: 100%;
+}
 .main-menu-item-content-icon {
   display: flex;
   justify-content: center;
   padding-bottom: 4px;
+}
+.main-menu-item-content-name {
+  flex: none;
+  text-align: center;
+  padding: 0 8px;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .secondary-menu {
   flex: none;
@@ -303,19 +276,10 @@ function toggleMenuHandler() {
   background: var(--border-color);
 }
 
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-  display: none;
-}
-
+/* 动画 */
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: all 0.3s ease;
+  transition: all 0.3s ease-out;
   overflow: hidden;
 }
 

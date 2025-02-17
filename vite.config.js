@@ -1,10 +1,35 @@
+import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-import { resolve } from 'path';
+import Icons from 'unplugin-icons/vite';
+import { FileSystemIconLoader } from 'unplugin-icons/loaders';
+import NiuMaIconLoader from './plugins/niuma-icon-loader';
+import RestartOnFolderChange from './plugins/restart-on-folder-change';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    // 用于处理 v-icon 组件
+    NiuMaIconLoader,
+    RestartOnFolderChange({
+      targetDir: './src/assets/icons',
+    }),
+    vue(),
+    Icons({
+      compiler: 'vue3',
+      autoInstall: true,
+      customCollections: {
+        custom: FileSystemIconLoader(
+          resolve(__dirname, 'src', 'assets', 'icons'),
+          (svg) => svg.replace(/^<svg /, '<svg fill="currentColor" '),
+        ),
+      },
+      iconCustomizer: (collection, icon, props) => {
+        props.width = '1em';
+        props.height = '1em';
+      },
+    }),
+  ],
   resolve: {
     alias: {
       '@src': resolve(__dirname, 'src'),

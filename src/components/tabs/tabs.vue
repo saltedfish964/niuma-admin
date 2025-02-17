@@ -207,7 +207,7 @@ defineExpose({
   background: #ffffff;
   display: flex;
   align-items: center;
-  padding: 4px 0;
+  height: 42px;
 }
 
 .v-tabs-before-extend {

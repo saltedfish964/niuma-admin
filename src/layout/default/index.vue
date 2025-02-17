@@ -90,7 +90,17 @@ function toggleMenuHandler() {
         <div class="main-menu-logo">Logo</div>
         <div class="main-menu-content mini-scroll-white">
           <div class="main-menu-item" v-for="item in 20" :key="item">
-            <div class="main-menu-item-content"></div>
+            <div
+              class="main-menu-item-content"
+              :class="[item === 1 ? 'main-menu-item-content-active' : '']"
+            >
+              <div>
+                <div class="main-menu-item-content-icon">
+                  <v-icon name="flat-color-icons-icon-home" size="20"></v-icon>
+                </div>
+                <div>菜单</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -185,15 +195,33 @@ function toggleMenuHandler() {
   overflow: auto;
 }
 .main-menu-item {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   padding: 8px;
 }
 .main-menu-item-content {
   width: 100%;
   height: 100%;
   border-radius: 4px;
+  background: #061529;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+.main-menu-item-content:hover {
+  background: #5594fd;
+  cursor: pointer;
+}
+.main-menu-item-content-active,
+.main-menu-item-content-active:hover {
   background: #5271fb;
+}
+.main-menu-item-content-icon {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 4px;
 }
 .secondary-menu {
   flex: none;

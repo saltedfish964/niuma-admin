@@ -22,6 +22,40 @@ function formatterMenuList(treeArray) {
           });
       }
     }
+    if (item.outlink) {
+      newItem.label = h(
+        'a',
+        {
+          ...item.outlink,
+          style: {
+            display: 'flex',
+            alignItems: 'center',
+          },
+        },
+        [
+          h(
+            'span',
+            {
+              style: {
+                flex: '1',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                paddingRight: '4px',
+              },
+            },
+            item.label,
+          ),
+          h(VIcon, {
+            name: 'line-md-icon-link',
+            size: 12,
+            style: {
+              position: 'relative',
+              top: '2px',
+            },
+          }),
+        ],
+      );
+    }
     return newItem;
   });
 }
@@ -60,17 +94,63 @@ export const useLayoutStore = defineStore(
             key: 'icon',
             label: '图标',
             title: '图标',
-            icon: 'ant-design-icon-menu-unfold-outlined',
+            icon: 'ic-icon-baseline-insert-emoticon',
+          },
+          {
+            key: 'iframe',
+            label: 'iframe',
+            title: 'iframe',
+            icon: 'material-symbols-icon-iframe',
+            children: [
+              {
+                key: 'iframe-juejin',
+                label: '掘金',
+                title: '掘金',
+                icon: 'custom-icon-juejin',
+                iframe: {
+                  src: 'https://juejin.cn/',
+                },
+              },
+            ],
+          },
+          {
+            key: 'outlink',
+            label: '外链',
+            title: '外链',
+            icon: 'line-md-icon-link',
+            children: [
+              {
+                key: 'outlink-gitee',
+                label: '码云',
+                title: '码云',
+                icon: 'custom-icon-gitee',
+                outlink: {
+                  target: '_blank',
+                  href: 'https://gitee.com/du-dudu/niuma-admin',
+                },
+                children: [],
+              },
+            ],
           },
         ],
+      },
+      {
+        key: 'gitee',
+        label: '码云',
+        title: '码云',
+        icon: 'custom-icon-gitee',
+        outlink: {
+          target: '_blank',
+          href: 'https://gitee.com/du-dudu/niuma-admin',
+        },
+        children: [],
       },
     ]);
     const menuCollapsed = ref(false);
     const menuActiveKey = ref('main');
-    const menuList = computed(() => {
-      return formatterMenuList(menuConfig.value);
-    });
+    const menuList = ref(formatterMenuList(menuConfig.value));
     const secondaryMenuActiveKey = ref(['overview']);
+    const secondaryMenuOpenKeys = ref([]);
     const secondaryMenuList = computed(() => {
       return (
         menuList.value.find((item) => item.key === menuActiveKey.value)
@@ -101,9 +181,11 @@ export const useLayoutStore = defineStore(
     }
 
     return {
+      menuConfig,
       menuActiveKey,
       menuList,
       secondaryMenuActiveKey,
+      secondaryMenuOpenKeys,
       secondaryMenuList,
       activeTabKey,
       tabsConfig,
@@ -115,6 +197,8 @@ export const useLayoutStore = defineStore(
     };
   },
   {
-    persist: true,
+    persist: {
+      omit: ['menuList', 'secondaryMenuList'],
+    },
   },
 );

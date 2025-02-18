@@ -1,9 +1,13 @@
 <script setup>
+import { useRouter } from 'vue-router';
+import { isEqual } from 'lodash-es';
 import { useLayoutStore } from '@src/store/modules/layout';
 import VTabs from '@src/components/tabs/tabs.vue';
 import VIcon from '@src/components/icon/icon.vue';
+import MainMenuItem from '@src/layout/default/main-menu-item.vue';
 
 const layoutStore = useLayoutStore();
+const router = useRouter();
 
 function mainMenuClickHandler(menu) {
   if (menu.key === layoutStore.menuActiveKey) {
@@ -19,7 +23,27 @@ function tabsChangeHandler(val) {
   layoutStore.setActiveTabKey(val);
 }
 
-function secondaryMenuSelectHandler({ keyPath }) {
+function secondaryMenuSelectHandler({ item, keyPath }) {
+  if (isEqual(keyPath, layoutStore.secondaryMenuActiveKey)) {
+    return;
+  }
+
+  const { originItemValue } = item;
+
+  if (originItemValue.outlink) {
+    return;
+  }
+
+  if (originItemValue.iframe) {
+    originItemValue.iframe?.src &&
+      router.push({
+        name: 'iframe',
+        query: {
+          src: originItemValue.iframe.src,
+        },
+      });
+  }
+
   layoutStore.setSecondaryMenuActiveKey(keyPath);
 }
 </script>
@@ -28,33 +52,21 @@ function secondaryMenuSelectHandler({ keyPath }) {
   <div class="layout">
     <div class="menu">
       <div class="main-menu">
-        <div class="main-menu-logo">Logo</div>
+        <div class="main-menu-logo">
+          <v-icon name="custom-icon-vue" size="28px"></v-icon>
+        </div>
         <div class="main-menu-content mini-scroll-white">
-          <div
-            class="main-menu-item"
+          <main-menu-item
             v-for="menu in layoutStore.menuList"
             :key="menu.key"
-          >
-            <div
-              class="main-menu-item-content"
-              :class="[
-                layoutStore.menuActiveKey === menu.key
-                  ? 'main-menu-item-content-active'
-                  : '',
-              ]"
-              @click="mainMenuClickHandler(menu)"
-            >
-              <div class="main-menu-item-content-container">
-                <div class="main-menu-item-content-icon">
-                  <component :is="menu.icon"></component>
-                </div>
-                <div class="main-menu-item-content-name">{{ menu.title }}</div>
-              </div>
-            </div>
-          </div>
+            :menu="menu"
+            :menu-active-key="layoutStore.menuActiveKey"
+            @click="mainMenuClickHandler(menu)"
+          ></main-menu-item>
         </div>
       </div>
       <div
+        v-if="layoutStore.secondaryMenuList.length > 0"
         class="secondary-menu"
         :style="{ width: layoutStore.menuCollapsed ? '81px' : '240px' }"
       >
@@ -81,6 +93,7 @@ function secondaryMenuSelectHandler({ keyPath }) {
         <div class="secondary-menu-content mini-scroll-black">
           <a-menu
             mode="inline"
+            v-model:open-keys="layoutStore.secondaryMenuOpenKeys"
             :items="layoutStore.secondaryMenuList"
             :inline-collapsed="layoutStore.menuCollapsed"
             :selected-keys="layoutStore.secondaryMenuActiveKey"
@@ -147,54 +160,11 @@ function secondaryMenuSelectHandler({ keyPath }) {
   height: var(--header-height);
   align-items: center;
   justify-content: center;
-  background: #cd9b56;
 }
 .main-menu-content {
   flex: 1;
   overflow: auto;
   padding-top: 8px;
-}
-.main-menu-item {
-  width: 70px;
-  display: flex;
-  justify-content: center;
-  padding-bottom: 8px;
-}
-.main-menu-item-content {
-  width: 54px;
-  height: 54px;
-  border-radius: 4px;
-  background: #061529;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ffffff;
-  transition: all 0.3s ease;
-}
-.main-menu-item-content:hover {
-  background: #5594fd;
-  cursor: pointer;
-}
-.main-menu-item-content-active,
-.main-menu-item-content-active:hover {
-  background: #5271fb;
-}
-.main-menu-item-content-container {
-  width: 100%;
-}
-.main-menu-item-content-icon {
-  display: flex;
-  justify-content: center;
-  padding-bottom: 4px;
-}
-.main-menu-item-content-name {
-  flex: none;
-  text-align: center;
-  padding: 0 8px;
-  font-size: 14px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 .secondary-menu {
   flex: none;

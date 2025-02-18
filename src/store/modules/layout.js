@@ -69,13 +69,13 @@ export const useLayoutStore = defineStore(
         key: 'main',
         label: '主页',
         title: '主页',
-        icon: 'flat-color-icons-icon-home',
+        icon: 'ant-design-icon-home-filled',
         children: [
           {
             key: 'overview',
             label: '概览',
             title: '概览',
-            icon: 'ant-design-icon-menu-unfold-outlined',
+            icon: 'solar-icon-chart-outline',
             route: {
               name: 'overview',
               path: '/overview',
@@ -85,7 +85,7 @@ export const useLayoutStore = defineStore(
             key: 'workbench',
             label: '工作台',
             title: '工作台',
-            icon: 'ant-design-icon-menu-unfold-outlined',
+            icon: 'icon-park-outline-icon-workbench',
             route: {
               name: 'workbench',
               path: '/workbench',
@@ -97,7 +97,7 @@ export const useLayoutStore = defineStore(
         key: 'example',
         label: '示例',
         title: '示例',
-        icon: 'ant-design-icon-menu-unfold-outlined',
+        icon: 'custom-icon-example',
         children: [
           {
             key: 'icon',
@@ -174,11 +174,8 @@ export const useLayoutStore = defineStore(
       return menuList.value;
     });
 
-    const activeTabKey = ref('home');
-    const tabsConfig = ref([
-      { key: 'home', name: '首页' },
-      { key: 'long', name: '这是一个很长的 Tabs 名字' },
-    ]);
+    const activeTabKey = ref('overview');
+    const tabsConfig = ref([{ key: 'overview', name: '概览' }]);
 
     function toggleMenuCollapsed() {
       menuCollapsed.value = !menuCollapsed.value;

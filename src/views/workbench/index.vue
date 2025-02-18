@@ -1,3 +1,3 @@
 <template>
-  <div>icon</div>
+  <div>workbench</div>
 </template>

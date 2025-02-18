@@ -51,7 +51,7 @@ function secondaryMenuSelectHandler({ item, keyPath }) {
 <template>
   <div class="layout">
     <div class="menu">
-      <div class="main-menu">
+      <div v-if="layoutStore.hasMainMenu" class="main-menu">
         <div class="main-menu-logo">
           <v-icon name="custom-icon-vue" size="28px"></v-icon>
         </div>

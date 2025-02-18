@@ -63,6 +63,7 @@ function formatterMenuList(treeArray) {
 export const useLayoutStore = defineStore(
   'layout',
   () => {
+    const hasMainMenu = ref(true);
     const menuConfig = ref([
       {
         key: 'main',
@@ -152,10 +153,13 @@ export const useLayoutStore = defineStore(
     const secondaryMenuActiveKey = ref(['overview']);
     const secondaryMenuOpenKeys = ref([]);
     const secondaryMenuList = computed(() => {
-      return (
-        menuList.value.find((item) => item.key === menuActiveKey.value)
-          ?.children || []
-      );
+      if (hasMainMenu.value) {
+        return (
+          menuList.value.find((item) => item.key === menuActiveKey.value)
+            ?.children || []
+        );
+      }
+      return menuList.value;
     });
 
     const activeTabKey = ref('home');
@@ -181,6 +185,7 @@ export const useLayoutStore = defineStore(
     }
 
     return {
+      hasMainMenu,
       menuConfig,
       menuActiveKey,
       menuList,

@@ -34,6 +34,8 @@ function secondaryMenuSelectHandler({ item, keyPath }) {
     return;
   }
 
+  layoutStore.setSecondaryMenuActiveKey(keyPath);
+
   if (originItemValue.iframe) {
     originItemValue.iframe?.src &&
       router.push({
@@ -42,9 +44,14 @@ function secondaryMenuSelectHandler({ item, keyPath }) {
           src: originItemValue.iframe.src,
         },
       });
+    return;
   }
 
-  layoutStore.setSecondaryMenuActiveKey(keyPath);
+  if (originItemValue.route) {
+    router.push({
+      name: originItemValue.route.name,
+    });
+  }
 }
 </script>
 

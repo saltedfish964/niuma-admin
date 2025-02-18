@@ -76,12 +76,20 @@ export const useLayoutStore = defineStore(
             label: '概览',
             title: '概览',
             icon: 'ant-design-icon-menu-unfold-outlined',
+            route: {
+              name: 'overview',
+              path: '/overview',
+            },
           },
           {
             key: 'workbench',
             label: '工作台',
             title: '工作台',
             icon: 'ant-design-icon-menu-unfold-outlined',
+            route: {
+              name: 'workbench',
+              path: '/workbench',
+            },
           },
         ],
       },
@@ -96,6 +104,10 @@ export const useLayoutStore = defineStore(
             label: '图标',
             title: '图标',
             icon: 'ic-icon-baseline-insert-emoticon',
+            route: {
+              name: 'icon',
+              path: '/icon',
+            },
           },
           {
             key: 'iframe',

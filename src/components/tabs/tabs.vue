@@ -201,7 +201,7 @@ defineExpose({
                 <div class="v-tabs-item-content-dot-inner"></div>
               </div>
               <div class="v-tabs-item-content-name">{{ tab.name }}</div>
-              <div class="v-tabs-item-content-close">
+              <div v-if="tab.closable" class="v-tabs-item-content-close">
                 <div
                   class="v-tabs-item-content-close-icon"
                   @click="(e) => closeHandler(e, tab)"

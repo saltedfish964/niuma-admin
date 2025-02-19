@@ -175,7 +175,7 @@ export const useLayoutStore = defineStore(
     });
 
     const activeTabKey = ref('overview');
-    const tabsConfig = ref([{ key: 'overview', name: '概览' }]);
+    const tabsConfig = ref([]);
 
     function toggleMenuCollapsed() {
       menuCollapsed.value = !menuCollapsed.value;
@@ -185,12 +185,24 @@ export const useLayoutStore = defineStore(
       menuActiveKey.value = key;
     }
 
+    function setSecondaryMenuActiveKey(keyPath) {
+      secondaryMenuActiveKey.value = keyPath;
+    }
+
     function setActiveTabKey(key) {
       activeTabKey.value = key;
     }
 
-    function setSecondaryMenuActiveKey(keyPath) {
-      secondaryMenuActiveKey.value = keyPath;
+    function addTab(tab) {
+      tabsConfig.value.push(tab);
+    }
+
+    function removeTabByKey(key) {
+      tabsConfig.value = tabsConfig.value.filter((tab) => tab.key !== key);
+    }
+
+    function hasTab(key) {
+      return tabsConfig.value.some((tab) => tab.key === key);
     }
 
     return {
@@ -208,6 +220,9 @@ export const useLayoutStore = defineStore(
       setActiveTabKey,
       toggleMenuCollapsed,
       setSecondaryMenuActiveKey,
+      hasTab,
+      addTab,
+      removeTabByKey,
     };
   },
   {

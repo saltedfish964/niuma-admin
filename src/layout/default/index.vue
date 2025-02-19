@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { isEqual } from 'lodash-es';
 import { useLayoutStore } from '@src/store/modules/layout';
@@ -8,6 +9,7 @@ import MainMenuItem from '@src/layout/default/main-menu-item.vue';
 
 const layoutStore = useLayoutStore();
 const router = useRouter();
+const tabsRef = ref();
 
 function mainMenuClickHandler(menu) {
   if (menu.key === layoutStore.menuActiveKey) {
@@ -23,7 +25,41 @@ function tabsChangeHandler(val) {
   layoutStore.setActiveTabKey(val);
 }
 
-function secondaryMenuSelectHandler({ item, keyPath }) {
+function tabsAddHandler(tab) {
+  layoutStore.addTab(tab);
+}
+
+function tabsRemoveHandler(key) {
+  layoutStore.removeTabByKey(key);
+}
+
+function tabsSelectHandler(tab) {
+  openTabs(tab.route, tab.menu);
+}
+
+async function openTabs(route, originItemValue) {
+  const navigationResult = await router.push(route);
+  if (!navigationResult) {
+    const hasTab = layoutStore.hasTab(originItemValue.key);
+    if (hasTab) {
+      layoutStore.setActiveTabKey(originItemValue.key);
+    } else {
+      tabsRef.value.addTab({
+        key: originItemValue.key,
+        name: originItemValue.label,
+        closable: true,
+        route: {
+          ...route,
+        },
+        menu: {
+          ...originItemValue,
+        },
+      });
+    }
+  }
+}
+
+async function secondaryMenuSelectHandler({ item, keyPath }) {
   if (isEqual(keyPath, layoutStore.secondaryMenuActiveKey)) {
     return;
   }
@@ -36,21 +72,26 @@ function secondaryMenuSelectHandler({ item, keyPath }) {
 
   layoutStore.setSecondaryMenuActiveKey(keyPath);
 
-  if (originItemValue.iframe) {
-    originItemValue.iframe?.src &&
-      router.push({
+  if (originItemValue.iframe && originItemValue.iframe.src) {
+    openTabs(
+      {
         name: 'iframe',
         query: {
           src: originItemValue.iframe.src,
         },
-      });
+      },
+      originItemValue,
+    );
     return;
   }
 
   if (originItemValue.route) {
-    router.push({
-      name: originItemValue.route.name,
-    });
+    openTabs(
+      {
+        name: originItemValue.route.name,
+      },
+      originItemValue,
+    );
   }
 }
 </script>
@@ -129,9 +170,13 @@ function secondaryMenuSelectHandler({ item, keyPath }) {
       <div class="content-tabs">
         <div class="content-tabs-container">
           <v-tabs
+            ref="tabsRef"
             :active-tab-key="layoutStore.activeTabKey"
             :init-data="layoutStore.tabsConfig"
             @update:active-tab-key="tabsChangeHandler"
+            @add="tabsAddHandler"
+            @remove="tabsRemoveHandler"
+            @select="tabsSelectHandler"
           ></v-tabs>
         </div>
       </div>

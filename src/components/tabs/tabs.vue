@@ -22,7 +22,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:activeTabKey']);
+const emit = defineEmits(['update:activeTabKey', 'add', 'remove', 'select']);
 
 const tabItemRefs = ref();
 const tabItemListRef = ref();
@@ -33,15 +33,29 @@ function emitUpdateActiveTabKey(key) {
   emit('update:activeTabKey', key);
 }
 
+function emitAddTab(tab) {
+  emit('add', tab);
+}
+
+function emitRemove(key) {
+  emit('remove', key);
+}
+
+function emitSelected(tab) {
+  emit('select', tab);
+}
+
 function removeTabByKey(key) {
   const tabIndex = tabs.value.findIndex((tab) => tab.key === key);
   if (props.activeTabKey === key) {
     const nextTab = tabs.value[tabIndex + 1] || tabs.value[tabIndex - 1];
     if (nextTab) {
       emitUpdateActiveTabKey(nextTab.key);
+      emitSelected({ ...nextTab });
     }
   }
   tabs.value.splice(tabIndex, 1);
+  emitRemove(key);
   nextTick(() => {
     updateHiddenTabs();
   });
@@ -49,6 +63,7 @@ function removeTabByKey(key) {
 
 async function addTab(tab) {
   tabs.value.push(tab);
+  emitAddTab(tab);
   emitUpdateActiveTabKey(tab.key);
   await nextTick();
   if (tabItemListRef.value && tabItemRefs.value) {
@@ -106,6 +121,7 @@ function updateScrollPositionByTab(tab) {
 }
 
 function tabClickHandler(e, tab) {
+  emitSelected(tab);
   emitUpdateActiveTabKey(tab.key);
   updateScrollPositionByTab(tab);
 }

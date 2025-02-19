@@ -189,6 +189,10 @@ export const useLayoutStore = defineStore(
       secondaryMenuActiveKey.value = keyPath;
     }
 
+    function setSecondaryMenuOpenKeys(openKeys) {
+      secondaryMenuOpenKeys.value = openKeys;
+    }
+
     function setActiveTabKey(key) {
       activeTabKey.value = key;
     }
@@ -220,6 +224,7 @@ export const useLayoutStore = defineStore(
       setActiveTabKey,
       toggleMenuCollapsed,
       setSecondaryMenuActiveKey,
+      setSecondaryMenuOpenKeys,
       hasTab,
       addTab,
       removeTabByKey,

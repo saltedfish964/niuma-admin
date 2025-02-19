@@ -1,14 +1,16 @@
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { isEqual } from 'lodash-es';
+import { useRouter, useRoute } from 'vue-router';
+import { isEqual, head } from 'lodash-es';
 import { useLayoutStore } from '@src/store/modules/layout';
 import VTabs from '@src/components/tabs/tabs.vue';
 import VIcon from '@src/components/icon/icon.vue';
 import MainMenuItem from '@src/layout/default/main-menu-item.vue';
+import { findTreePathBFS } from '@src/utils/tree';
 
 const layoutStore = useLayoutStore();
 const router = useRouter();
+const route = useRoute();
 const tabsRef = ref();
 
 function mainMenuClickHandler(menu) {
@@ -34,25 +36,42 @@ function tabsRemoveHandler(key) {
 }
 
 function tabsSelectHandler(tab) {
-  openTabs(tab.route, tab.menu);
+  selectTabs(tab);
 }
 
-async function openTabs(route, originItemValue) {
-  const navigationResult = await router.push(route);
+async function selectTabs(tab) {
+  const navigationResult = await router.push(tab.route);
+  if (navigationResult) return;
+  layoutStore.setActiveTabKey(tab.key);
+  const result = findTreePathBFS(layoutStore.menuList, (node) => {
+    return node.key === tab.key;
+  });
+  const path = result.path;
+  if (path.length === 0) return;
+  const node = result.node;
+  const root = head(path);
+  const openkeys = path.map((node) => node.key);
+  layoutStore.setSecondaryMenuOpenKeys([
+    ...new Set([...openkeys, ...layoutStore.secondaryMenuOpenKeys]),
+  ]);
+  layoutStore.setMenuActiveKey(root.key);
+  layoutStore.setSecondaryMenuActiveKey([node.key]);
+}
+
+async function openTabs({ key, name, closable = true, routeConfig }) {
+  const navigationResult = await router.push(routeConfig);
   if (!navigationResult) {
-    const hasTab = layoutStore.hasTab(originItemValue.key);
+    console.log('route: ', route.fullPath);
+    const hasTab = layoutStore.hasTab(key);
     if (hasTab) {
-      layoutStore.setActiveTabKey(originItemValue.key);
+      layoutStore.setActiveTabKey(key);
     } else {
       tabsRef.value.addTab({
-        key: originItemValue.key,
-        name: originItemValue.label,
-        closable: true,
+        key,
+        name,
+        closable,
         route: {
-          ...route,
-        },
-        menu: {
-          ...originItemValue,
+          ...routeConfig,
         },
       });
     }
@@ -73,25 +92,29 @@ async function secondaryMenuSelectHandler({ item, keyPath }) {
   layoutStore.setSecondaryMenuActiveKey(keyPath);
 
   if (originItemValue.iframe && originItemValue.iframe.src) {
-    openTabs(
-      {
+    openTabs({
+      key: originItemValue.key,
+      name: originItemValue.label,
+      closable: true,
+      routeConfig: {
         name: 'iframe',
         query: {
           src: originItemValue.iframe.src,
         },
       },
-      originItemValue,
-    );
+    });
     return;
   }
 
   if (originItemValue.route) {
-    openTabs(
-      {
-        name: originItemValue.route.name,
+    openTabs({
+      key: originItemValue.key,
+      name: originItemValue.label,
+      closable: true,
+      routeConfig: {
+        ...originItemValue.route,
       },
-      originItemValue,
-    );
+    });
   }
 }
 </script>

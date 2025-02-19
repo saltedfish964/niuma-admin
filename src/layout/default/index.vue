@@ -266,3 +266,13 @@ function secondaryMenuSelectHandler({ item, keyPath }) {
   font-size: 0;
 }
 </style>
+
+<style>
+.ant-menu-submenu.ant-menu-submenu-popup .ant-menu-item {
+  display: flex;
+}
+.ant-menu-submenu.ant-menu-submenu-popup .ant-menu-title-content {
+  flex: 1;
+  max-width: 200px;
+}
+</style>

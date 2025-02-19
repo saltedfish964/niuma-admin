@@ -61,7 +61,6 @@ async function selectTabs(tab) {
 async function openTabs({ key, name, closable = true, routeConfig }) {
   const navigationResult = await router.push(routeConfig);
   if (!navigationResult) {
-    console.log('route: ', route.fullPath);
     const hasTab = layoutStore.hasTab(key);
     if (hasTab) {
       layoutStore.setActiveTabKey(key);

@@ -46,7 +46,6 @@ function onLoad() {
 function onError() {
   loading.value = false;
   error.value = true;
-  console.log('出错了');
 }
 
 onMounted(() => {

@@ -9,5 +9,6 @@ export default {
     'line-md:link',
     'solar:chart-outline',
     'icon-park-outline:workbench',
+    'ant-design:table-outlined',
   ],
 };

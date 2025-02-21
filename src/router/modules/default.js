@@ -31,6 +31,11 @@ export default [
           src: decodeURIComponent(route.query.src),
         }),
       },
+      {
+        path: '/table',
+        name: 'table',
+        component: () => import('@src/views/table/index.vue'),
+      },
     ],
   },
 ];

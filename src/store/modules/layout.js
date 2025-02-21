@@ -110,6 +110,16 @@ export const useLayoutStore = defineStore(
             },
           },
           {
+            key: 'table',
+            label: '表格',
+            title: '表格',
+            icon: 'ant-design-icon-table-outlined',
+            route: {
+              name: 'table',
+              path: '/table',
+            },
+          },
+          {
             key: 'iframe',
             label: 'iframe',
             title: 'iframe',

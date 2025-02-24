@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue';
-import { VxeGrid } from 'vxe-table';
 import VTable from '@src/components/table/table.vue';
 
 const gridOptions = ref({
@@ -8,6 +7,10 @@ const gridOptions = ref({
     {
       field: 'name',
       title: '姓名',
+      editRender: {},
+      slots: {
+        edit: 'edit-name',
+      },
     },
     {
       field: 'age',
@@ -56,15 +59,14 @@ function dataFunc() {
   <div class="container">
     <a-row :gutter="[0, 16]">
       <a-col :span="24">
-        <a-card title="自定义封装 Vxe-table" :bordered="false">
+        <a-card title="自定义封装 vxe-table" :bordered="false">
           <div class="table-container">
-            <v-table v-bind="gridOptions"></v-table>
+            <v-table v-bind="gridOptions">
+              <template #edit-name="{ row }">
+                <a-input></a-input>
+              </template>
+            </v-table>
           </div>
-        </a-card>
-      </a-col>
-      <a-col :span="24">
-        <a-card title="原版 Vxe-table" :bordered="false">
-          <vxe-grid v-bind="gridOptions"></vxe-grid>
         </a-card>
       </a-col>
     </a-row>

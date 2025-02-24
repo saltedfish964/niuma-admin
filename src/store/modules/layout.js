@@ -176,10 +176,7 @@ export const useLayoutStore = defineStore(
     const secondaryMenuOpenKeys = ref([]);
     const secondaryMenuList = computed(() => {
       if (hasMainMenu.value) {
-        return (
-          menuList.value.find((item) => item.key === menuActiveKey.value)
-            ?.children || []
-        );
+        return menuList.value.find((item) => item.key === menuActiveKey.value)?.children || [];
       }
       return menuList.value;
     });

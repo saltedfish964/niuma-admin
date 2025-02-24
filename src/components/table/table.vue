@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch, computed, onMounted, useAttrs, useSlots, defineAsyncComponent } from 'vue';
-import { isFunction, isArray } from 'lodash-es';
+import { isArray } from 'lodash-es';
 
 // 异步导入组件
 const VxeGrid = defineAsyncComponent({
@@ -31,10 +31,6 @@ const props = defineProps({
     default: true,
   },
   stripe: {
-    type: Boolean,
-    default: true,
-  },
-  round: {
     type: Boolean,
     default: true,
   },
@@ -250,7 +246,6 @@ defineExpose({
             :height="props.height"
             :border="props.border"
             :stripe="props.stripe"
-            :round="props.round"
           >
             <template #radio_cell="{ row, checked }">
               <a-radio
@@ -300,6 +295,7 @@ defineExpose({
   --vxe-ui-table-row-checkbox-checked-background-color: #e7f4ff;
   --vxe-ui-table-row-striped-background-color: #fafafa;
   --vxe-ui-table-row-hover-background-color: #fafafa;
+  --vxe-ui-table-row-hover-checkbox-checked-background-color: #bedffe;
 }
 .v-table,
 .v-table :deep(.ant-spin-nested-loading),

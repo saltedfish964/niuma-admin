@@ -10,5 +10,6 @@ export default {
     'solar:chart-outline',
     'icon-park-outline:workbench',
     'ant-design:table-outlined',
+    'carbon:screen',
   ],
 };

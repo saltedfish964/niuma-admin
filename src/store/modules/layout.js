@@ -91,6 +91,16 @@ export const useLayoutStore = defineStore(
               path: '/workbench',
             },
           },
+          {
+            key: 'big-screen',
+            label: '大屏',
+            title: '大屏',
+            icon: 'carbon-icon-screen',
+            route: {
+              name: 'big-screen',
+              path: '/big-screen',
+            },
+          },
         ],
       },
       {

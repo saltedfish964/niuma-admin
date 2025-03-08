@@ -1,16 +1,15 @@
 <script setup>
 import { ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { isEqual, head } from 'lodash-es';
 import { useLayoutStore } from '@src/store/modules/layout';
-import VTabs from '@src/components/tabs/tabs.vue';
-import VIcon from '@src/components/icon/icon.vue';
 import MainMenuItem from '@src/layout/default/main-menu-item.vue';
 import { findTreePathBFS } from '@src/utils/tree';
+import VIcon from '@src/components/icon/icon.vue';
+import DefaultLayoutTabs from './tabs/tabs.vue';
 
 const layoutStore = useLayoutStore();
 const router = useRouter();
-const route = useRoute();
 const tabsRef = ref();
 
 function mainMenuClickHandler(menu) {
@@ -25,14 +24,6 @@ function tabsChangeHandler(val) {
     return;
   }
   layoutStore.setActiveTabKey(val);
-}
-
-function tabsAddHandler(tab) {
-  layoutStore.addTab(tab);
-}
-
-function tabsRemoveHandler(key) {
-  layoutStore.removeTabByKey(key);
 }
 
 function tabsSelectHandler(tab) {
@@ -65,7 +56,7 @@ async function openTabs({ key, name, closable = true, routeConfig }) {
     if (hasTab) {
       layoutStore.setActiveTabKey(key);
     } else {
-      tabsRef.value.addTab({
+      layoutStore.addTab({
         key,
         name,
         closable,
@@ -73,6 +64,7 @@ async function openTabs({ key, name, closable = true, routeConfig }) {
           ...routeConfig,
         },
       });
+      layoutStore.setActiveTabKey(key);
     }
   }
 }
@@ -88,6 +80,8 @@ async function secondaryMenuSelectHandler({ item, keyPath }) {
     return;
   }
 
+  layoutStore.setSecondaryMenuActiveKey(keyPath);
+
   if (originItemValue.iframe && originItemValue.iframe.src) {
     openTabs({
       key: originItemValue.key,
@@ -100,12 +94,6 @@ async function secondaryMenuSelectHandler({ item, keyPath }) {
         },
       },
     });
-    layoutStore.setSecondaryMenuActiveKey(keyPath);
-    return;
-  }
-
-  if (originItemValue.route && originItemValue.route.name === 'big-screen') {
-    router.push(originItemValue.route);
     return;
   }
 
@@ -118,7 +106,6 @@ async function secondaryMenuSelectHandler({ item, keyPath }) {
         ...originItemValue.route,
       },
     });
-    layoutStore.setSecondaryMenuActiveKey(keyPath);
   }
 }
 </script>
@@ -147,11 +134,21 @@ async function secondaryMenuSelectHandler({ item, keyPath }) {
       >
         <div class="secondary-menu-title">
           <transition name="slide-up">
-            <div v-if="!layoutStore.menuCollapsed" class="secondary-menu-title-text">
+            <div
+              v-if="!layoutStore.menuCollapsed"
+              class="secondary-menu-title-text"
+            >
               NiuMa Admin
             </div>
-            <div v-else class="collapsed-btn-container" @click="layoutStore.toggleMenuCollapsed">
-              <v-icon name="ant-design-icon-menu-unfold-outlined" size="24px"></v-icon>
+            <div
+              v-else
+              class="collapsed-btn-container"
+              @click="layoutStore.toggleMenuCollapsed"
+            >
+              <v-icon
+                name="ant-design-icon-menu-unfold-outlined"
+                size="24px"
+              ></v-icon>
             </div>
           </transition>
         </div>
@@ -166,7 +163,10 @@ async function secondaryMenuSelectHandler({ item, keyPath }) {
           ></a-menu>
         </div>
         <div class="secondary-menu-footer">
-          <div class="collapsed-btn-container" @click="layoutStore.toggleMenuCollapsed">
+          <div
+            class="collapsed-btn-container"
+            @click="layoutStore.toggleMenuCollapsed"
+          >
             <v-icon
               :name="
                 layoutStore.menuCollapsed
@@ -183,15 +183,12 @@ async function secondaryMenuSelectHandler({ item, keyPath }) {
       <div class="content-header"></div>
       <div class="content-tabs">
         <div class="content-tabs-container">
-          <v-tabs
+          <default-layout-tabs
             ref="tabsRef"
             :active-tab-key="layoutStore.activeTabKey"
-            :init-data="layoutStore.tabsConfig"
             @update:active-tab-key="tabsChangeHandler"
-            @add="tabsAddHandler"
-            @remove="tabsRemoveHandler"
             @select="tabsSelectHandler"
-          ></v-tabs>
+          ></default-layout-tabs>
         </div>
       </div>
       <div class="content-body">

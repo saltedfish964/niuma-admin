@@ -91,16 +91,6 @@ export const useLayoutStore = defineStore(
               path: '/workbench',
             },
           },
-          {
-            key: 'big-screen',
-            label: '大屏',
-            title: '大屏',
-            icon: 'carbon-icon-screen',
-            route: {
-              name: 'big-screen',
-              path: '/big-screen',
-            },
-          },
         ],
       },
       {
@@ -117,16 +107,6 @@ export const useLayoutStore = defineStore(
             route: {
               name: 'icon',
               path: '/icon',
-            },
-          },
-          {
-            key: 'table',
-            label: '表格',
-            title: '表格',
-            icon: 'ant-design-icon-table-outlined',
-            route: {
-              name: 'table',
-              path: '/table',
             },
           },
           {
@@ -191,8 +171,9 @@ export const useLayoutStore = defineStore(
       return menuList.value;
     });
 
+    // tabs
     const activeTabKey = ref('overview');
-    const tabsConfig = ref([]);
+    const tabsList = ref([]);
 
     function toggleMenuCollapsed() {
       menuCollapsed.value = !menuCollapsed.value;
@@ -215,15 +196,15 @@ export const useLayoutStore = defineStore(
     }
 
     function addTab(tab) {
-      tabsConfig.value.push(tab);
+      tabsList.value.push(tab);
     }
 
     function removeTabByKey(key) {
-      tabsConfig.value = tabsConfig.value.filter((tab) => tab.key !== key);
+      tabsList.value = tabsList.value.filter((tab) => tab.key !== key);
     }
 
     function hasTab(key) {
-      return tabsConfig.value.some((tab) => tab.key === key);
+      return tabsList.value.some((tab) => tab.key === key);
     }
 
     return {
@@ -235,7 +216,7 @@ export const useLayoutStore = defineStore(
       secondaryMenuOpenKeys,
       secondaryMenuList,
       activeTabKey,
-      tabsConfig,
+      tabsList,
       menuCollapsed,
       setMenuActiveKey,
       setActiveTabKey,

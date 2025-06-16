@@ -138,7 +138,6 @@ function updateHiddenTabs() {
       });
     }
   }
-  console.log('hiddenTabs', hiddenTabs.value);
 }
 
 function closeHandler(e, tab) {

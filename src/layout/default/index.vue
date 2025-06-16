@@ -134,21 +134,11 @@ async function secondaryMenuSelectHandler({ item, keyPath }) {
       >
         <div class="secondary-menu-title">
           <transition name="slide-up">
-            <div
-              v-if="!layoutStore.menuCollapsed"
-              class="secondary-menu-title-text"
-            >
+            <div v-if="!layoutStore.menuCollapsed" class="secondary-menu-title-text">
               NiuMa Admin
             </div>
-            <div
-              v-else
-              class="collapsed-btn-container"
-              @click="layoutStore.toggleMenuCollapsed"
-            >
-              <v-icon
-                name="ant-design-icon-menu-unfold-outlined"
-                size="24px"
-              ></v-icon>
+            <div v-else class="collapsed-btn-container" @click="layoutStore.toggleMenuCollapsed">
+              <v-icon name="ant-design-icon-menu-unfold-outlined" size="24px"></v-icon>
             </div>
           </transition>
         </div>
@@ -163,10 +153,7 @@ async function secondaryMenuSelectHandler({ item, keyPath }) {
           ></a-menu>
         </div>
         <div class="secondary-menu-footer">
-          <div
-            class="collapsed-btn-container"
-            @click="layoutStore.toggleMenuCollapsed"
-          >
+          <div class="collapsed-btn-container" @click="layoutStore.toggleMenuCollapsed">
             <v-icon
               :name="
                 layoutStore.menuCollapsed

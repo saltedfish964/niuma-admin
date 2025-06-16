@@ -1,5 +1,6 @@
 <script setup>
 import { ref, nextTick, onMounted, onUnmounted, computed } from 'vue';
+import { debounce } from 'lodash-es';
 import CloseIcon from './close-icon.vue';
 import { useLayoutStore } from '@src/store/modules/layout';
 
@@ -7,10 +8,15 @@ const emit = defineEmits(['select']);
 
 const layoutStore = useLayoutStore();
 
+const isScrolling = ref(false);
 const tabItemRefs = ref();
 const tabItemListRef = ref();
 const hiddenTabs = ref([]);
 const activeTabKey = computed(() => layoutStore.activeTabKey);
+
+let container = null;
+let resizeObserver = null;
+let resizeDebounceTimer = null;
 
 function emitSelected(tab) {
   emit('select', tab);
@@ -33,10 +39,15 @@ function removeTabByKey(key) {
 }
 
 function updateScrollPositionByTab(tab) {
+  if (isScrolling.value) return; // 避免重复滚动
+
+  isScrolling.value = true;
+
   const tabElementIndex = tabItemRefs.value.findIndex((el) => {
     const elKey = el.getAttribute('data-key');
     return elKey === tab.key;
   });
+
   const tabElement = tabItemRefs.value[tabElementIndex];
   if (tabElement && tabItemListRef.value) {
     // 获取容器可视区域边界
@@ -44,14 +55,23 @@ function updateScrollPositionByTab(tab) {
     const containerLeft = containerRect.left;
     const containerRight = containerRect.right;
     const tabRect = tabElement.getBoundingClientRect();
+
     // 判断元素是否完全在可视区域内
-    const isFullyVisible =
-      tabRect.left >= containerLeft && tabRect.right <= containerRight + 1;
-    if (isFullyVisible) return;
-
+    const isFullyVisible = tabRect.left >= containerLeft && tabRect.right <= containerRight + 1;
+    if (isFullyVisible) {
+      isScrolling.value = false;
+      return;
+    }
     let left = 0;
-
-    if (tabRect.left < containerLeft) {
+    // 处理极小容器的情况
+    if (containerRect.width < tabRect.width) {
+      // 容器太小，无法完全显示一个tab，居中处理
+      left =
+        tabItemListRef.value.scrollLeft +
+        tabRect.left -
+        containerLeft -
+        (containerRect.width - tabRect.width) / 2;
+    } else if (tabRect.left < containerLeft) {
       left = tabItemListRef.value.scrollLeft + tabRect.left - containerLeft;
       const isFirstChild = tabElementIndex === 0;
       if (!isFirstChild) {
@@ -66,10 +86,18 @@ function updateScrollPositionByTab(tab) {
         left += nextTab.offsetWidth / 2;
       }
     }
+
     tabItemListRef.value.scrollTo({
-      left,
+      left: Math.max(0, left),
       behavior: 'smooth',
     });
+
+    // 滚动结束后重置标志位
+    setTimeout(() => {
+      isScrolling.value = false;
+    }, 300); // 略大于滚动动画时长
+  } else {
+    isScrolling.value = false;
   }
 }
 
@@ -80,25 +108,37 @@ function tabClickHandler(tab) {
 
 // 计算隐藏的 Tab
 function updateHiddenTabs() {
+  // 如果正在滚动中，不执行检测
+  if (isScrolling.value) return;
+
   const container = tabItemListRef.value;
   if (!container || !tabItemRefs.value) return;
-
   // 获取容器可视区域边界
   const containerRect = container.getBoundingClientRect();
   const containerLeft = containerRect.left;
   const containerRight = containerRect.right;
-
-  hiddenTabs.value = tabItemRefs.value
-    .map((tabEl, index) => ({ tabEl, index }))
+  // 保存隐藏tab的详细信息（包括索引）
+  const hiddenTabsInfo = tabItemRefs.value
+    .map((tabEl, index) => ({ tabEl, index, key: tabEl.getAttribute('data-key') }))
     .filter(({ tabEl }) => {
       const tabRect = tabEl.getBoundingClientRect();
-      // 判断元素是否完全在可视区域内
-      const isFullyVisible =
-        tabRect.left >= containerLeft && tabRect.right <= containerRight + 1;
-      // 若不完全可见，则加入 hiddenTabs
+      const isFullyVisible = tabRect.left >= containerLeft && tabRect.right <= containerRight + 1;
       return !isFullyVisible;
-    })
-    .map(({ index }) => layoutStore.tabsList[index]);
+    });
+  hiddenTabs.value = hiddenTabsInfo.map(({ index }) => layoutStore.tabsList[index]);
+  // 检查当前激活的 tab 是否被隐藏
+  const isActiveTabHidden = hiddenTabsInfo.some(({ key }) => key === activeTabKey.value);
+
+  // 如果激活的 tab 被隐藏，自动滚动到它的位置
+  if (isActiveTabHidden && layoutStore.tabsList.length > 0) {
+    const activeTab = layoutStore.tabsList.find((tab) => tab.key === activeTabKey.value);
+    if (activeTab) {
+      nextTick(() => {
+        updateScrollPositionByTab(activeTab);
+      });
+    }
+  }
+  console.log('hiddenTabs', hiddenTabs.value);
 }
 
 function closeHandler(e, tab) {
@@ -108,19 +148,26 @@ function closeHandler(e, tab) {
 
 // 监听容器变化
 onMounted(() => {
-  const container = tabItemListRef.value;
+  container = tabItemListRef.value;
   if (!container) return;
+  // 使用防抖包装updateHiddenTabs
+  const debouncedUpdateHiddenTabs = debounce(updateHiddenTabs, 100);
 
-  const resizeObserver = new ResizeObserver(updateHiddenTabs);
+  resizeObserver = new ResizeObserver(debouncedUpdateHiddenTabs);
   resizeObserver.observe(container);
-
-  container.addEventListener('scroll', updateHiddenTabs);
-  updateHiddenTabs(); // 初始计算
-
-  onUnmounted(() => {
-    resizeObserver.disconnect();
-    container.removeEventListener('scroll', updateHiddenTabs);
+  container.addEventListener('scroll', () => {
+    // 只有不在滚动中时才更新隐藏tabs
+    if (!isScrolling.value) {
+      updateHiddenTabs();
+    }
   });
+
+  updateHiddenTabs(); // 初始计算
+});
+
+onUnmounted(() => {
+  if (resizeObserver) resizeObserver.disconnect();
+  if (container) container.removeEventListener('scroll', updateHiddenTabs);
 });
 </script>
 
@@ -139,18 +186,12 @@ onMounted(() => {
         >
           <slot name="tab-item" :tab="tab">
             <div class="v-tabs-item-content" @click="tabClickHandler(tab)">
-              <div
-                v-if="activeTabKey === tab.key"
-                class="v-tabs-item-content-dot"
-              >
+              <div v-if="activeTabKey === tab.key" class="v-tabs-item-content-dot">
                 <div class="v-tabs-item-content-dot-inner"></div>
               </div>
               <div class="v-tabs-item-content-name">{{ tab.name }}</div>
               <div v-if="tab.closable" class="v-tabs-item-content-close">
-                <div
-                  class="v-tabs-item-content-close-icon"
-                  @click="(e) => closeHandler(e, tab)"
-                >
+                <div class="v-tabs-item-content-close-icon" @click="(e) => closeHandler(e, tab)">
                   <close-icon></close-icon>
                 </div>
               </div>

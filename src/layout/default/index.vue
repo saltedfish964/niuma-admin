@@ -30,23 +30,29 @@ function tabsSelectHandler(tab) {
   selectTabs(tab);
 }
 
-async function selectTabs(tab) {
-  const navigationResult = await router.push(tab.route);
-  if (navigationResult) return;
-  layoutStore.setActiveTabKey(tab.key);
+function updateOpenKeys() {
+  const activeKey = layoutStore.activeTabKey;
   const result = findTreePathBFS(layoutStore.menuList, (node) => {
-    return node.key === tab.key;
+    return node.key === activeKey;
   });
   const path = result.path;
   if (path.length === 0) return;
   const node = result.node;
   const root = head(path);
-  const openkeys = path.map((node) => node.key);
-  layoutStore.setSecondaryMenuOpenKeys([
-    ...new Set([...openkeys, ...layoutStore.secondaryMenuOpenKeys]),
-  ]);
+  let openkeys = path.map((node) => node.key);
+  openkeys = new Set([...openkeys]);
+  if (!layoutStore.menuCollapsed) {
+    layoutStore.setSecondaryMenuOpenKeys(Array.from(openkeys));
+  }
   layoutStore.setMenuActiveKey(root.key);
   layoutStore.setSecondaryMenuActiveKey([node.key]);
+}
+
+async function selectTabs(tab) {
+  const navigationResult = await router.push(tab.route);
+  if (navigationResult) return;
+  layoutStore.setActiveTabKey(tab.key);
+  updateOpenKeys();
 }
 
 async function openTabs({ key, name, closable = true, routeConfig }) {
@@ -108,6 +114,11 @@ async function secondaryMenuSelectHandler({ item, keyPath }) {
     });
   }
 }
+
+function toggleMenuCollapsedHandler() {
+  layoutStore.toggleMenuCollapsed();
+  updateOpenKeys();
+}
 </script>
 
 <template>
@@ -137,7 +148,7 @@ async function secondaryMenuSelectHandler({ item, keyPath }) {
             <div v-if="!layoutStore.menuCollapsed" class="secondary-menu-title-text">
               NiuMa Admin
             </div>
-            <div v-else class="collapsed-btn-container" @click="layoutStore.toggleMenuCollapsed">
+            <div v-else class="collapsed-btn-container" @click="toggleMenuCollapsedHandler">
               <v-icon name="ant-design-icon-menu-unfold-outlined" size="24px"></v-icon>
             </div>
           </transition>
@@ -153,7 +164,7 @@ async function secondaryMenuSelectHandler({ item, keyPath }) {
           ></a-menu>
         </div>
         <div class="secondary-menu-footer">
-          <div class="collapsed-btn-container" @click="layoutStore.toggleMenuCollapsed">
+          <div class="collapsed-btn-container" @click="toggleMenuCollapsedHandler">
             <v-icon
               :name="
                 layoutStore.menuCollapsed

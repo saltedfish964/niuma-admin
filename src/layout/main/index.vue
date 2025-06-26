@@ -3,10 +3,10 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { isEqual, head } from 'lodash-es';
 import { useLayoutStore } from '@src/store/modules/layout';
-import MainMenuItem from '@src/layout/default/main-menu-item.vue';
+import MainMenuItem from '@src/layout/main/main-menu-item.vue';
 import { findTreePathBFS } from '@src/utils/tree';
 import VIcon from '@src/components/icon/icon.vue';
-import DefaultLayoutTabs from './tabs/tabs.vue';
+import TabsController from './tabs/tabs.vue';
 
 const layoutStore = useLayoutStore();
 const router = useRouter();
@@ -181,12 +181,12 @@ function toggleMenuCollapsedHandler() {
       <div class="content-header"></div>
       <div class="content-tabs">
         <div class="content-tabs-container">
-          <default-layout-tabs
+          <tabs-controller
             ref="tabsRef"
             :active-tab-key="layoutStore.activeTabKey"
             @update:active-tab-key="tabsChangeHandler"
             @select="tabsSelectHandler"
-          ></default-layout-tabs>
+          ></tabs-controller>
         </div>
       </div>
       <div class="content-body">

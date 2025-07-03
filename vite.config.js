@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue';
 import Icons from 'unplugin-icons/vite';
 import { FileSystemIconLoader } from 'unplugin-icons/loaders';
 import NiuMaIconLoader from './plugins/niuma-icon-loader';
+import NiuMaAsyncViewMap from './plugins/niuma-async-view-map';
 import RestartOnFolderChange from './plugins/restart-on-folder-change';
 
 // https://vite.dev/config/
@@ -11,6 +12,7 @@ export default defineConfig({
   plugins: [
     // 用于处理 v-icon 组件
     NiuMaIconLoader,
+    NiuMaAsyncViewMap(),
     RestartOnFolderChange({
       targetDir: './src/assets/icons',
     }),
@@ -19,9 +21,8 @@ export default defineConfig({
       compiler: 'vue3',
       autoInstall: true,
       customCollections: {
-        custom: FileSystemIconLoader(
-          resolve(__dirname, 'src', 'assets', 'icons'),
-          (svg) => svg.replace(/^<svg /, '<svg fill="currentColor" '),
+        custom: FileSystemIconLoader(resolve(__dirname, 'src', 'assets', 'icons'), (svg) =>
+          svg.replace(/^<svg /, '<svg fill="currentColor" '),
         ),
       },
       iconCustomizer: (collection, icon, props) => {

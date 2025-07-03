@@ -1,9 +1,7 @@
 import { createWebHashHistory, createRouter } from 'vue-router';
-import DefaultRoutes from '@src/router/modules/default';
-import NotFoundRoutes from '@src/router/modules/not-found';
-import BigScreenRoutes from '@src/router/modules/big-screen';
+import BasicRoutes from '@src/router/modules/basic';
 
-const routes = [...DefaultRoutes, ...BigScreenRoutes, ...NotFoundRoutes];
+const routes = [...BasicRoutes];
 
 const router = createRouter({
   history: createWebHashHistory(),

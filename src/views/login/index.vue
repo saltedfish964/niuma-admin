@@ -9,7 +9,7 @@ const router = useRouter();
 
 const allViewKey = Object.keys(NiuMaAsyncViewMap);
 
-function generateMenu(menu = []) {
+function generateLocalMenu(menu = []) {
   const showMenu = menu.filter((item) => {
     const hide = item?.meta?.hide;
     return !hide;
@@ -19,13 +19,13 @@ function generateMenu(menu = []) {
       ...item,
     };
     if (item.children) {
-      result.children = generateMenu(item.children);
+      result.children = generateLocalMenu(item.children);
     }
     return result;
   });
 }
 
-function generateRoutes(menu = []) {
+function generateLocalRoutes(menu = []) {
   const mainLayoutRoute = {
     component: () => import('@src/layout/main/index.vue'),
     children: [],
@@ -86,14 +86,13 @@ function generateRoutes(menu = []) {
 
 function onLogin() {
   // 菜单
-  const menu = generateMenu(projectConfig.menu);
-  console.log(menu);
+  const menu = generateLocalMenu(projectConfig.menu);
   // 路由
-  const routes = generateRoutes(projectConfig.menu);
+  const routes = generateLocalRoutes(projectConfig.menu);
   routes.forEach((item) => {
     router.addRoute(item);
   });
-  router.push('/bank-test');
+  router.push('/icon');
 }
 </script>
 

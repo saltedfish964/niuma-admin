@@ -25,9 +25,7 @@ function clickHandler(menu) {
     >
       <div
         class="main-menu-item-content"
-        :class="[
-          menuActiveKey === menu.key ? 'main-menu-item-content-active' : '',
-        ]"
+        :class="[menuActiveKey === menu.key ? 'main-menu-item-content-active' : '']"
       >
         <div class="main-menu-item-content-container">
           <div class="main-menu-item-content-icon">
@@ -42,9 +40,7 @@ function clickHandler(menu) {
     <div
       v-else
       class="main-menu-item-content"
-      :class="[
-        menuActiveKey === menu.key ? 'main-menu-item-content-active' : '',
-      ]"
+      :class="[menuActiveKey === menu.key ? 'main-menu-item-content-active' : '']"
       @click="clickHandler(menu)"
     >
       <div class="main-menu-item-content-container">
@@ -59,7 +55,7 @@ function clickHandler(menu) {
 
 <style scoped>
 .main-menu-item {
-  width: 70px;
+  width: 60px;
   display: flex;
   justify-content: center;
   padding-bottom: 8px;
@@ -68,8 +64,8 @@ function clickHandler(menu) {
   text-decoration: none;
 }
 .main-menu-item-content {
-  width: 54px;
-  height: 54px;
+  width: 50px;
+  height: 50px;
   border-radius: 4px;
   background: #061529;
   display: flex;

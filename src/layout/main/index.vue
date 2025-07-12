@@ -141,7 +141,7 @@ function toggleMenuCollapsedHandler() {
       <div
         v-if="layoutStore.secondaryMenuList.length > 0"
         class="secondary-menu"
-        :style="{ width: layoutStore.menuCollapsed ? '81px' : '240px' }"
+        :style="{ width: layoutStore.menuCollapsed ? '51px' : '240px' }"
       >
         <div class="secondary-menu-title">
           <transition name="slide-up">
@@ -149,7 +149,7 @@ function toggleMenuCollapsedHandler() {
               NiuMa Admin
             </div>
             <div v-else class="collapsed-btn-container" @click="toggleMenuCollapsedHandler">
-              <v-icon name="ant-design-icon-menu-unfold-outlined" size="24px"></v-icon>
+              <v-icon name="ant-design-icon-menu-unfold-outlined" size="20px"></v-icon>
             </div>
           </transition>
         </div>
@@ -171,7 +171,7 @@ function toggleMenuCollapsedHandler() {
                   ? 'ant-design-icon-menu-unfold-outlined'
                   : 'ant-design-icon-menu-fold-outlined'
               "
-              size="24px"
+              size="20px"
             ></v-icon>
           </div>
         </div>
@@ -267,6 +267,9 @@ function toggleMenuCollapsedHandler() {
 .secondary-menu-content {
   flex: 1;
   overflow: auto;
+}
+.secondary-menu-content :deep(.ant-menu-inline-collapsed) {
+  width: 50px;
 }
 .secondary-menu-content .ant-menu-light.ant-menu-root.ant-menu-inline,
 .secondary-menu-content :deep(.ant-menu-light.ant-menu-root.ant-menu-vertical) {

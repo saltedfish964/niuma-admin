@@ -1,25 +1,11 @@
+/// <reference path="./types/menu.js" />
+
 const MENU_KEYS = {
   INDEX: 'index',
   OVERVIEW: 'overview',
   ICON: 'icon',
 };
 
-/**
- * @typedef {Object} MenuItemMeta
- * @property {string} icon - 菜单图标
- * @property {string} layout - 路由布局
- * @property {string} component - 路由组件
- * @property {boolean} hide - 是否隐藏菜单
- * @property {boolean} unloadRouter - 不加载路由
- */
-/**
- * @typedef {Object} MenuItem
- * @property {string} key - 菜单 key
- * @property {string} title - 菜单标题
- * @property {string} [path] - 路由路径
- * @property {MenuItemMeta} meta - 菜单 meta
- * @property {MenuItem[]} [children] - 子菜单
- */
 /**
  * 菜单
  * @type {MenuItem[]}
@@ -63,7 +49,7 @@ const menu = [
       icon: 'ic-icon-baseline-insert-emoticon',
       layout: 'bank',
       hide: true, // 在菜单中隐藏
-      component: 'icon',
+      component: 'icon123',
     },
   },
 ];

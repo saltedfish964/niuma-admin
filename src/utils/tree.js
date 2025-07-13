@@ -1,4 +1,4 @@
-export function searchTreeArrayNodeBFS(nodes, predicate) {
+export function findTreeNodeBFS(nodes, predicate) {
   const queue = [...nodes];
   while (queue.length > 0) {
     const currentNode = queue.shift();

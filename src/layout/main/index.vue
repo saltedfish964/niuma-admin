@@ -35,6 +35,7 @@ function updateOpenKeys() {
   const result = findTreePathBFS(layoutStore.menuList, (node) => {
     return node.key === activeKey;
   });
+  if (!result) return;
   const path = result.path;
   if (path.length === 0) return;
   const node = result.node;

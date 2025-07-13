@@ -16,7 +16,6 @@ const activeTabKey = computed(() => layoutStore.activeTabKey);
 
 let container = null;
 let resizeObserver = null;
-let resizeDebounceTimer = null;
 
 function emitSelected(tab) {
   emit('select', tab);

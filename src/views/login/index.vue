@@ -3,9 +3,10 @@
 import { defineComponent, h } from 'vue';
 import { useRouter } from 'vue-router';
 import NiuMaAsyncViewMap from 'virtual:niuma-async-view-map';
-import projectConfig from '@src/config.js';
-import VIcon from '@src/components/icon/icon.vue';
+import { useLayoutStore } from '@src/store/modules/layout';
+import projectConfig from '@src/config';
 
+const layoutStore = useLayoutStore();
 const router = useRouter();
 
 const allViewKey = Object.keys(NiuMaAsyncViewMap);
@@ -158,6 +159,7 @@ function onLogin() {
   const remoteMenu = generateRemoteMenu([]);
 
   let menu = [...localMenu, ...remoteMenu];
+  layoutStore.setMenuList(menu);
 
   // 提取本地配置中的所有路由
   const localRoutes = generateLocalRoutes(projectConfig.menu);
@@ -194,7 +196,7 @@ function onLogin() {
 
   addRoutes(routes);
 
-  router.push('/bank-test');
+  router.push('/icon');
 }
 </script>
 

@@ -81,8 +81,8 @@ function generateRoutes(arr = []) {
         };
         if (!newItem.meta) newItem.meta = {};
         newItem.meta.layout = item?.meta?.layout || 'bank';
-        if (item.path === '/iframe') {
-          console.log('item: ', item);
+        newItem.meta.key = item.key;
+        if (item?.meta?.iframeSrc) {
           newItem.props = (route) => {
             return {
               src: decodeURIComponent(route.meta.iframeSrc),

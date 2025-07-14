@@ -11,8 +11,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const layoutStore = useLayoutStore();
-  layoutStore.updateTabByRouteFullPath(to.fullPath);
-  layoutStore.updateMenuActiveByRouteFullPath(to.fullPath);
+  const meta = to.meta;
+  layoutStore.updateTabByKey(meta.key);
+  layoutStore.updateMenuActiveByKey(meta.key);
   next();
 });
 

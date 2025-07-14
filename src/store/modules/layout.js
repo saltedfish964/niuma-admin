@@ -29,7 +29,6 @@ function formatterMenuList(treeArray) {
           });
       }
     }
-    console.log('newItem: ', newItem);
     return newItem;
   });
 }
@@ -37,7 +36,7 @@ function formatterMenuList(treeArray) {
 export const useLayoutStore = defineStore(
   'layout',
   () => {
-    const hasMainMenu = ref(false);
+    const hasMainMenu = ref(true);
     // const menuConfig = ref([
     //   {
     //     key: 'main',
@@ -185,27 +184,27 @@ export const useLayoutStore = defineStore(
       return tabsList.value.some((tab) => tab.key === key);
     }
 
-    function updateTabByRouteFullPath(routeFullPath) {
+    function updateTabByKey(key) {
       const menu = findTreeNodeBFS(menuList.value, (tab) => {
-        return tab.path === routeFullPath;
+        return tab.key === key;
       });
       if (!menu) return;
-      if (hasTab(routeFullPath)) {
-        setActiveTabKey(routeFullPath);
+      if (hasTab(key)) {
+        setActiveTabKey(key);
       } else {
         addTab({
-          key: routeFullPath,
+          key,
           name: menu.title,
           closable: true,
           menu,
         });
-        setActiveTabKey(routeFullPath);
+        setActiveTabKey(key);
       }
     }
 
-    function updateMenuActiveByRouteFullPath(routeFullPath) {
+    function updateMenuActiveByKey(key) {
       const info = findTreePathBFS(menuList.value, (tab) => {
-        return tab.path === routeFullPath;
+        return tab.key === key;
       });
       if (!info) return;
       setSecondaryMenuActiveKey([info.node.key]);
@@ -234,8 +233,8 @@ export const useLayoutStore = defineStore(
       hasTab,
       addTab,
       removeTabByKey,
-      updateTabByRouteFullPath,
-      updateMenuActiveByRouteFullPath,
+      updateTabByKey,
+      updateMenuActiveByKey,
     };
   },
   // {

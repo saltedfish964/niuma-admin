@@ -27,7 +27,9 @@ function tabsChangeHandler(val) {
 }
 
 function tabsSelectHandler(tab) {
-  selectTabs(tab);
+  const { menu } = tab;
+  if (!menu) return;
+  router.push(menu.path);
 }
 
 function updateOpenKeys() {
@@ -49,71 +51,11 @@ function updateOpenKeys() {
   layoutStore.setSecondaryMenuActiveKey([node.key]);
 }
 
-async function selectTabs(tab) {
-  const navigationResult = await router.push(tab.route);
-  if (navigationResult) return;
-  layoutStore.setActiveTabKey(tab.key);
-  updateOpenKeys();
-}
-
-async function openTabs({ key, name, closable = true, routeConfig }) {
-  const navigationResult = await router.push(routeConfig);
-  if (!navigationResult) {
-    const hasTab = layoutStore.hasTab(key);
-    if (hasTab) {
-      layoutStore.setActiveTabKey(key);
-    } else {
-      layoutStore.addTab({
-        key,
-        name,
-        closable,
-        route: {
-          ...routeConfig,
-        },
-      });
-      layoutStore.setActiveTabKey(key);
-    }
-  }
-}
-
 async function secondaryMenuSelectHandler({ item, keyPath }) {
   if (isEqual(keyPath, layoutStore.secondaryMenuActiveKey)) {
     return;
   }
-
-  const { originItemValue } = item;
-
-  if (originItemValue.outlink) {
-    return;
-  }
-
-  layoutStore.setSecondaryMenuActiveKey(keyPath);
-
-  if (originItemValue.iframe && originItemValue.iframe.src) {
-    openTabs({
-      key: originItemValue.key,
-      name: originItemValue.label,
-      closable: true,
-      routeConfig: {
-        name: 'iframe',
-        query: {
-          src: originItemValue.iframe.src,
-        },
-      },
-    });
-    return;
-  }
-
-  if (originItemValue.route) {
-    openTabs({
-      key: originItemValue.key,
-      name: originItemValue.label,
-      closable: true,
-      routeConfig: {
-        ...originItemValue.route,
-      },
-    });
-  }
+  router.push(item.path);
 }
 
 function toggleMenuCollapsedHandler() {

@@ -34,10 +34,10 @@ function validateMenu(menu) {
 }
 
 /**
- * 生成本地菜单
+ * 生成菜单
  * @param {MenuItem[]} arr config.js 中的 menu 配置
  */
-function generateLocalMenu(arr = []) {
+function generateMenu(arr = []) {
   const showMenu = arr.filter((item) => {
     const hide = item?.meta?.hide;
     return !hide;
@@ -47,17 +47,17 @@ function generateLocalMenu(arr = []) {
       ...item,
     };
     if (item.children) {
-      result.children = generateLocalMenu(item.children);
+      result.children = generateMenu(item.children);
     }
     return result;
   });
 }
 
 /**
- * 生成本地路由
+ * 生成路由
  * @param {MenuItem[]} arr config.js 中的 menu 配置
  */
-function generateLocalRoutes(arr = []) {
+function generateRoutes(arr = []) {
   let result = [];
 
   function loop(loopArr) {
@@ -81,6 +81,14 @@ function generateLocalRoutes(arr = []) {
         };
         if (!newItem.meta) newItem.meta = {};
         newItem.meta.layout = item?.meta?.layout || 'bank';
+        if (item.path === '/iframe') {
+          console.log('item: ', item);
+          newItem.props = (route) => {
+            return {
+              src: decodeURIComponent(route.meta.iframeSrc),
+            };
+          };
+        }
         result.push(newItem);
       }
       if (item.children) {
@@ -96,22 +104,6 @@ function generateLocalRoutes(arr = []) {
   });
 
   return result;
-}
-
-/**
- * 生成远程菜单
- * @param {MenuItem[]} arr
- */
-function generateRemoteMenu(arr = []) {
-  return [];
-}
-
-/**
- * 生成远程路由
- * @param {MenuItem[]} arr
- */
-function generateRemoteRoutes(arr = []) {
-  return [];
 }
 
 /**
@@ -153,19 +145,19 @@ function onLogin() {
   if (!localMenuIsValid) return;
 
   // 本地菜单
-  const localMenu = generateLocalMenu(projectConfig.menu);
+  const localMenu = generateMenu(projectConfig.menu);
   // 远程菜单
   // TODO: 请求接口获取菜单数据
-  const remoteMenu = generateRemoteMenu([]);
+  const remoteMenu = generateMenu([]);
 
   let menu = [...localMenu, ...remoteMenu];
   layoutStore.setMenuList(menu);
 
   // 提取本地配置中的所有路由
-  const localRoutes = generateLocalRoutes(projectConfig.menu);
+  const localRoutes = generateRoutes(projectConfig.menu);
 
   // 提取远程配置中的所有路由
-  const remoteRoutes = generateRemoteRoutes([]);
+  const remoteRoutes = generateRoutes([]);
 
   let routes = [...localRoutes, ...remoteRoutes];
   // 根据 path 过滤重复的路由

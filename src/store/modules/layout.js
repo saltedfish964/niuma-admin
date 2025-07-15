@@ -184,6 +184,15 @@ export const useLayoutStore = defineStore(
       return tabsList.value.some((tab) => tab.key === key);
     }
 
+    function updateTabClosable() {
+      tabsList.value = tabsList.value.map((tab) => {
+        return {
+          ...tab,
+          closable: tabsList.value.length > 1,
+        };
+      });
+    }
+
     function updateTabByKey(key) {
       const menu = findTreeNodeBFS(menuList.value, (tab) => {
         return tab.key === key;
@@ -200,6 +209,7 @@ export const useLayoutStore = defineStore(
         });
         setActiveTabKey(key);
       }
+      updateTabClosable();
     }
 
     function updateMenuActiveByKey(key) {
@@ -232,14 +242,15 @@ export const useLayoutStore = defineStore(
       setSecondaryMenuOpenKeys,
       hasTab,
       addTab,
+      updateTabClosable,
       removeTabByKey,
       updateTabByKey,
       updateMenuActiveByKey,
     };
   },
-  // {
-  //   persist: {
-  //     omit: ['menuList', 'secondaryMenuList'],
-  //   },
-  // },
+  {
+    persist: {
+      omit: ['menuList', 'secondaryMenuList'],
+    },
+  },
 );

@@ -32,6 +32,7 @@ function removeTabByKey(key) {
     }
   }
   layoutStore.removeTabByKey(key);
+  layoutStore.updateTabClosable();
   nextTick(() => {
     updateHiddenTabs();
   });

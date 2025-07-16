@@ -83,6 +83,7 @@ const iconsList = [
 ];
 
 export default {
+  homeRoutePath: '/overview',
   menu,
   iconsList,
 };

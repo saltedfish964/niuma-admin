@@ -1,6 +1,6 @@
 import { ref, computed, h } from 'vue';
 import { defineStore } from 'pinia';
-import { isString } from 'lodash-es';
+import { isArray, isString } from 'lodash-es';
 import VIcon from '@src/components/icon/icon.vue';
 import { findTreeNodeBFS, findTreePathBFS } from '@src/utils/tree';
 
@@ -33,105 +33,27 @@ function formatterMenuList(treeArray) {
   });
 }
 
+function generateMenu(config) {
+  if (!isArray(config)) return [];
+  const showMenu = config.filter((item) => {
+    const hide = item?.meta?.hide;
+    return !hide;
+  });
+  return showMenu.map((item) => {
+    const result = {
+      ...item,
+    };
+    if (item.children) {
+      result.children = generateMenu(item.children);
+    }
+    return result;
+  });
+}
+
 export const useLayoutStore = defineStore(
   'layout',
   () => {
     const hasMainMenu = ref(true);
-    // const menuConfig = ref([
-    //   {
-    //     key: 'main',
-    //     label: '主页',
-    //     title: '主页',
-    //     icon: 'ant-design-icon-home-filled',
-    //     children: [
-    //       {
-    //         key: 'overview',
-    //         label: '概览',
-    //         title: '概览',
-    //         icon: 'solar-icon-chart-outline',
-    //         route: {
-    //           name: 'overview',
-    //           path: '/overview',
-    //         },
-    //       },
-    //       {
-    //         key: 'workbench',
-    //         label: '工作台',
-    //         title: '工作台',
-    //         icon: 'icon-park-outline-icon-workbench',
-    //         route: {
-    //           name: 'workbench',
-    //           path: '/workbench',
-    //         },
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     key: 'example',
-    //     label: '示例',
-    //     title: '示例',
-    //     icon: 'custom-icon-example',
-    //     children: [
-    //       {
-    //         key: 'icon',
-    //         label: '图标',
-    //         title: '图标',
-    //         icon: 'ic-icon-baseline-insert-emoticon',
-    //         route: {
-    //           name: 'icon',
-    //           path: '/icon',
-    //         },
-    //       },
-    //       {
-    //         key: 'iframe',
-    //         label: 'iframe',
-    //         title: 'iframe',
-    //         icon: 'material-symbols-icon-iframe',
-    //         children: [
-    //           {
-    //             key: 'iframe-juejin',
-    //             label: '掘金',
-    //             title: '掘金',
-    //             icon: 'custom-icon-juejin',
-    //             iframe: {
-    //               src: 'https://juejin.cn/',
-    //             },
-    //           },
-    //         ],
-    //       },
-    //       {
-    //         key: 'outlink',
-    //         label: '外链',
-    //         title: '外链',
-    //         icon: 'line-md-icon-link',
-    //         children: [
-    //           {
-    //             key: 'outlink-gitee',
-    //             label: '码云',
-    //             title: '码云',
-    //             icon: 'custom-icon-gitee',
-    //             outlink: {
-    //               target: '_blank',
-    //               href: 'https://gitee.com/du-dudu/niuma-admin',
-    //             },
-    //             children: [],
-    //           },
-    //         ],
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     key: 'gitee',
-    //     label: '码云',
-    //     title: '码云',
-    //     icon: 'custom-icon-gitee',
-    //     outlink: {
-    //       target: '_blank',
-    //       href: 'https://gitee.com/du-dudu/niuma-admin',
-    //     },
-    //     children: [],
-    //   },
-    // ]);
     const menuCollapsed = ref(false);
     const menuActiveKey = ref();
     const menuList = ref([]);
@@ -166,10 +88,6 @@ export const useLayoutStore = defineStore(
 
     function setActiveTabKey(key) {
       activeTabKey.value = key;
-    }
-
-    function setMenuList(list) {
-      menuList.value = formatterMenuList(list);
     }
 
     function addTab(tab) {
@@ -224,6 +142,18 @@ export const useLayoutStore = defineStore(
       }
     }
 
+    function generateMenuList(config) {
+      const menu = generateMenu(config);
+      menuList.value = formatterMenuList(menu);
+    }
+
+    function getActiveTab() {
+      const tab = findTreeNodeBFS(tabsList.value, (tab) => {
+        return tab.key === activeTabKey.value;
+      });
+      return tab;
+    }
+
     return {
       hasMainMenu,
       menuActiveKey,
@@ -234,7 +164,8 @@ export const useLayoutStore = defineStore(
       activeTabKey,
       tabsList,
       menuCollapsed,
-      setMenuList,
+      getActiveTab,
+      generateMenuList,
       setMenuActiveKey,
       setActiveTabKey,
       toggleMenuCollapsed,

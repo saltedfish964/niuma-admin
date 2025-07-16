@@ -4,13 +4,24 @@ import { defineStore } from 'pinia';
 export const useUserStore = defineStore(
   'user',
   () => {
-    const userInfo = ref({
-      name: 'NiuMa',
-    });
+    const token = ref('');
 
-    return { userInfo };
+    function getToken() {
+      return token.value;
+    }
+
+    function setToken(value) {
+      token.value = value;
+    }
+    return {
+      token,
+      getToken,
+      setToken,
+    };
   },
   {
-    persist: true,
+    persist: {
+      storage: sessionStorage,
+    },
   },
 );

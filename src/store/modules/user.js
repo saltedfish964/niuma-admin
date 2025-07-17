@@ -13,10 +13,16 @@ export const useUserStore = defineStore(
     function setToken(value) {
       token.value = value;
     }
+
+    function $reset() {
+      token.value = '';
+    }
+
     return {
       token,
       getToken,
       setToken,
+      $reset,
     };
   },
   {

@@ -154,6 +154,15 @@ export const useLayoutStore = defineStore(
       return tab;
     }
 
+    function $reset() {
+      menuActiveKey.value = undefined;
+      menuList.value = [];
+      secondaryMenuActiveKey.value = [];
+      secondaryMenuOpenKeys.value = [];
+      activeTabKey.value = '';
+      tabsList.value = [];
+    }
+
     return {
       hasMainMenu,
       menuActiveKey,
@@ -177,6 +186,7 @@ export const useLayoutStore = defineStore(
       removeTabByKey,
       updateTabByKey,
       updateMenuActiveByKey,
+      $reset,
     };
   },
   {

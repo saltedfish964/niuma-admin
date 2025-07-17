@@ -80,6 +80,7 @@ const iconsList = [
   'icon-park-outline:workbench',
   'ant-design:table-outlined',
   'carbon:screen',
+  'material-symbols:logout-rounded',
 ];
 
 export default {

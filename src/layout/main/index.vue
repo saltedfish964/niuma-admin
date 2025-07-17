@@ -7,6 +7,7 @@ import MainMenuItem from '@src/layout/main/main-menu-item.vue';
 import { findTreePathBFS } from '@src/utils/tree';
 import VIcon from '@src/components/icon/icon.vue';
 import TabsController from './tabs/tabs.vue';
+import HeaderAvatar from './avatar.vue';
 
 const layoutStore = useLayoutStore();
 const router = useRouter();
@@ -121,7 +122,9 @@ function toggleMenuCollapsedHandler() {
       </div>
     </div>
     <div class="content">
-      <div class="content-header"></div>
+      <div class="content-header">
+        <header-avatar></header-avatar>
+      </div>
       <div class="content-tabs">
         <div class="content-tabs-container">
           <tabs-controller
@@ -233,7 +236,10 @@ function toggleMenuCollapsedHandler() {
   overflow: auto;
 }
 .content-header {
-  flex: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 16px;
   height: var(--header-height);
   border-bottom: 1px solid var(--border-color);
 }

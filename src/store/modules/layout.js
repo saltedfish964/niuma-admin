@@ -53,7 +53,7 @@ function generateMenu(config) {
 export const useLayoutStore = defineStore(
   'layout',
   () => {
-    const hasMainMenu = ref(true);
+    const hasMainMenu = ref(false);
     const menuCollapsed = ref(false);
     const menuActiveKey = ref();
     const menuList = ref([]);
@@ -69,6 +69,15 @@ export const useLayoutStore = defineStore(
     // tabs
     const activeTabKey = ref('');
     const tabsList = ref([]);
+
+    // breadcrumb
+    const breadcrumbList = computed(() => {
+      const info = findTreePathBFS(menuList.value, (tab) => {
+        return tab.key === activeTabKey.value;
+      });
+      if (info) return info.path;
+      return [];
+    });
 
     function toggleMenuCollapsed() {
       menuCollapsed.value = !menuCollapsed.value;
@@ -136,7 +145,11 @@ export const useLayoutStore = defineStore(
       });
       if (!info) return;
       setSecondaryMenuActiveKey([info.node.key]);
-      setSecondaryMenuOpenKeys(info.path.map((node) => node.key));
+      if (menuCollapsed.value) {
+        setSecondaryMenuOpenKeys([]);
+      } else {
+        setSecondaryMenuOpenKeys(info.path.map((node) => node.key));
+      }
       if (hasMainMenu.value) {
         setMenuActiveKey(info.path[0].key);
       }
@@ -173,6 +186,7 @@ export const useLayoutStore = defineStore(
       activeTabKey,
       tabsList,
       menuCollapsed,
+      breadcrumbList,
       getActiveTab,
       generateMenuList,
       setMenuActiveKey,

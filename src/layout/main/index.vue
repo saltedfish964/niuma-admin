@@ -8,6 +8,7 @@ import { findTreePathBFS } from '@src/utils/tree';
 import VIcon from '@src/components/icon/icon.vue';
 import TabsController from './tabs/tabs.vue';
 import HeaderAvatar from './avatar.vue';
+import HeaderBreadcrumb from './breadcrumb.vue';
 
 const layoutStore = useLayoutStore();
 const router = useRouter();
@@ -48,7 +49,9 @@ function updateOpenKeys() {
   const root = head(path);
   let openkeys = path.map((node) => node.key);
   openkeys = new Set([...openkeys]);
-  if (!layoutStore.menuCollapsed) {
+  if (layoutStore.menuCollapsed) {
+    layoutStore.setSecondaryMenuOpenKeys([]);
+  } else {
     layoutStore.setSecondaryMenuOpenKeys(Array.from(openkeys));
   }
   layoutStore.setMenuActiveKey(root.key);
@@ -126,6 +129,7 @@ function toggleMenuCollapsedHandler() {
     </div>
     <div class="content">
       <div class="content-header">
+        <header-breadcrumb></header-breadcrumb>
         <header-avatar></header-avatar>
       </div>
       <div class="content-tabs">
@@ -240,7 +244,7 @@ function toggleMenuCollapsedHandler() {
 }
 .content-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding: 0 16px;
   height: var(--header-height);

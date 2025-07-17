@@ -8,7 +8,7 @@ export function getMenu() {
       resolve([
         {
           key: 'test',
-          title: '测试 Iframe',
+          title: '测试',
           path: '/test-iframe',
           meta: {
             icon: 'material-symbols-icon-iframe',

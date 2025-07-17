@@ -17,6 +17,9 @@ function mainMenuClickHandler(menu) {
   if (menu.key === layoutStore.menuActiveKey) {
     return;
   }
+  if (menu.path) {
+    router.push(menu.path);
+  }
   layoutStore.setMenuActiveKey(menu.key);
 }
 

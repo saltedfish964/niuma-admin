@@ -6,6 +6,7 @@ import { useUserStore } from '@src/store/modules/user';
 import { getMenu } from '@src/api/menu';
 import { mergeNewConfigToMenuConfig } from '@src/utils/config';
 import { addRoutes } from '@src/router/dynamicRoutes';
+import projectConfig from '@src/config';
 
 const layoutStore = useLayoutStore();
 const userStore = useUserStore();
@@ -19,9 +20,7 @@ async function onLogin() {
 
   userStore.setToken('ok');
 
-  const jumpPath = '/icon';
-
-  router.push(jumpPath);
+  router.push(projectConfig.homeRoutePath);
 }
 </script>
 

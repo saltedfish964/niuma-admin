@@ -53,7 +53,7 @@ function generateMenu(config) {
 export const useLayoutStore = defineStore(
   'layout',
   () => {
-    const hasMainMenu = ref(false);
+    const hasMainMenu = ref(true);
     const menuCollapsed = ref(false);
     const menuActiveKey = ref();
     const menuList = ref([]);

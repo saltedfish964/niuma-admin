@@ -39,7 +39,17 @@ function onMenuClick({ key }) {
       </div>
     </div>
     <template #overlay>
-      <a-menu :items="menuList" @click="onMenuClick"></a-menu>
+      <div class="menu-container">
+        <div class="user-info">
+          <div class="avatar">
+            <img :src="AvatarImg" />
+          </div>
+          <div class="name">Niuma</div>
+          <a-tag style="margin: 0" color="green">在线</a-tag>
+        </div>
+        <a-divider style="margin: 8px 0 0 0" />
+        <a-menu :items="menuList" @click="onMenuClick"></a-menu>
+      </div>
     </template>
   </a-dropdown>
 </template>
@@ -63,5 +73,26 @@ function onMenuClick({ key }) {
 }
 .avatar img {
   width: 100%;
+}
+.menu-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow:
+    0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 3px 6px -4px rgba(0, 0, 0, 0.12),
+    0 9px 28px 8px rgba(0, 0, 0, 0.05);
+}
+.menu-container .user-info {
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-top: 8px;
+  display: flex;
+  align-items: center;
+}
+.menu-container .user-info .name {
+  padding: 0 8px;
+}
+.menu-container .ant-dropdown-menu {
+  box-shadow: none;
 }
 </style>

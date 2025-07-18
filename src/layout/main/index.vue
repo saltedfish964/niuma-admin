@@ -28,14 +28,12 @@ const menuStyle = computed(() => {
   }
   return {
     width: `${menuWidth}px`,
-    overflow: layoutStore.isContentFullscreen ? 'hidden' : 'auto',
   };
 });
 
 const contentHeaderStyle = computed(() => {
   return {
     height: layoutStore.isContentFullscreen ? '0px' : '60px',
-    overflow: layoutStore.isContentFullscreen ? 'hidden' : 'auto',
     borderBottom: layoutStore.isContentFullscreen ? 'none' : '1px solid var(--border-color)',
   };
 });
@@ -95,10 +93,34 @@ function toggleMenuCollapsedHandler() {
   layoutStore.toggleMenuCollapsed();
   updateOpenKeys();
 }
+
+function onTransitionStart(event) {
+  const classList = event.target.classList;
+  if (
+    (event.propertyName === 'width' || event.propertyName === 'height') &&
+    (classList.contains('main-menu') ||
+      classList.contains('secondary-menu') ||
+      classList.contains('content-header'))
+  ) {
+    event.target.style.overflow = 'hidden';
+  }
+}
+
+function onTransitionEnd(event) {
+  const classList = event.target.classList;
+  if (
+    (event.propertyName === 'width' || event.propertyName === 'height') &&
+    (classList.contains('main-menu') ||
+      classList.contains('secondary-menu') ||
+      classList.contains('content-header'))
+  ) {
+    event.target.style.overflow = 'auto';
+  }
+}
 </script>
 
 <template>
-  <div class="layout">
+  <div class="layout" @transitionstart="onTransitionStart" @transitionend="onTransitionEnd">
     <div class="menu" :style="menuStyle">
       <transition name="main-menu">
         <div v-if="layoutStore.hasMainMenu" class="main-menu">
@@ -195,6 +217,7 @@ function toggleMenuCollapsedHandler() {
 .menu {
   display: flex;
   flex: none;
+  overflow: hidden;
   transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 .main-menu {
@@ -214,7 +237,6 @@ function toggleMenuCollapsedHandler() {
 }
 .main-menu-content {
   flex: 1;
-  overflow: auto;
   padding-top: 8px;
 }
 .secondary-menu {
@@ -223,7 +245,7 @@ function toggleMenuCollapsedHandler() {
   flex-direction: column;
   border-right: 1px solid var(--border-color);
   width: 240px;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 .secondary-menu-title {
   flex: none;

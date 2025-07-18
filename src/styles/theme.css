@@ -1,0 +1,8 @@
+:root {
+  --nm-border-color: rgba(5, 5, 5, 0.06);
+  --nm-border: 1px solid var(--nm-border-color);
+}
+
+[data-theme='dark'] {
+  --nm-border-color: rgba(253, 253, 253, 0.12);
+}

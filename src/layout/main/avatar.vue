@@ -61,7 +61,7 @@ function onMenuClick({ key }) {
   border-radius: 8px;
 }
 .avatar-container:hover {
-  background: #f0f0f0;
+  background: var(--nm-border-color);
   cursor: pointer;
 }
 .avatar {
@@ -69,13 +69,13 @@ function onMenuClick({ key }) {
   height: 32px;
   border-radius: 4px;
   overflow: hidden;
-  border: 2px solid var(--border-color);
+  border: 2px solid var(--nm-border-color);
 }
 .avatar img {
   width: 100%;
 }
 .menu-container {
-  background-color: #ffffff;
+  background-color: var(--nm-color-bg-elevated);
   border-radius: 8px;
   box-shadow:
     0 6px 16px 0 rgba(0, 0, 0, 0.08),

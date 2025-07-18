@@ -25,7 +25,8 @@ const layoutStore = useLayoutStore();
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  color: rgba(0, 0, 0, 0.45);
+
+  color: var(--nm-color-text-tertiary);
   font-size: 14px;
   line-height: 1.5714285714285714;
   list-style: none;
@@ -41,11 +42,11 @@ const layoutStore = useLayoutStore();
   display: flex;
 }
 .breadcrumb ol li:last-child {
-  color: rgba(0, 0, 0, 0.88);
+  color: var(--nm-color-text);
 }
 .breadcrumb ol li .breadcrumb-separator {
   margin-inline: 8px;
-  color: rgba(0, 0, 0, 0.45);
+  color: var(--nm-color-text-tertiary);
   cursor: default;
 }
 .breadcrumb-item {

@@ -18,7 +18,7 @@ const router = useRouter();
 const menuStyle = computed(() => {
   let menuWidth = 0;
   if (layoutStore.secondaryMenuList.length > 0) {
-    menuWidth += layoutStore.menuCollapsed ? 51 : 240;
+    menuWidth += layoutStore.menuCollapsed ? 51 : 241;
   }
   if (layoutStore.hasMainMenu) {
     menuWidth += 60;
@@ -35,7 +35,7 @@ const menuStyle = computed(() => {
 const contentHeaderStyle = computed(() => {
   return {
     height: layoutStore.isContentFullscreen ? '0px' : '60px',
-    borderBottom: layoutStore.isContentFullscreen ? 'none' : '1px solid var(--border-color)',
+    borderBottom: layoutStore.isContentFullscreen ? 'none' : 'var(--nm-border)',
     opacity: layoutStore.isContentFullscreen ? 0 : 1,
   };
 });
@@ -143,7 +143,9 @@ function onTransitionEnd(event) {
       <div
         v-if="layoutStore.secondaryMenuList.length > 0"
         class="secondary-menu"
-        :style="{ width: layoutStore.menuCollapsed ? '51px' : '240px' }"
+        :style="{
+          width: layoutStore.menuCollapsed ? '51px' : '240px',
+        }"
       >
         <div class="secondary-menu-title">
           <transition name="slide-up">
@@ -211,22 +213,26 @@ function onTransitionEnd(event) {
 
 <style scoped>
 .layout {
+  --header-height: 60px;
   display: flex;
   height: 100vh;
   overflow: auto;
-  --header-height: 60px;
+  color: var(--nm-color-text);
+  background: var(--nm-color-bg-container);
 }
 .menu {
   display: flex;
   flex: none;
   overflow: hidden;
+  border-right: var(--nm-border);
   transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 .main-menu {
   display: flex;
   flex-direction: column;
   flex: none;
-  background: #031529;
+  background: #141414;
+  border-right: var(--nm-border);
 }
 
 .main-menu-logo {
@@ -245,7 +251,6 @@ function onTransitionEnd(event) {
   flex: none;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--border-color);
   width: 240px;
   transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
@@ -257,7 +262,7 @@ function onTransitionEnd(event) {
   justify-content: center;
   font-size: 20px;
   font-weight: bold;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: var(--nm-border);
   overflow: hidden;
 }
 .secondary-menu-title-text {
@@ -275,7 +280,7 @@ function onTransitionEnd(event) {
   transition: all 0.3s ease;
 }
 .collapsed-btn-container:hover {
-  background: #f0f0f0;
+  background: var(--nm-border-color);
   cursor: pointer;
 }
 .secondary-menu-content {
@@ -291,7 +296,7 @@ function onTransitionEnd(event) {
 }
 .secondary-menu-footer {
   height: var(--header-height);
-  border-top: 1px solid var(--border-color);
+  border-top: var(--nm-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -309,14 +314,14 @@ function onTransitionEnd(event) {
   align-items: center;
   padding: 0 16px;
   height: var(--header-height);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: var(--nm-border);
   transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 .content-tabs {
   flex: none;
   overflow: auto;
   width: 100%;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: var(--nm-border);
 }
 .content-tabs-container {
   width: 100%;
@@ -325,7 +330,7 @@ function onTransitionEnd(event) {
 .tabs-after-extend {
   flex: none;
   height: 100%;
-  border-left: 1px solid var(--border-color);
+  border-left: var(--nm-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -334,7 +339,6 @@ function onTransitionEnd(event) {
 .content-body {
   flex: 1;
   overflow: auto;
-  background: var(--border-color);
 }
 
 /* 动画 */

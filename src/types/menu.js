@@ -15,3 +15,9 @@
  * @property {MenuItemMeta} meta - 菜单 meta
  * @property {MenuItem[]} [children] - 子菜单
  */
+
+/**
+ * @typedef {Object} ThemeColorItem
+ * @property {string} name - 颜色名称
+ * @property {string} color - 颜色值
+ */

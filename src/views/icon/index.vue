@@ -112,7 +112,7 @@ async function copyHandler(item) {
           :text="item.type === 'custom' ? '自定义' : 'iconify'"
           :color="item.type === 'custom' ? 'green' : ''"
         >
-          <a-card :bordered="false">
+          <a-card>
             <div class="icon-item">
               <div class="icon-item-icon">
                 <v-icon :name="item.name" size="38"></v-icon>
@@ -170,9 +170,7 @@ async function copyHandler(item) {
             文件夹中后，图标组件的
             <a-typography-text :code="true">name</a-typography-text>
             为
-            <a-typography-text :code="true"
-              >custom-icon-文件名</a-typography-text
-            >
+            <a-typography-text :code="true">custom-icon-文件名</a-typography-text>
             ,即可正常使用。
           </a-typography-paragraph>
         </a-card>

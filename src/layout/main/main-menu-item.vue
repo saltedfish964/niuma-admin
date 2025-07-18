@@ -67,7 +67,6 @@ function clickHandler(menu) {
   width: 50px;
   height: 50px;
   border-radius: 4px;
-  background: #061529;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,12 +74,13 @@ function clickHandler(menu) {
   transition: all 0.3s ease;
 }
 .main-menu-item-content:hover {
-  background: #5594fd;
+  background: rgba(255, 255, 255, 0.12);
   cursor: pointer;
 }
 .main-menu-item-content-active,
 .main-menu-item-content-active:hover {
-  background: #5271fb;
+  color: #ffffff;
+  background: var(--nm-primary-color);
 }
 .main-menu-item-content-container {
   width: 100%;

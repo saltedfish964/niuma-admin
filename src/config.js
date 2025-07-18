@@ -86,8 +86,28 @@ const iconsList = [
   'proicons:full-screen-minimize',
 ];
 
+/**
+ * 主题色
+ * @type {ThemeColorItem[]}
+ */
+const themeColors = [
+  { name: '极客蓝', color: '#2f54eb' },
+  { name: '拂晓蓝', color: '#1677ff' },
+  { name: '薄暮', color: '#f5222d' },
+  { name: '火山', color: '#fa541c' },
+  { name: '日出', color: '#fadb14' },
+  { name: '日暮', color: '#fa8c16' },
+  { name: '金盏花', color: '#faad14' },
+  { name: '明青', color: '#13c2c2' },
+  { name: '极光绿', color: '#52c41a' },
+  { name: '酱紫', color: '#722ed1' },
+  { name: '法式洋红', color: '#eb2f96' },
+  { name: '青柠', color: '#a0d911' },
+];
+
 export default {
   homeRoutePath: '/overview',
   menu,
   iconsList,
+  themeColors,
 };

@@ -26,7 +26,11 @@ async function onLogin() {
 
 <template>
   <div
-    class="background bg-gradient-to-r from-[#458cfb] dark:from-[#111827] to-[#f2f6fe] dark:to-[#111827] flex h-screen w-screen overflow-auto"
+    class="background"
+    :style="{
+      backgroundImage: layoutStore.darkMode ? '' : 'linear-gradient(to right, #458cfb, #f2f6fe)',
+      backgroundColor: layoutStore.darkMode ? '#141414' : '',
+    }"
   >
     <div class="background-img"></div>
     <div class="right-content">
@@ -34,7 +38,16 @@ async function onLogin() {
         <span class="title"> Niuma Admin </span>
       </div>
       <div class="main">
-        <div class="form-content">
+        <div
+          class="form-content"
+          :style="{
+            shadow: layoutStore.darkMode
+              ? ''
+              : '0 0 #0000, 0 0 #0000, 0 25px 50px -12px rgb(0 0 0 / 0.25)',
+            background: layoutStore.darkMode ? '' : '#ffffffaa',
+            border: layoutStore.darkMode ? 'var(--nm-border)' : '',
+          }"
+        >
           <div class="form-content-title">登录</div>
           <div class="form-content-form">
             <a-form ref="formRef">
@@ -65,11 +78,11 @@ async function onLogin() {
 
 <style scoped>
 .background {
-  background-image: linear-gradient(to right, #458cfb, #f2f6fe);
   height: 100vh;
   width: 100vw;
   overflow: auto;
   display: flex;
+  color: var(--nm-color-text);
 }
 .background-img {
   background: url('@src/assets/imgs/login-bg.svg');
@@ -108,12 +121,7 @@ async function onLogin() {
   width: 100%;
   max-width: 360px;
   border-radius: 0.5rem;
-  background-color: #ffffffaa;
   padding: 1.5rem;
-  box-shadow:
-    0 0 #0000,
-    0 0 #0000,
-    0 25px 50px -12px rgb(0 0 0 / 0.25);
 }
 .form-content-title {
   font-size: 1.5rem;

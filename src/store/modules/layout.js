@@ -82,6 +82,18 @@ export const useLayoutStore = defineStore(
     // content fullscreen
     const isContentFullscreen = ref(false);
 
+    // theme
+    const darkMode = ref(false);
+    const themeColor = ref('#1890ff');
+
+    function setThemeColor(color) {
+      themeColor.value = color;
+    }
+
+    function setDarkMode(isDark) {
+      darkMode.value = isDark;
+    }
+
     function toggleIsContentFullscreen() {
       isContentFullscreen.value = !isContentFullscreen.value;
     }
@@ -197,6 +209,10 @@ export const useLayoutStore = defineStore(
       tabsList,
       menuCollapsed,
       breadcrumbList,
+      darkMode,
+      themeColor,
+      setThemeColor,
+      setDarkMode,
       toggleIsContentFullscreen,
       getActiveTab,
       generateMenuList,

@@ -205,7 +205,6 @@ onUnmounted(() => {
 
 <style scoped>
 .v-tabs {
-  background: #ffffff;
   display: flex;
   align-items: center;
   height: 42px;
@@ -231,17 +230,16 @@ onUnmounted(() => {
   width: 160px;
 }
 .v-tabs-item:hover .v-tabs-item-content {
-  background: #f0f0f0;
+  background: var(--nm-border-color);
 }
 .v-tabs-item-content {
   padding: 4px 8px;
   border-radius: 8px;
   cursor: pointer;
-  background: #fff;
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  border: 1px solid var(--border-color);
+  border: var(--nm-border);
 }
 .v-tabs-item-content-dot {
   flex: none;
@@ -291,16 +289,16 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #474747;
+  color: var(--nm-color-text-tertiary);
   font-size: 10px;
 }
 .v-tabs-item-content-close-icon:hover {
-  background-color: #ffffff;
+  color: var(--nm-color-text);
 }
 
 .v-tabs-item-active .v-tabs-item-content,
 .v-tabs-item-active:hover .v-tabs-item-content {
-  background: #3e74fd;
+  background: var(--nm-primary-color);
   color: #fff;
 }
 

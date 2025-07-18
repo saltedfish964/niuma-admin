@@ -31,7 +31,7 @@ function toggleFullscreen() {
   justify-content: center;
 }
 .content-fullscreen-btn:hover {
-  background: #f0f0f0;
+  background: var(--nm-border-color);
   cursor: pointer;
 }
 </style>

@@ -82,6 +82,8 @@ const iconsList = [
   'carbon:screen',
   'material-symbols:logout-rounded',
   'ant-design:setting-outlined',
+  'proicons:full-screen-maximize',
+  'proicons:full-screen-minimize',
 ];
 
 export default {

@@ -79,6 +79,13 @@ export const useLayoutStore = defineStore(
       return [];
     });
 
+    // content fullscreen
+    const isContentFullscreen = ref(false);
+
+    function toggleIsContentFullscreen() {
+      isContentFullscreen.value = !isContentFullscreen.value;
+    }
+
     function toggleMenuCollapsed() {
       menuCollapsed.value = !menuCollapsed.value;
     }
@@ -179,6 +186,7 @@ export const useLayoutStore = defineStore(
     }
 
     return {
+      isContentFullscreen,
       hasMainMenu,
       menuActiveKey,
       menuList,
@@ -189,6 +197,7 @@ export const useLayoutStore = defineStore(
       tabsList,
       menuCollapsed,
       breadcrumbList,
+      toggleIsContentFullscreen,
       getActiveTab,
       generateMenuList,
       setMenuActiveKey,

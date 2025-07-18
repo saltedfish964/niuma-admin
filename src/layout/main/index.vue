@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { isEqual, head } from 'lodash-es';
 import { useLayoutStore } from '@src/store/modules/layout';
@@ -9,9 +10,35 @@ import TabsController from './tabs/tabs.vue';
 import HeaderAvatar from './avatar.vue';
 import HeaderBreadcrumb from './breadcrumb.vue';
 import HeaderSetting from './setting.vue';
+import ContentFullscreenBtn from './content-fullscreen-btn.vue';
 
 const layoutStore = useLayoutStore();
 const router = useRouter();
+
+const menuStyle = computed(() => {
+  let menuWidth = 0;
+  if (layoutStore.secondaryMenuList.length > 0) {
+    menuWidth += layoutStore.menuCollapsed ? 51 : 240;
+  }
+  if (layoutStore.hasMainMenu) {
+    menuWidth += 60;
+  }
+  if (layoutStore.isContentFullscreen) {
+    menuWidth = 0;
+  }
+  return {
+    width: `${menuWidth}px`,
+    overflow: layoutStore.isContentFullscreen ? 'hidden' : 'auto',
+  };
+});
+
+const contentHeaderStyle = computed(() => {
+  return {
+    height: layoutStore.isContentFullscreen ? '0px' : '60px',
+    overflow: layoutStore.isContentFullscreen ? 'hidden' : 'auto',
+    borderBottom: layoutStore.isContentFullscreen ? 'none' : '1px solid var(--border-color)',
+  };
+});
 
 function mainMenuClickHandler(menu) {
   if (menu.key === layoutStore.menuActiveKey) {
@@ -72,7 +99,7 @@ function toggleMenuCollapsedHandler() {
 
 <template>
   <div class="layout">
-    <div class="menu">
+    <div class="menu" :style="menuStyle">
       <transition name="main-menu">
         <div v-if="layoutStore.hasMainMenu" class="main-menu">
           <div class="main-menu-logo">
@@ -129,7 +156,7 @@ function toggleMenuCollapsedHandler() {
       </div>
     </div>
     <div class="content">
-      <div class="content-header">
+      <div class="content-header" :style="contentHeaderStyle">
         <header-breadcrumb></header-breadcrumb>
         <a-space>
           <header-setting></header-setting>
@@ -142,7 +169,13 @@ function toggleMenuCollapsedHandler() {
             :active-tab-key="layoutStore.activeTabKey"
             @update:active-tab-key="tabsChangeHandler"
             @select="tabsSelectHandler"
-          ></tabs-controller>
+          >
+            <template #after-extend>
+              <div class="tabs-after-extend">
+                <content-fullscreen-btn></content-fullscreen-btn>
+              </div>
+            </template>
+          </tabs-controller>
         </div>
       </div>
       <div class="content-body">
@@ -162,6 +195,7 @@ function toggleMenuCollapsedHandler() {
 .menu {
   display: flex;
   flex: none;
+  transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 .main-menu {
   display: flex;
@@ -252,6 +286,7 @@ function toggleMenuCollapsedHandler() {
   padding: 0 16px;
   height: var(--header-height);
   border-bottom: 1px solid var(--border-color);
+  transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
 }
 .content-tabs {
   flex: none;
@@ -262,6 +297,15 @@ function toggleMenuCollapsedHandler() {
 .content-tabs-container {
   width: 100%;
   height: 100%;
+}
+.tabs-after-extend {
+  flex: none;
+  height: 100%;
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
 }
 .content-body {
   flex: 1;

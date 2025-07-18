@@ -199,7 +199,7 @@ onUnmounted(() => {
         </div>
       </TransitionGroup>
     </div>
-    <!-- <div class="v-tabs-after-extebd">后置扩展</div> -->
+    <slot name="after-extend"></slot>
   </div>
 </template>
 
@@ -214,10 +214,6 @@ onUnmounted(() => {
 .v-tabs-before-extend {
   flex: none;
   padding: 0 4px 0 8px;
-}
-.v-tabs-after-extebd {
-  flex: none;
-  padding: 0 8px 0 4px;
 }
 
 .v-tabs-item-list {

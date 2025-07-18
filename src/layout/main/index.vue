@@ -28,6 +28,7 @@ const menuStyle = computed(() => {
   }
   return {
     width: `${menuWidth}px`,
+    opacity: layoutStore.isContentFullscreen ? 0 : 1,
   };
 });
 
@@ -35,6 +36,7 @@ const contentHeaderStyle = computed(() => {
   return {
     height: layoutStore.isContentFullscreen ? '0px' : '60px',
     borderBottom: layoutStore.isContentFullscreen ? 'none' : '1px solid var(--border-color)',
+    opacity: layoutStore.isContentFullscreen ? 0 : 1,
   };
 });
 

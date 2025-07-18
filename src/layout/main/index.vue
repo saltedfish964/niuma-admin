@@ -9,6 +9,7 @@ import VIcon from '@src/components/icon/icon.vue';
 import TabsController from './tabs/tabs.vue';
 import HeaderAvatar from './avatar.vue';
 import HeaderBreadcrumb from './breadcrumb.vue';
+import HeaderSetting from './setting.vue';
 
 const layoutStore = useLayoutStore();
 const router = useRouter();
@@ -130,7 +131,10 @@ function toggleMenuCollapsedHandler() {
     <div class="content">
       <div class="content-header">
         <header-breadcrumb></header-breadcrumb>
-        <header-avatar></header-avatar>
+        <a-space>
+          <header-setting></header-setting>
+          <header-avatar></header-avatar>
+        </a-space>
       </div>
       <div class="content-tabs">
         <div class="content-tabs-container">

@@ -150,9 +150,7 @@ export const useLayoutStore = defineStore(
       } else {
         setSecondaryMenuOpenKeys(info.path.map((node) => node.key));
       }
-      if (hasMainMenu.value) {
-        setMenuActiveKey(info.path[0].key);
-      }
+      setMenuActiveKey(info.path[0].key);
     }
 
     function generateMenuList(config) {
@@ -165,6 +163,10 @@ export const useLayoutStore = defineStore(
         return tab.key === activeTabKey.value;
       });
       return tab;
+    }
+
+    function setHasMainMenu(has) {
+      hasMainMenu.value = has;
     }
 
     function $reset() {
@@ -200,6 +202,7 @@ export const useLayoutStore = defineStore(
       removeTabByKey,
       updateTabByKey,
       updateMenuActiveByKey,
+      setHasMainMenu,
       $reset,
     };
   },

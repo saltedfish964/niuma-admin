@@ -81,6 +81,7 @@ const iconsList = [
   'ant-design:table-outlined',
   'carbon:screen',
   'material-symbols:logout-rounded',
+  'ant-design:setting-outlined',
 ];
 
 export default {

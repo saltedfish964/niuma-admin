@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { isEqual, head } from 'lodash-es';
 import { useLayoutStore } from '@src/store/modules/layout';
@@ -13,7 +12,6 @@ import HeaderSetting from './setting.vue';
 
 const layoutStore = useLayoutStore();
 const router = useRouter();
-const tabsRef = ref();
 
 function mainMenuClickHandler(menu) {
   if (menu.key === layoutStore.menuActiveKey) {
@@ -75,20 +73,22 @@ function toggleMenuCollapsedHandler() {
 <template>
   <div class="layout">
     <div class="menu">
-      <div v-if="layoutStore.hasMainMenu" class="main-menu">
-        <div class="main-menu-logo">
-          <v-icon name="custom-icon-vue" size="28px"></v-icon>
+      <transition name="main-menu">
+        <div v-if="layoutStore.hasMainMenu" class="main-menu">
+          <div class="main-menu-logo">
+            <v-icon name="custom-icon-vue" size="28px"></v-icon>
+          </div>
+          <div class="main-menu-content mini-scroll-white">
+            <main-menu-item
+              v-for="menu in layoutStore.menuList"
+              :key="menu.key"
+              :menu="menu"
+              :menu-active-key="layoutStore.menuActiveKey"
+              @click="mainMenuClickHandler(menu)"
+            ></main-menu-item>
+          </div>
         </div>
-        <div class="main-menu-content mini-scroll-white">
-          <main-menu-item
-            v-for="menu in layoutStore.menuList"
-            :key="menu.key"
-            :menu="menu"
-            :menu-active-key="layoutStore.menuActiveKey"
-            @click="mainMenuClickHandler(menu)"
-          ></main-menu-item>
-        </div>
-      </div>
+      </transition>
       <div
         v-if="layoutStore.secondaryMenuList.length > 0"
         class="secondary-menu"
@@ -139,7 +139,6 @@ function toggleMenuCollapsedHandler() {
       <div class="content-tabs">
         <div class="content-tabs-container">
           <tabs-controller
-            ref="tabsRef"
             :active-tab-key="layoutStore.activeTabKey"
             @update:active-tab-key="tabsChangeHandler"
             @select="tabsSelectHandler"
@@ -281,6 +280,22 @@ function toggleMenuCollapsedHandler() {
 .slide-up-leave-to {
   opacity: 0;
   font-size: 0;
+}
+/* main-menu 过渡动画 */
+.main-menu-enter-from,
+.main-menu-leave-to {
+  width: 0;
+  opacity: 0;
+}
+.main-menu-enter-active,
+.main-menu-leave-active {
+  transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+  overflow: hidden;
+}
+.main-menu-enter-to,
+.main-menu-leave-from {
+  width: 60px;
+  opacity: 1;
 }
 </style>
 

@@ -3,6 +3,15 @@
   --nm-border: 1px solid var(--nm-border-color);
 }
 
-[data-theme='dark'] {
+[data-theme='dark']:root {
   --nm-border-color: rgba(253, 253, 253, 0.12);
+}
+
+/* dark mode 过渡动画 */
+::view-transition-new(root),
+::view-transition-old(root) {
+  animation: none;
+}
+[data-theme='dark']::view-transition-old(root) {
+  z-index: 100;
 }

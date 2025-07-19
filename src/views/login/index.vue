@@ -7,10 +7,15 @@ import { getMenu } from '@src/api/menu';
 import { mergeNewConfigToMenuConfig } from '@src/utils/config';
 import { addRoutes } from '@src/router/dynamicRoutes';
 import projectConfig from '@src/config';
+import { toggleDarkMode } from '@src/utils/theme';
 
 const layoutStore = useLayoutStore();
 const userStore = useUserStore();
 const router = useRouter();
+
+function onDarkModeChange(e) {
+  toggleDarkMode(e);
+}
 
 async function onLogin() {
   const res = await getMenu();
@@ -36,6 +41,12 @@ async function onLogin() {
     <div class="right-content">
       <div class="header">
         <span class="title"> Niuma Admin </span>
+        <a-switch
+          checked-children="深色"
+          un-checked-children="浅色"
+          :checked="layoutStore.darkMode"
+          @change="(_, e) => onDarkModeChange(e)"
+        />
       </div>
       <div class="main">
         <div

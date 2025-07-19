@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import VIcon from '@src/components/icon/icon.vue';
 import { useLayoutStore } from '@src/store/modules/layout';
 import projectConfig from '@src/config';
-import { applyTheme } from '@src/utils/theme';
+import { applyTheme, toggleDarkMode } from '@src/utils/theme';
 
 const layoutStore = useLayoutStore();
 
@@ -17,8 +17,8 @@ function onHasMainMenuChange(checked) {
   layoutStore.setHasMainMenu(checked);
 }
 
-function onDarkModeChange(checked) {
-  applyTheme(layoutStore.themeColor, checked);
+function onDarkModeChange(e) {
+  toggleDarkMode(e);
 }
 
 function onThemeItemClick(color) {
@@ -43,7 +43,7 @@ function onThemeItemClick(color) {
       </div>
       <div class="switch-item">
         <div>深色模式</div>
-        <a-switch :checked="layoutStore.darkMode" @change="onDarkModeChange" />
+        <a-switch :checked="layoutStore.darkMode" @change="(_, e) => onDarkModeChange(e)" />
       </div>
       <div class="theme-item">
         <div class="theme-item-title">主题颜色</div>

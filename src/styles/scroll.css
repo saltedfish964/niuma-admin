@@ -1,6 +1,6 @@
 /* 滚动条整体样式 */
 ::-webkit-scrollbar {
-  width: 12px;  /* 竖向滚动条宽度 */
+  width: 12px; /* 竖向滚动条宽度 */
   height: 12px; /* 横向滚动条高度 */
   background-color: transparent; /* 轨道背景透明 */
 }
@@ -19,7 +19,7 @@
 }
 
 .mini-scroll-black::-webkit-scrollbar {
-  width: 4px;  /* 竖向滚动条宽度 */
+  width: 4px; /* 竖向滚动条宽度 */
   height: 4px; /* 横向滚动条高度 */
   background-color: transparent; /* 轨道背景透明 */
 }
@@ -36,7 +36,7 @@
 }
 
 .mini-scroll-white::-webkit-scrollbar {
-  width: 4px;  /* 竖向滚动条宽度 */
+  width: 4px; /* 竖向滚动条宽度 */
   height: 4px; /* 横向滚动条高度 */
   background-color: transparent; /* 轨道背景透明 */
 }
@@ -50,4 +50,19 @@
 /* 滑块悬停效果 */
 .mini-scroll-white::-webkit-scrollbar-thumb:hover {
   background-color: #ffffff;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar,
+[data-theme='dark'] .mini-scroll-white::-webkit-scrollbar {
+  background-color: #2c2c2c;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb,
+[data-theme='dark'] .mini-scroll-white::-webkit-scrollbar-thumb {
+  background-color: #9f9f9f;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover,
+[data-theme='dark'] .mini-scroll-white::-webkit-scrollbar-thumb:hover {
+  background-color: #d1d1d1;
 }

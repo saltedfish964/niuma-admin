@@ -45,11 +45,15 @@ function onThemeItemClick(color) {
         <div>深色模式</div>
         <a-switch :checked="layoutStore.darkMode" @change="(_, e) => onDarkModeChange(e)" />
       </div>
+      <a-divider />
       <div class="theme-item">
         <div class="theme-item-title">主题颜色</div>
         <div class="theme-list">
           <div
-            class="theme-list-item"
+            :class="[
+              'theme-list-item',
+              layoutStore.themeColor === color.color ? 'theme-list-item-active' : '',
+            ]"
             v-for="color in projectConfig.themeColors"
             :key="color.color"
             @click="onThemeItemClick(color.color)"
@@ -84,8 +88,6 @@ function onThemeItemClick(color) {
   padding: 8px 0;
 }
 .theme-item-title {
-  font-size: 16px;
-  font-weight: 600;
   padding: 8px 0 16px 0;
 }
 .theme-list {
@@ -98,6 +100,9 @@ function onThemeItemClick(color) {
   padding: 4px;
   border-radius: 4px;
   transition: all 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+.theme-list-item-active {
+  background: var(--nm-border-color);
 }
 .theme-list-item:hover {
   background: var(--nm-border-color);

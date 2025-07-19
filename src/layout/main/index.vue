@@ -164,6 +164,7 @@ function onTransitionEnd(event) {
             :items="layoutStore.secondaryMenuList"
             :inline-collapsed="layoutStore.menuCollapsed"
             :selected-keys="layoutStore.secondaryMenuActiveKey"
+            :theme="layoutStore.darkMode ? 'dark' : 'light'"
             @select="secondaryMenuSelectHandler"
           ></a-menu>
         </div>
@@ -339,6 +340,10 @@ function onTransitionEnd(event) {
 .content-body {
   flex: 1;
   overflow: auto;
+  background: #f0f2f5;
+}
+[data-theme='dark'] .content-body {
+  background: #010c17;
 }
 
 /* 动画 */

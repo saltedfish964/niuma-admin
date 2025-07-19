@@ -1,7 +1,7 @@
 <script setup>
 import { message } from 'ant-design-vue';
 import iconList from 'virtual:niuma-icon-loader';
-import { useClipboard } from '@src/hooks/use-clipboard';
+import { useClipboard } from '@src/composables/use-clipboard';
 import VIcon from '@src/components/icon/icon.vue';
 
 const [messageApi, contextHolder] = message.useMessage();

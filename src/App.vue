@@ -2,7 +2,7 @@
 import { theme } from 'ant-design-vue';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import { useRouter } from 'vue-router';
-import { useBeforeUnload } from '@src/composables/useBeforeUnload';
+import { useBeforeUnload } from '@src/composables/use-before-unload';
 import { useLayoutStore } from '@src/store/modules/layout';
 
 const router = useRouter();

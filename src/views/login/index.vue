@@ -5,7 +5,7 @@ import { useLayoutStore } from '@src/store/modules/layout';
 import { useUserStore } from '@src/store/modules/user';
 import { getMenu } from '@src/api/menu';
 import { mergeNewConfigToMenuConfig } from '@src/utils/config';
-import { addRoutes } from '@src/router/dynamicRoutes';
+import { addRoutes } from '@src/router/dynamic-routes';
 import projectConfig from '@src/config';
 import { toggleDarkMode } from '@src/utils/theme';
 

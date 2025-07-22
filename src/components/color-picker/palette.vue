@@ -166,4 +166,7 @@ defineExpose({
   border-radius: 2px;
   z-index: -1;
 }
+[data-theme='dark'] .v-palette::before {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" fill-opacity="0.5"><rect x="10" width="10" height="10"/><rect y="10" width="10" height="10"/></svg>');
+}
 </style>

@@ -251,8 +251,8 @@ defineExpose({
         @input="onInput"
         @blur="onBlur"
       />
-      <button class="v-btn" :disabled="props.disabled" @click="onApply">应用</button>
       <button class="v-btn v-btn-reset" :disabled="props.disabled" @click="onClear">清除</button>
+      <button class="v-btn" :disabled="props.disabled" @click="onApply">应用</button>
     </div>
   </div>
 </template>
@@ -265,9 +265,11 @@ defineExpose({
   box-shadow:
     0 0.15em 1.5em 0 rgba(0, 0, 0, 0.1),
     0 0 1em 0 rgba(0, 0, 0, 0.03);
+  border-radius: 4px;
 }
 [data-theme='dark'] .v-color-picker-panel {
   box-shadow: none;
+  border: var(--nm-border, 1px solid #2c2c2c);
 }
 .v-color-preview-container {
   padding-bottom: 8px;
@@ -292,6 +294,9 @@ defineExpose({
   background-size: 0.5em;
   border-radius: 0.15em;
   z-index: -1;
+}
+[data-theme='dark'] .v-color-preview::before {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" fill-opacity="0.5"><rect x="10" width="10" height="10"/><rect y="10" width="10" height="10"/></svg>');
 }
 .v-last-color,
 .v-current-color {
@@ -347,6 +352,9 @@ defineExpose({
   border-radius: 4px;
   z-index: -1;
 }
+[data-theme='dark'] .v-swatches-item::before {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" fill-opacity="0.5"><rect x="10" width="10" height="10"/><rect y="10" width="10" height="10"/></svg>');
+}
 .v-swatches-item::after {
   position: absolute;
   content: '';
@@ -363,13 +371,13 @@ defineExpose({
   justify-content: space-between;
 }
 .v-result {
-  color: #75797e;
+  color: var(--nm-color-text, #75797e);
   text-align: left;
   flex: none;
   width: 106px;
   height: 24px;
   transition: all 0.2s;
-  border-radius: 2px;
+  border-radius: 4px;
   background: #f1f3f4;
   cursor: text;
   font-size: 12px;
@@ -377,11 +385,15 @@ defineExpose({
   border: none;
   padding: 0 8px;
 }
+[data-theme='dark'] .v-result {
+  border: var(--nm-border, 1px solid #2c2c2c);
+  background: var(--nm-color-bg-container);
+}
 .v-btn {
   flex: none;
   width: 40px;
   height: 24px;
-  border-radius: 2px;
+  border-radius: 4px;
   background: var(--nm-primary-color, #3e74fd);
   color: #ffffff;
   font-size: 12px;

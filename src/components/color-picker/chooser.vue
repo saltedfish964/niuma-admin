@@ -153,4 +153,10 @@ defineExpose({
     url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill-opacity="0.5"><rect x="10" width="10" height="10"/><rect y="10" width="10" height="10"/></svg>');
   background-size: 100%, 4px;
 }
+[data-theme='dark'] .v-slider-opacity {
+  background:
+    linear-gradient(to right, transparent, black),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" fill-opacity="0.5"><rect x="10" width="10" height="10"/><rect y="10" width="10" height="10"/></svg>');
+  background-size: 100%, 4px;
+}
 </style>

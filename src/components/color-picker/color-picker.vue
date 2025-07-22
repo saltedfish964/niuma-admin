@@ -1,5 +1,5 @@
 <script setup>
-import { ref, useTemplateRef } from 'vue';
+import { ref } from 'vue';
 import ColorPickerPanel from './color-picker-panel.vue';
 
 const props = defineProps({
@@ -18,8 +18,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue']);
-
-const colorPickerPanelRef = useTemplateRef('colorPickerPanel');
 
 const isPopoverOpen = ref(false);
 
@@ -45,7 +43,6 @@ function onPopoverOpenChange(open) {
       </div>
       <template #content>
         <color-picker-panel
-          ref="colorPickerPanel"
           :model-value="props.modelValue"
           :swatches="props.swatches"
           :disabled="props.disabled"

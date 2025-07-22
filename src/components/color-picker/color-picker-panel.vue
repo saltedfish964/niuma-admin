@@ -197,7 +197,9 @@ watch(
   () => props.modelValue,
   (newValue, oldValue) => {
     if (newValue !== oldValue) {
-      setColor(newValue);
+      setTimeout(() => {
+        setColor(newValue);
+      });
     }
   },
 );
@@ -226,7 +228,6 @@ defineExpose({
       ref="palette"
       :palette-bg="paletteBg"
       :picker-bg="palettePickerBg"
-      :is-interactive="isInteractive"
       @change="onColorPaletteChange"
       @change-is-interactive="onChangeIsInteractive"
     ></color-palette>
@@ -234,7 +235,6 @@ defineExpose({
       <color-chooser
         ref="hue"
         :picker-bg="huePickerBg"
-        :is-interactive="isInteractive"
         @change="onHueColorChooserChange"
         @change-is-interactive="onChangeIsInteractive"
       ></color-chooser>
@@ -244,7 +244,6 @@ defineExpose({
         ref="opacity"
         type="opacity"
         :picker-bg="opacityPickerBg"
-        :is-interactive="isInteractive"
         @change="onOpacityColorChooserChange"
         @change-is-interactive="onChangeIsInteractive"
       ></color-chooser>

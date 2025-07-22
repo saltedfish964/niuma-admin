@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, useTemplateRef } from 'vue';
+import { computed, nextTick, ref, useTemplateRef } from 'vue';
 import { clamp } from './utils/utils';
 
 const props = defineProps({
@@ -10,10 +10,6 @@ const props = defineProps({
   paletteBg: {
     type: String,
     default: '#42445A',
-  },
-  isInteractive: {
-    type: Boolean,
-    default: false,
   },
 });
 
@@ -81,7 +77,9 @@ function onMousedown(event) {
   document.addEventListener('mousemove', onMousemove);
   event.preventDefault();
 
-  onMousemove(event);
+  nextTick(() => {
+    onMousemove(event);
+  });
 }
 
 function onMouseup() {

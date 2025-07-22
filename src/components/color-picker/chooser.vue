@@ -12,10 +12,6 @@ const props = defineProps({
     validate: (value) => ['hex', 'opacity'].includes(value),
     default: 'hex',
   },
-  isInteractive: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const emit = defineEmits(['change', 'changeIsInteractive']);
@@ -64,6 +60,8 @@ function onMousemove(event) {
   chooserCache = { x: x / rect.width };
 
   const cx = clamp(x / rect.width);
+
+  if (Number.isNaN(cx)) return;
 
   emit('change', cx);
 }

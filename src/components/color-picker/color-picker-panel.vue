@@ -18,6 +18,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  hideClearButton: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['update:modelValue', 'apply']);
@@ -269,7 +273,14 @@ defineExpose({
         @input="onInput"
         @blur="onBlur"
       />
-      <button class="v-btn v-btn-reset" :disabled="props.disabled" @click="onClear">清除</button>
+      <button
+        v-if="!props.hideClearButton"
+        class="v-btn v-btn-reset"
+        :disabled="props.disabled"
+        @click="onClear"
+      >
+        清除
+      </button>
       <button class="v-btn" :disabled="props.disabled" @click="onApply">应用</button>
     </div>
   </div>
@@ -386,13 +397,14 @@ defineExpose({
 .v-interaction {
   padding-top: 12px;
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
 }
 .v-result {
   color: var(--nm-color-text, #75797e);
   text-align: left;
-  flex: none;
-  width: 106px;
+  flex-grow: 1;
+  width: 100%;
+  margin-right: 8px;
   height: 24px;
   transition: all 0.2s;
   border-radius: 4px;
@@ -421,5 +433,6 @@ defineExpose({
 }
 .v-btn-reset {
   background: var(--nm-color-error, #e0e0e0);
+  margin-right: 8px;
 }
 </style>

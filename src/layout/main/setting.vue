@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import VIcon from '@src/components/icon/icon.vue';
+import VColorPickerPanel from '@src/components/color-picker/color-picker-panel.vue';
 import { useLayoutStore } from '@src/store/modules/layout';
 import projectConfig from '@src/config';
 import { applyTheme, toggleDarkMode } from '@src/utils/theme';
@@ -8,6 +9,7 @@ import { applyTheme, toggleDarkMode } from '@src/utils/theme';
 const layoutStore = useLayoutStore();
 
 const open = ref(false);
+const customColor = ref(layoutStore.themeColor);
 
 function onSettingClick() {
   open.value = true;
@@ -22,6 +24,12 @@ function onDarkModeChange(e) {
 }
 
 function onThemeItemClick(color) {
+  layoutStore.setThemeColor(color);
+  applyTheme(color, layoutStore.darkMode);
+}
+
+function onCustomColorChange(color) {
+  customColor.value = color;
   layoutStore.setThemeColor(color);
   applyTheme(color, layoutStore.darkMode);
 }
@@ -61,6 +69,21 @@ function onThemeItemClick(color) {
             <div class="theme-item-color" :style="{ background: color.color }"></div>
             <div class="theme-item-name">{{ color.name }}</div>
           </div>
+        </div>
+        <div
+          :class="[
+            'custom-theme',
+            layoutStore.themeColor === customColor &&
+            !projectConfig.themeColors.map((item) => item.color).includes(customColor)
+              ? 'custom-theme-active'
+              : '',
+          ]"
+        >
+          <v-color-picker-panel
+            :model-value="customColor"
+            :hide-clear-button="true"
+            @update:model-value="onCustomColorChange"
+          ></v-color-picker-panel>
         </div>
       </div>
     </a-drawer>
@@ -116,5 +139,14 @@ function onThemeItemClick(color) {
 .theme-item-name {
   text-align: center;
   padding: 4px 0;
+}
+.custom-theme {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+  border-radius: 4px;
+}
+.custom-theme-active {
+  background: var(--nm-border-color);
 }
 </style>

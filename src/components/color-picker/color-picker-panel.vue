@@ -1,5 +1,5 @@
 <script setup>
-import { ref, useTemplateRef, onMounted } from 'vue';
+import { ref, useTemplateRef, onMounted, watch } from 'vue';
 import ColorPalette from './palette.vue';
 import ColorChooser from './chooser.vue';
 import { HSVaColor } from './utils/hsvacolor';
@@ -192,6 +192,15 @@ function getValue() {
 
   return !values ? null : HSVaColor(...values);
 }
+
+watch(
+  () => props.modelValue,
+  (newValue, oldValue) => {
+    if (newValue !== oldValue) {
+      setColor(newValue);
+    }
+  },
+);
 
 onMounted(async () => {
   setTimeout(() => {

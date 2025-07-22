@@ -97,7 +97,7 @@ async function onLogin() {
 }
 .background-img {
   background: url('@src/assets/imgs/login-bg.svg');
-  background-size: auto;
+  background-size: 50%;
   background-position: center;
   background-repeat: no-repeat;
   display: none;

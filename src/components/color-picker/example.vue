@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import VColorPicker from '@src/components/color-picker/color-picker.vue';
+import { set } from 'lodash-es';
 
 const selectedColor = ref('#3498db');
 const swatches = ref([
@@ -12,11 +13,19 @@ const swatches = ref([
   'rgba(33, 150, 243, 0.75)',
   'rgba(3, 169, 244, 0.7)',
 ]);
+
+function randomColor() {
+  const randomHex = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+  selectedColor.value = randomHex;
+}
 </script>
 <template>
   <div style="padding: 8px 30px">
     <h1>颜色选择器演示</h1>
-    <VColorPicker v-model="selectedColor" :swatches="swatches" />
+    <a-button @click="randomColor">修改 v-model 值</a-button>
+    <div>
+      <VColorPicker v-model="selectedColor" :swatches="swatches" />
+    </div>
     <p style="padding-top: 50px">当前颜色值: {{ selectedColor }}</p>
   </div>
 </template>

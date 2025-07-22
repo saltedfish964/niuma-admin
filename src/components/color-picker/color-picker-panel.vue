@@ -124,6 +124,10 @@ function onColorPaletteChange(x, y) {
     colorText.value = hexa;
   }
   currentColorStyle.value.backgroundColor = cssRGBaString;
+  if (props.modelValue === null) {
+    lastColor = color.clone();
+    lastColorStyle.value.backgroundColor = cssRGBaString;
+  }
 }
 
 function onHueColorChooserChange(v) {
@@ -157,6 +161,9 @@ function onBlur() {
 }
 
 function onLastColorClick() {
+  if (lastColor === null) {
+    lastColor = color.clone();
+  }
   setColor(lastColor.toHEXA().toString());
 }
 
@@ -186,12 +193,15 @@ function getValue() {
   return !values ? null : HSVaColor(...values);
 }
 
-onMounted(() => {
-  setColor(props.modelValue);
+onMounted(async () => {
+  setTimeout(() => {
+    setColor(props.modelValue);
+  });
 });
 
 defineExpose({
   getValue,
+  setColor,
 });
 </script>
 

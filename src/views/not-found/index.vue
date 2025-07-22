@@ -26,6 +26,7 @@ function goHome() {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  background: var(--nm-color-bg-container);
 }
 
 .not-found .img {

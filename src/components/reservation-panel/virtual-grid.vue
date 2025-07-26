@@ -75,17 +75,27 @@ let scrollTicking = false;
 const gridContainerHeight = computed(() => {
   let height = 0;
   height += props.height;
-  height -= socrollXBarHeight.value; // 减去 X 滚动条
+  // height -= socrollXBarHeight.value; // 减去 X 滚动条
   height -= headerHeight.value; // 减去表头高度
   return height;
 });
 const gridContainerWidth = computed(() => {
   let width = 0;
   width += props.width;
-  width -= socrollYBarWidth.value; // 减去 Y 滚动条宽度
+  // width -= socrollYBarWidth.value; // 减去 Y 滚动条宽度
   width -= leftFixedWidth.value; // 减去左侧固定列宽度
   width -= rightFixedWidth.value; // 减去右侧固定列宽度
   return width;
+});
+
+// 判断是否需要显示垂直滚动条
+const hasVerticalScroll = computed(() => {
+  return totalHeight.value > gridContainerHeight.value - socrollXBarHeight.value;
+});
+
+// 判断是否需要显示水平滚动条
+const hasHorizontalScroll = computed(() => {
+  return totalWidth.value > gridContainerWidth.value - socrollYBarWidth.value;
 });
 
 // 计算列的左侧位置
@@ -111,8 +121,6 @@ const totalWidth = computed(() => {
   for (let i = 0; i < props.colCount; i++) {
     width += getColumnWidth(i);
   }
-  width += leftFixedWidth.value;
-  width += rightFixedWidth.value;
   return width;
 });
 
@@ -274,12 +282,11 @@ function handleContainerWheel(event) {
   if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
     containerRef.value.scrollTop += event.deltaY;
 
-    const maxContainerScroll = totalHeight.value - gridContainerHeight.value;
+    const maxContainerScroll =
+      totalHeight.value + socrollXBarHeight.value - gridContainerHeight.value;
     const maxBarScroll = scrollYBarRef.value.scrollHeight - scrollYBarRef.value.clientHeight;
-
     if (maxContainerScroll <= 0) return;
     const scrollRatio = Math.min(1, Math.max(0, containerRef.value.scrollTop / maxContainerScroll));
-
     scrollYBarRef.value.scrollTop = scrollRatio * maxBarScroll;
   } else {
     containerRef.value.scrollLeft += e.deltaX;
@@ -339,7 +346,7 @@ function getScrollbarWidth() {
       class="v-fixed-header-container"
       :style="{
         height: `${headerHeight}px`,
-        width: `${gridContainerWidth}px`,
+        width: `${hasVerticalScroll ? gridContainerWidth - socrollYBarWidth : gridContainerWidth}px`,
         transform: `translateX(${leftFixedWidth}px)`,
       }"
     >
@@ -353,7 +360,11 @@ function getScrollbarWidth() {
         <div
           v-for="col in visibleCols"
           :key="col.index"
-          class="v-fixed-header-col"
+          :class="[
+            'v-fixed-header-col',
+            isScrolledToLeft ? 'v-fixed-header-col-first-border-left-none' : '',
+            !hasHorizontalScroll ? 'v-fixed-header-col-last-border-right' : '',
+          ]"
           :style="{
             transform: `translateX(${col.left}px)`,
             width: `${col.width}px`,
@@ -383,9 +394,12 @@ function getScrollbarWidth() {
         }"
       >
         <div
-          class="v-time-item-container"
           v-for="time in timeSlotsGroup"
           :key="time.hour"
+          :class="[
+            'v-time-item-container',
+            !hasVerticalScroll ? 'v-time-item-container-border-bottom' : '',
+          ]"
           :style="{
             height: `${time.times.length * itemHeight}px`,
             transform: `translateY(${time.top}px)`,
@@ -399,7 +413,6 @@ function getScrollbarWidth() {
               :key="timeSlot"
               :style="{
                 height: `${itemHeight}px`,
-                borderRight: !isScrolledToLeft ? '1px solid #ddd' : 'none',
               }"
             >
               {{ timeSlot }}
@@ -415,7 +428,6 @@ function getScrollbarWidth() {
         width: `${leftFixedWidth}px`,
         height: `${headerHeight}px`,
         borderBottom: !isScrolledToTop ? '1px solid #ddd' : 'none',
-        borderRight: !isScrolledToLeft ? '1px solid #ddd' : 'none',
       }"
     ></div>
 
@@ -425,7 +437,7 @@ function getScrollbarWidth() {
       :style="{
         height: `${props.height}px`,
         width: `${rightFixedWidth}px`,
-        right: `${socrollYBarWidth}px`,
+        right: `${hasVerticalScroll ? socrollYBarWidth : 0}px`,
         paddingTop: `${headerHeight}px`,
       }"
       @wheel="handleContainerWheel"
@@ -438,9 +450,12 @@ function getScrollbarWidth() {
         }"
       >
         <div
-          class="v-time-item-container"
           v-for="time in timeSlotsGroup"
           :key="time.hour"
+          :class="[
+            'v-time-item-container',
+            !hasVerticalScroll ? 'v-time-item-container-border-bottom' : '',
+          ]"
           :style="{
             height: `${time.times.length * itemHeight}px`,
             transform: `translateY(${time.top}px)`,
@@ -466,39 +481,49 @@ function getScrollbarWidth() {
       :style="{
         width: `${rightFixedWidth}px`,
         height: `${headerHeight}px`,
-        right: `${socrollYBarWidth}px`,
+        right: `${hasVerticalScroll ? socrollYBarWidth : 0}px`,
         borderBottom: !isScrolledToTop ? '1px solid #ddd' : 'none',
       }"
     ></div>
 
     <!-- Y 滚动条 -->
     <div
+      v-show="hasVerticalScroll"
       ref="scrollYBar"
       class="v-y-scrollbar"
       :style="{ height: `${props.height}px`, width: `${socrollYBarWidth}px` }"
       @scroll="handleYScroll"
     >
       <div
-        :style="{ height: `${totalHeight + headerHeight}px`, width: `${socrollYBarWidth}px` }"
+        :style="{
+          height: `${totalHeight + headerHeight + socrollXBarHeight}px`,
+          width: `${socrollYBarWidth}px`,
+        }"
       ></div>
     </div>
 
     <!-- X 滚动条 -->
     <div
+      v-show="hasHorizontalScroll"
       ref="scrollXBar"
       class="v-x-scrollbar"
       :style="{ height: `${socrollXBarHeight}px`, width: `${props.width}px` }"
       @scroll="handleXScroll"
     >
-      <div :style="{ height: `${socrollXBarHeight}px`, width: `${totalWidth}px` }"></div>
+      <div
+        :style="{
+          height: `${socrollXBarHeight}px`,
+          width: `${totalWidth + leftFixedWidth + rightFixedWidth}px`,
+        }"
+      ></div>
     </div>
 
     <div
       class="virtual-grid-container"
       ref="container"
       :style="{
-        height: `${gridContainerHeight}px`,
-        width: `${gridContainerWidth}px`,
+        height: `${hasHorizontalScroll ? gridContainerHeight - socrollXBarHeight : gridContainerHeight}px`,
+        width: `${hasVerticalScroll ? gridContainerWidth - socrollYBarWidth : gridContainerWidth}px`,
         transform: `translateX(${leftFixedWidth}px)`,
       }"
       @scroll="handleScroll"
@@ -506,18 +531,28 @@ function getScrollbarWidth() {
     >
       <div
         class="virtual-grid-content"
-        :style="{ height: `${totalHeight}px`, width: `${totalWidth + leftFixedWidth}px` }"
+        :style="{
+          height: `${totalHeight}px`,
+          width: `${totalWidth}px`,
+        }"
       >
         <div
           v-for="row in visibleRows"
           :key="row.index"
-          class="virtual-grid-row"
+          :class="[
+            'virtual-grid-row',
+            !hasVerticalScroll ? 'virtual-grid-row-last-border-bottom' : '',
+          ]"
           :style="{ transform: `translateY(${row.top}px)`, height: `${itemHeight}px` }"
         >
           <div
             v-for="col in visibleCols"
             :key="col.index"
-            class="virtual-grid-cell"
+            :class="[
+              'virtual-grid-cell',
+              isScrolledToLeft ? 'virtual-grid-cell-first-border-left-none' : '',
+              !hasHorizontalScroll ? 'virtual-grid-cell-last-border-right' : '',
+            ]"
             :style="{
               transform: `translateX(${col.left}px)`,
               width: `${col.width}px`,
@@ -551,6 +586,7 @@ function getScrollbarWidth() {
   overflow: hidden;
 }
 .v-fixed-header-container {
+  border-top: 1px solid #ddd;
   overflow: hidden;
 }
 .v-fixed-header {
@@ -563,8 +599,13 @@ function getScrollbarWidth() {
   box-sizing: border-box;
   height: 100%;
   border-left: 1px solid #ddd;
-  border-top: 1px solid #ddd;
   background-color: #fff;
+}
+.v-fixed-header-col-first-border-left-none:first-child {
+  border-left: none;
+}
+.v-fixed-header-col-last-border-right:last-child {
+  border-right: 1px solid #ddd;
 }
 /* 左边固定 */
 .v-fixed-left-container {
@@ -573,6 +614,8 @@ function getScrollbarWidth() {
   left: 0;
   height: 100%;
   background-color: #f9f9f9;
+  border-right: 1px solid #ddd;
+  border-left: 1px solid #ddd;
   z-index: 10;
 }
 .v-fixed-left-container .v-time-item-container {
@@ -581,7 +624,6 @@ function getScrollbarWidth() {
   left: 0;
   width: 100%;
   display: flex;
-  border-left: 1px solid #ddd;
 }
 .v-fixed-left-container .v-time-item {
   display: flex;
@@ -604,6 +646,7 @@ function getScrollbarWidth() {
   top: 0;
   left: 0;
   border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
   border-top: 1px solid #ddd;
   background: #ffffff;
   z-index: 20;
@@ -616,6 +659,7 @@ function getScrollbarWidth() {
   background-color: #f9f9f9;
   overflow: hidden;
   z-index: 10;
+  border-left: 1px solid #ddd;
 }
 .v-fixed-right-container .v-time-item-container {
   position: absolute;
@@ -636,7 +680,6 @@ function getScrollbarWidth() {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
   border-top: 1px solid #ddd;
   width: 100%;
@@ -648,6 +691,9 @@ function getScrollbarWidth() {
   border-top: 1px solid #ddd;
   background: #ffffff;
   z-index: 20;
+}
+.v-time-item-container-border-bottom:last-child {
+  border-bottom: 1px solid #ddd;
 }
 /* Y 滚动条 */
 .v-y-scrollbar {
@@ -681,6 +727,9 @@ function getScrollbarWidth() {
   left: 0;
   width: 100%;
 }
+.virtual-grid-row-last-border-bottom:last-child {
+  border-bottom: 1px solid #ddd;
+}
 .virtual-grid-cell {
   height: 100%;
   position: absolute;
@@ -689,5 +738,11 @@ function getScrollbarWidth() {
   border-top: 1px solid #ddd;
   background-color: #fff;
   overflow: hidden;
+}
+.virtual-grid-cell-first-border-left-none:first-child {
+  border-left: none;
+}
+.virtual-grid-cell-last-border-right:last-child {
+  border-right: 1px solid #ddd;
 }
 </style>

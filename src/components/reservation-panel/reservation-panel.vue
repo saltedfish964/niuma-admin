@@ -15,14 +15,14 @@ const props = defineProps({
   },
   timeInterval: {
     type: Number,
-    default: 15,
+    default: 40,
   },
 });
 
 let observer;
 const containerRef = useTemplateRef('container');
 const userList = ref([]);
-for (let i = 0; i <= 50; i++) {
+for (let i = 0; i <= 2; i++) {
   userList.value.push({
     id: i,
     name: `用户-${i}`,

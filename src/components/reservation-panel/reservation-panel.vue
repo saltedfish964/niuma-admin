@@ -15,14 +15,14 @@ const props = defineProps({
   },
   timeInterval: {
     type: Number,
-    default: 10,
+    default: 15,
   },
 });
 
 let observer;
 const containerRef = useTemplateRef('container');
 const userList = ref([]);
-for (let i = 0; i <= 100; i++) {
+for (let i = 0; i <= 50; i++) {
   userList.value.push({
     id: i,
     name: `用户-${i}`,
@@ -82,9 +82,7 @@ onBeforeUnmount(() => {
       :time-slots="timeSlots"
     >
       <template #default="{ item, rowIndex, colIndex }">
-        <div class="cell-content" :style="{ backgroundColor: getCellColor(rowIndex, colIndex) }">
-          {{ item }}
-        </div>
+        <div class="cell-content"></div>
       </template>
     </virtual-grid>
   </div>

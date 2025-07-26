@@ -9,11 +9,11 @@ function validateTimeFormat(timeStr) {
 }
 
 /**
- * 生成时间段列表
+ * 生成时间段列表（不包含结束时间）
  * @param {string} startTime - 开始时间，格式为 HH:mm
  * @param {string} endTime - 结束时间，格式为 HH:mm
  * @param {number} interval - 时间间隔（分钟）
- * @returns {string[]} - 生成的时间段列表
+ * @returns {string[]} - 生成的时间段列表（不包含结束时间）
  */
 export function generateTimeSlots(startTime, endTime, interval) {
   // 验证时间格式
@@ -21,13 +21,11 @@ export function generateTimeSlots(startTime, endTime, interval) {
     throw new Error('时间格式错误，请使用 HH:mm 格式（如 08:30）');
   }
 
-  // 将时间字符串转换为分钟数
   const toMinutes = (timeStr) => {
     const [hours, minutes] = timeStr.split(':').map(Number);
     return hours * 60 + minutes;
   };
 
-  // 将分钟数转换回时间字符串
   const toTimeString = (totalMinutes) => {
     const hours = Math.floor(totalMinutes / 60)
       .toString()
@@ -47,8 +45,8 @@ export function generateTimeSlots(startTime, endTime, interval) {
   const timeSlots = [];
   let currentMinutes = startMinutes;
 
-  // 生成时间列表
-  while (currentMinutes <= endMinutes) {
+  // 修改循环条件：只包含小于结束时间的时间点
+  while (currentMinutes < endMinutes) {
     timeSlots.push(toTimeString(currentMinutes));
     currentMinutes += interval;
   }
@@ -69,8 +67,9 @@ export function groupTimesByHour(timeList) {
 
   // 使用对象临时存储分组
   const grouped = {};
+  const startIndexMap = {};
 
-  timeList.forEach((time) => {
+  timeList.forEach((time, index) => {
     // 验证时间格式
     if (!/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/.test(time)) {
       throw new Error(`无效的时间格式: ${time}，请使用 HH:mm 格式`);
@@ -86,6 +85,10 @@ export function groupTimesByHour(timeList) {
 
     // 将时间添加到对应小时的分组
     grouped[hour].push(time);
+
+    if (grouped[hour].length === 1) {
+      startIndexMap[hour] = index; // 记录该小时的起始索引
+    }
   });
 
   // 将对象转换为数组并排序
@@ -93,6 +96,7 @@ export function groupTimesByHour(timeList) {
     .sort((a, b) => parseInt(a) - parseInt(b)) // 按小时数值升序排序
     .map((hour) => ({
       hour: hour,
+      startIndex: startIndexMap[hour],
       times: grouped[hour],
     }));
 }

@@ -1,5 +1,6 @@
 <script setup>
 import { ref, useTemplateRef, computed } from 'vue';
+import { groupTimesByHour } from './time';
 
 const props = defineProps({
   // 总行数
@@ -35,7 +36,7 @@ const props = defineProps({
   // 缓冲区大小（预渲染的额外行/列数）
   buffer: {
     type: Number,
-    default: 2,
+    default: 5,
   },
   // 数据获取函数
   getItemData: {
@@ -65,8 +66,8 @@ const scrollYBarRef = useTemplateRef('scrollYBar');
 const scrollTop = ref(0);
 const scrollLeft = ref(0);
 const headerHeight = ref(32);
-const leftFixedWidth = ref(50);
-const rightFixedWidth = ref(50);
+const leftFixedWidth = ref(80);
+const rightFixedWidth = ref(80);
 const socrollYBarWidth = ref(12);
 const socrollXBarHeight = ref(12);
 let scrollTicking = false;
@@ -178,6 +179,31 @@ const visibleCols = computed(() => {
     });
   }
   return cols;
+});
+// TODO: 虚拟滚动方式，由于分组，如果时间分段过多，会出现空白问题
+// const timeSlotsGroup = computed(() => {
+//   const visibleTimeSlots = props.timeSlots.slice(startRowIndex.value, endRowIndex.value);
+//   const groupTime = groupTimesByHour(props.timeSlots)
+//     .map((group) => {
+//       return {
+//         hour: group.hour,
+//         startIndex: group.startIndex, // 记录该小时的起始索引
+//         top: group.startIndex * props.itemHeight, // 计算该小时的顶部位置
+//         times: group.times.filter((time) => {
+//           return visibleTimeSlots.includes(time);
+//         }),
+//       };
+//     })
+//     .filter((group) => group.times.length > 0);
+//   return groupTime;
+// });
+const timeSlotsGroup = computed(() => {
+  return groupTimesByHour(props.timeSlots).map((group) => {
+    return {
+      ...group,
+      top: group.startIndex * props.itemHeight,
+    };
+  });
 });
 
 // 判断 x 轴滚动条是否滚动到最右边
@@ -331,6 +357,7 @@ function getScrollbarWidth() {
           :style="{
             transform: `translateX(${col.left}px)`,
             width: `${col.width}px`,
+            borderBottom: !isScrolledToTop ? '1px solid #ddd' : 'none',
           }"
         >
           {{ props.users[col.index]?.name }}
@@ -356,12 +383,28 @@ function getScrollbarWidth() {
         }"
       >
         <div
-          v-for="row in visibleRows"
-          :key="row.index"
-          class="v-time-item"
-          :style="{ height: `${itemHeight}px`, transform: `translateY(${row.top}px)` }"
+          class="v-time-item-container"
+          v-for="time in timeSlotsGroup"
+          :key="time.hour"
+          :style="{
+            height: `${time.times.length * itemHeight}px`,
+            transform: `translateY(${time.top}px)`,
+          }"
         >
-          {{ props.timeSlots[row.index] }}
+          <div class="v-time-item-hour" :style="{ height: `${itemHeight}px` }">{{ time.hour }}</div>
+          <div style="flex: 1">
+            <div
+              class="v-time-item"
+              v-for="timeSlot in time.times"
+              :key="timeSlot"
+              :style="{
+                height: `${itemHeight}px`,
+                borderRight: !isScrolledToLeft ? '1px solid #ddd' : 'none',
+              }"
+            >
+              {{ timeSlot }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -372,6 +415,7 @@ function getScrollbarWidth() {
         width: `${leftFixedWidth}px`,
         height: `${headerHeight}px`,
         borderBottom: !isScrolledToTop ? '1px solid #ddd' : 'none',
+        borderRight: !isScrolledToLeft ? '1px solid #ddd' : 'none',
       }"
     ></div>
 
@@ -394,12 +438,25 @@ function getScrollbarWidth() {
         }"
       >
         <div
-          v-for="row in visibleRows"
-          :key="row.index"
-          class="v-time-item"
-          :style="{ height: `${itemHeight}px`, transform: `translateY(${row.top}px)` }"
+          class="v-time-item-container"
+          v-for="time in timeSlotsGroup"
+          :key="time.hour"
+          :style="{
+            height: `${time.times.length * itemHeight}px`,
+            transform: `translateY(${time.top}px)`,
+          }"
         >
-          {{ props.timeSlots[row.index] }}
+          <div style="flex: 1">
+            <div
+              class="v-time-item"
+              v-for="timeSlot in time.times"
+              :key="timeSlot"
+              :style="{ height: `${itemHeight}px` }"
+            >
+              {{ timeSlot }}
+            </div>
+          </div>
+          <div class="v-time-item-hour" :style="{ height: `${itemHeight}px` }">{{ time.hour }}</div>
         </div>
       </div>
     </div>
@@ -518,14 +575,29 @@ function getScrollbarWidth() {
   background-color: #f9f9f9;
   z-index: 10;
 }
-.v-fixed-left-container .v-time-item {
+.v-fixed-left-container .v-time-item-container {
   position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  border-left: 1px solid #ddd;
+}
+.v-fixed-left-container .v-time-item {
   display: flex;
   align-items: center;
   justify-content: center;
   border-left: 1px solid #ddd;
   border-top: 1px solid #ddd;
   width: 100%;
+}
+.v-fixed-left-container .v-time-item-hour {
+  border-top: 1px solid #ddd;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
 }
 .v-fixed-left-mask {
   position: absolute;
@@ -545,12 +617,27 @@ function getScrollbarWidth() {
   overflow: hidden;
   z-index: 10;
 }
-.v-fixed-right-container .v-time-item {
+.v-fixed-right-container .v-time-item-container {
   position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+}
+.v-fixed-right-container .v-time-item-hour {
+  border-top: 1px solid #ddd;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+.v-fixed-right-container .v-time-item {
   display: flex;
   align-items: center;
   justify-content: center;
   border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
   border-top: 1px solid #ddd;
   width: 100%;
 }

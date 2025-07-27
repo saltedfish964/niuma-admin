@@ -1,6 +1,8 @@
 <script setup>
-import { ref, useTemplateRef, computed, watchEffect, watch } from 'vue';
+import { ref, useTemplateRef, computed, watch } from 'vue';
+import DragList from './drag.vue';
 import { groupTimesByHour } from './time';
+import { debounce } from 'lodash-es';
 
 const DEFAULT_ITEM_HEIGHT = 32;
 
@@ -21,7 +23,7 @@ const props = defineProps({
     default: 100,
   },
   // 单元格高度
-  itemHeight: {
+  defaultItemHeight: {
     type: Number,
     default: DEFAULT_ITEM_HEIGHT,
   },
@@ -62,11 +64,13 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['item-height-changed']);
-
 const containerRef = useTemplateRef('container');
 const scrollXBarRef = useTemplateRef('scrollXBar');
 const scrollYBarRef = useTemplateRef('scrollYBar');
+
+let scrollTicking = false;
+
+const currentItemHeight = ref(props.defaultItemHeight);
 const scrollTop = ref(0);
 const scrollLeft = ref(0);
 const headerHeight = ref(32);
@@ -74,33 +78,21 @@ const leftFixedWidth = ref(80);
 const rightFixedWidth = ref(80);
 const socrollYBarWidth = ref(12);
 const socrollXBarHeight = ref(12);
-let scrollTicking = false;
 
-const gridContainerHeight = computed(() => {
-  let height = 0;
-  height += props.height;
-  // height -= socrollXBarHeight.value; // 减去 X 滚动条
-  height -= headerHeight.value; // 减去表头高度
-  return height;
-});
-const gridContainerWidth = computed(() => {
-  let width = 0;
-  width += props.width;
-  // width -= socrollYBarWidth.value; // 减去 Y 滚动条宽度
-  width -= leftFixedWidth.value; // 减去左侧固定列宽度
-  width -= rightFixedWidth.value; // 减去右侧固定列宽度
-  return width;
-});
+const gridContainerHeight = ref(0);
+const gridContainerWidth = ref(0);
 
 // 判断是否需要显示垂直滚动条
-const hasVerticalScroll = computed(() => {
-  return totalHeight.value > gridContainerHeight.value;
-});
-
+const hasVerticalScroll = ref(false);
 // 判断是否需要显示水平滚动条
-const hasHorizontalScroll = computed(() => {
-  return totalWidth.value > gridContainerWidth.value;
-});
+const hasHorizontalScroll = ref(false);
+
+const verticalScrollContentHeight = ref(0);
+const horizontalScrollContentWidth = ref(0);
+
+// 计算总高度和总宽度
+const totalHeight = ref(0);
+const totalWidth = ref(0);
 
 // 计算列的左侧位置
 const columnLeftPositions = computed(() => {
@@ -115,27 +107,14 @@ const columnLeftPositions = computed(() => {
   return positions;
 });
 
-// 计算总高度和总宽度
-const totalHeight = computed(() => {
-  let height = props.rowCount * props.itemHeight;
-  return height;
-});
-const totalWidth = computed(() => {
-  let width = 0;
-  for (let i = 0; i < props.colCount; i++) {
-    width += getColumnWidth(i);
-  }
-  return width;
-});
-
 // 计算可见行数
 const visibleRowCount = computed(
-  () => Math.ceil(props.height / props.itemHeight) + props.buffer * 2,
+  () => Math.ceil(props.height / currentItemHeight.value) + props.buffer * 2,
 );
 
 // 计算起始行索引
 const startRowIndex = computed(() =>
-  Math.max(0, Math.floor(scrollTop.value / props.itemHeight) - props.buffer),
+  Math.max(0, Math.floor(scrollTop.value / currentItemHeight.value) - props.buffer),
 );
 
 // 计算结束行索引
@@ -149,7 +128,7 @@ const visibleRows = computed(() => {
   for (let i = startRowIndex.value; i < endRowIndex.value; i++) {
     rows.push({
       index: i,
-      top: i * props.itemHeight,
+      top: i * currentItemHeight.value,
     });
   }
   return rows;
@@ -200,7 +179,7 @@ const visibleCols = computed(() => {
 //       return {
 //         hour: group.hour,
 //         startIndex: group.startIndex, // 记录该小时的起始索引
-//         top: group.startIndex * props.itemHeight, // 计算该小时的顶部位置
+//         top: group.startIndex * currentItemHeight.value, // 计算该小时的顶部位置
 //         times: group.times.filter((time) => {
 //           return visibleTimeSlots.includes(time);
 //         }),
@@ -213,7 +192,7 @@ const timeSlotsGroup = computed(() => {
   return groupTimesByHour(props.timeSlots).map((group) => {
     return {
       ...group,
-      top: group.startIndex * props.itemHeight,
+      top: group.startIndex * currentItemHeight.value,
     };
   });
 });
@@ -308,13 +287,15 @@ function handleContainerWheel(event) {
 }
 
 function handleYScroll(event) {
-  if (!containerRef.value) return;
+  if (!containerRef.value || !scrollYBarRef.value) return;
   event.preventDefault();
-  const scrollRatio = Math.min(
-    1,
-    Math.max(0, event.target.scrollTop / (event.target.scrollHeight - event.target.clientHeight)),
-  );
-  containerRef.value.scrollTop = scrollRatio * (totalHeight.value - gridContainerHeight.value);
+  const scrollPos = scrollYBarRef.value.scrollTop;
+  const totalScroll = scrollYBarRef.value.scrollHeight;
+  const visibleSize = scrollYBarRef.value.clientHeight;
+  const maxScroll = Math.max(0, totalScroll - visibleSize);
+  if (maxScroll <= 0) return 0;
+  const percentage = Math.min(1, Math.max(0, scrollPos / maxScroll));
+  containerRef.value.scrollTop = percentage * (totalHeight.value - gridContainerHeight.value);
 }
 
 function handleXScroll(event) {
@@ -345,37 +326,64 @@ function getScrollbarWidth() {
   return scrollbarWidth;
 }
 
-// watchEffect(() => {
-//   let height = props.itemHeight;
-//   if (!hasVerticalScroll) {
-//     const containerHeight = gridContainerHeight.value - socrollXBarHeight.value;
-//     if (containerHeight > 0) {
-//       height = containerHeight / props.rowCount;
-//     }
-//   }
-//   emit('item-height-changed', height);
-// });
+function calcAllSizes(componentWidth, componentHeight) {
+  // 重置格子高度
+  currentItemHeight.value = props.defaultItemHeight;
+
+  // 网格可视区域宽高
+  let gridViewWidth = componentWidth;
+  let gridViewHeight = componentHeight;
+
+  // 网格内容宽高
+  let gridContentWidth = 0;
+  let gridContentHeight = 0;
+  for (let i = 0; i < props.colCount; i++) {
+    gridContentWidth += getColumnWidth(i);
+  }
+  gridContentHeight = props.rowCount * currentItemHeight.value;
+
+  gridViewHeight -= headerHeight.value;
+
+  // 是否有垂直滚动条
+  let hasVScroll =
+    gridContentHeight > gridViewHeight ||
+    gridContentHeight > gridViewHeight - socrollXBarHeight.value;
+  // 是否有水平滚动条
+  let hasHScroll =
+    gridContentWidth > gridViewWidth || gridContentWidth > gridViewWidth - socrollYBarWidth.value;
+
+  if (hasHScroll) {
+    gridViewHeight -= socrollXBarHeight.value;
+  }
+
+  gridViewWidth -= leftFixedWidth.value + rightFixedWidth.value;
+
+  hasVerticalScroll.value = hasVScroll;
+  hasHorizontalScroll.value = hasHScroll;
+
+  verticalScrollContentHeight.value = gridContentHeight + headerHeight.value;
+  horizontalScrollContentWidth.value =
+    gridContentWidth + leftFixedWidth.value + rightFixedWidth.value;
+
+  totalHeight.value = gridContentHeight;
+  totalWidth.value = gridContentWidth;
+
+  gridContainerWidth.value = gridViewWidth;
+  gridContainerHeight.value = gridViewHeight;
+
+  if (!hasVScroll) {
+    currentItemHeight.value = gridViewHeight / props.rowCount;
+  } else {
+    currentItemHeight.value = DEFAULT_ITEM_HEIGHT;
+  }
+}
 
 watch(
-  [hasVerticalScroll, hasHorizontalScroll, gridContainerHeight],
-  () => {
-    if (!hasVerticalScroll.value) {
-      let height = props.itemHeight;
-      const containerHeight = hasHorizontalScroll.value
-        ? gridContainerHeight.value - socrollXBarHeight.value
-        : gridContainerHeight.value;
-      if (containerHeight > 0) {
-        height = containerHeight / props.rowCount;
-      }
-      height = Math.max(height, DEFAULT_ITEM_HEIGHT);
-      emit('item-height-changed', height);
-    } else {
-      emit('item-height-changed', DEFAULT_ITEM_HEIGHT);
-    }
-  },
-  {
-    immediate: true,
-  },
+  [() => props.width, () => props.height],
+  debounce(([w, h]) => {
+    calcAllSizes(w, h);
+  }, 100),
+  { immediate: true },
 );
 </script>
 
@@ -441,18 +449,20 @@ watch(
             !hasVerticalScroll ? 'v-time-item-container-border-bottom' : '',
           ]"
           :style="{
-            height: `${time.times.length * itemHeight}px`,
+            height: `${time.times.length * currentItemHeight}px`,
             transform: `translateY(${time.top}px)`,
           }"
         >
-          <div class="v-time-item-hour" :style="{ height: `${itemHeight}px` }">{{ time.hour }}</div>
+          <div class="v-time-item-hour" :style="{ height: `${currentItemHeight}px` }">
+            {{ time.hour }}
+          </div>
           <div style="flex: 1">
             <div
               class="v-time-item"
               v-for="timeSlot in time.times"
               :key="timeSlot"
               :style="{
-                height: `${itemHeight}px`,
+                height: `${currentItemHeight}px`,
               }"
             >
               {{ timeSlot }}
@@ -497,7 +507,7 @@ watch(
             !hasVerticalScroll ? 'v-time-item-container-border-bottom' : '',
           ]"
           :style="{
-            height: `${time.times.length * itemHeight}px`,
+            height: `${time.times.length * currentItemHeight}px`,
             transform: `translateY(${time.top}px)`,
           }"
         >
@@ -506,12 +516,14 @@ watch(
               class="v-time-item"
               v-for="timeSlot in time.times"
               :key="timeSlot"
-              :style="{ height: `${itemHeight}px` }"
+              :style="{ height: `${currentItemHeight}px` }"
             >
               {{ timeSlot }}
             </div>
           </div>
-          <div class="v-time-item-hour" :style="{ height: `${itemHeight}px` }">{{ time.hour }}</div>
+          <div class="v-time-item-hour" :style="{ height: `${currentItemHeight}px` }">
+            {{ time.hour }}
+          </div>
         </div>
       </div>
     </div>
@@ -536,7 +548,7 @@ watch(
     >
       <div
         :style="{
-          height: `${totalHeight}px`,
+          height: `${verticalScrollContentHeight}px`,
           width: `${socrollYBarWidth}px`,
         }"
       ></div>
@@ -553,7 +565,7 @@ watch(
       <div
         :style="{
           height: `${socrollXBarHeight}px`,
-          width: `${totalWidth + leftFixedWidth + rightFixedWidth}px`,
+          width: `${horizontalScrollContentWidth}px`,
         }"
       ></div>
     </div>
@@ -562,7 +574,7 @@ watch(
       class="virtual-grid-container"
       ref="container"
       :style="{
-        height: `${hasHorizontalScroll ? gridContainerHeight - socrollXBarHeight : gridContainerHeight}px`,
+        height: `${gridContainerHeight}px`,
         width: `${hasVerticalScroll ? gridContainerWidth - socrollYBarWidth : gridContainerWidth}px`,
         transform: `translateX(${leftFixedWidth}px)`,
       }"
@@ -576,6 +588,11 @@ watch(
           width: `${totalWidth}px`,
         }"
       >
+        <drag-list
+          :item-width="props.itemWidth"
+          :item-height="currentItemHeight"
+          :containerRef="containerRef"
+        ></drag-list>
         <div
           v-for="row in visibleRows"
           :key="row.index"
@@ -583,7 +600,10 @@ watch(
             'virtual-grid-row',
             !hasVerticalScroll ? 'virtual-grid-row-last-border-bottom' : '',
           ]"
-          :style="{ transform: `translateY(${row.top}px)`, height: `${itemHeight}px` }"
+          :style="{
+            transform: `translateY(${row.top}px)`,
+            height: `${currentItemHeight}px`,
+          }"
         >
           <div
             v-for="col in visibleCols"

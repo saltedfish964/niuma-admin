@@ -15,6 +15,10 @@ const props = defineProps({
   },
 });
 
+let currentDragItem = null;
+let currentDragItemX = 0;
+let currentDragItemY = 0;
+
 const dataList = ref([
   {
     id: 1,
@@ -30,28 +34,45 @@ const dataList = ref([
   },
 ]);
 
+function getDragItemByChild(child) {
+  let parent = child;
+  while (parent) {
+    if (parent.classList && parent.classList.contains('drag-item')) {
+      return parent;
+    }
+    parent = parent.parentElement;
+  }
+  return null;
+}
+
 function onMousedown(event) {
   window.addEventListener('mousemove', onMousemove);
   window.addEventListener('mouseup', onMouseup);
-
   event.preventDefault();
-  // 允许事件穿透
-  // event.target.style.pointerEvents = 'none';
+  currentDragItem = getDragItemByChild(event.target);
+  currentDragItemX = event.clientX;
+  currentDragItemY = event.clientY;
 }
 
 function onMousemove(event) {
-  if (!props.containerRef) return;
-  // const rect = props.containerRef.getBoundingClientRect();
-  // 计算鼠标位置
-  // const x = event.clientX - rect.left;
-  // const y = event.clientY - rect.top;
-  // 更新拖拽元素位置
-  // event.target.style.transform = `translate(${x}px, ${y}px)`;
+  if (!currentDragItem) return;
+  // 计算鼠标拖动的距离
+  const dx = event.clientX - currentDragItemX;
+  const dy = event.clientY - currentDragItemY;
+  // currentDragItem.style.transform = `translate(${dx}px, ${dy}px)`;
+  currentDragItem.style.left = `${currentDragItem.offsetLeft + dx}px`;
+  currentDragItem.style.top = `${currentDragItem.offsetTop + dy}px`;
+
+  currentDragItemX = event.clientX;
+  currentDragItemY = event.clientY;
 }
 
 function onMouseup() {
   window.removeEventListener('mousemove', onMousemove);
   window.removeEventListener('mouseup', onMouseup);
+
+  currentDragItemX = 0;
+  currentDragItemY = 0;
 }
 </script>
 

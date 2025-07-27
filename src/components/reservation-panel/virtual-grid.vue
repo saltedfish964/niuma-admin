@@ -1,6 +1,8 @@
 <script setup>
-import { ref, useTemplateRef, computed } from 'vue';
+import { ref, useTemplateRef, computed, watchEffect, watch } from 'vue';
 import { groupTimesByHour } from './time';
+
+const DEFAULT_ITEM_HEIGHT = 32;
 
 const props = defineProps({
   // 总行数
@@ -21,7 +23,7 @@ const props = defineProps({
   // 单元格高度
   itemHeight: {
     type: Number,
-    default: 50,
+    default: DEFAULT_ITEM_HEIGHT,
   },
   // 可视区域宽度
   width: {
@@ -60,6 +62,8 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(['item-height-changed']);
+
 const containerRef = useTemplateRef('container');
 const scrollXBarRef = useTemplateRef('scrollXBar');
 const scrollYBarRef = useTemplateRef('scrollYBar');
@@ -90,12 +94,12 @@ const gridContainerWidth = computed(() => {
 
 // 判断是否需要显示垂直滚动条
 const hasVerticalScroll = computed(() => {
-  return totalHeight.value > gridContainerHeight.value - socrollXBarHeight.value;
+  return totalHeight.value > gridContainerHeight.value;
 });
 
 // 判断是否需要显示水平滚动条
 const hasHorizontalScroll = computed(() => {
-  return totalWidth.value > gridContainerWidth.value - socrollYBarWidth.value;
+  return totalWidth.value > gridContainerWidth.value;
 });
 
 // 计算列的左侧位置
@@ -282,8 +286,7 @@ function handleContainerWheel(event) {
   if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
     containerRef.value.scrollTop += event.deltaY;
 
-    const maxContainerScroll =
-      totalHeight.value + socrollXBarHeight.value - gridContainerHeight.value;
+    const maxContainerScroll = totalHeight.value - gridContainerHeight.value;
     const maxBarScroll = scrollYBarRef.value.scrollHeight - scrollYBarRef.value.clientHeight;
     if (maxContainerScroll <= 0) return;
     const scrollRatio = Math.min(1, Math.max(0, containerRef.value.scrollTop / maxContainerScroll));
@@ -307,7 +310,11 @@ function handleContainerWheel(event) {
 function handleYScroll(event) {
   if (!containerRef.value) return;
   event.preventDefault();
-  containerRef.value.scrollTop = event.target.scrollTop;
+  const scrollRatio = Math.min(
+    1,
+    Math.max(0, event.target.scrollTop / (event.target.scrollHeight - event.target.clientHeight)),
+  );
+  containerRef.value.scrollTop = scrollRatio * (totalHeight.value - gridContainerHeight.value);
 }
 
 function handleXScroll(event) {
@@ -337,6 +344,39 @@ function getScrollbarWidth() {
 
   return scrollbarWidth;
 }
+
+// watchEffect(() => {
+//   let height = props.itemHeight;
+//   if (!hasVerticalScroll) {
+//     const containerHeight = gridContainerHeight.value - socrollXBarHeight.value;
+//     if (containerHeight > 0) {
+//       height = containerHeight / props.rowCount;
+//     }
+//   }
+//   emit('item-height-changed', height);
+// });
+
+watch(
+  [hasVerticalScroll, hasHorizontalScroll, gridContainerHeight],
+  () => {
+    if (!hasVerticalScroll.value) {
+      let height = props.itemHeight;
+      const containerHeight = hasHorizontalScroll.value
+        ? gridContainerHeight.value - socrollXBarHeight.value
+        : gridContainerHeight.value;
+      if (containerHeight > 0) {
+        height = containerHeight / props.rowCount;
+      }
+      height = Math.max(height, DEFAULT_ITEM_HEIGHT);
+      emit('item-height-changed', height);
+    } else {
+      emit('item-height-changed', DEFAULT_ITEM_HEIGHT);
+    }
+  },
+  {
+    immediate: true,
+  },
+);
 </script>
 
 <template>
@@ -496,7 +536,7 @@ function getScrollbarWidth() {
     >
       <div
         :style="{
-          height: `${totalHeight + headerHeight + socrollXBarHeight}px`,
+          height: `${totalHeight}px`,
           width: `${socrollYBarWidth}px`,
         }"
       ></div>

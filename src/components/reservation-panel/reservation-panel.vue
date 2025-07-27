@@ -22,7 +22,7 @@ const props = defineProps({
 let observer;
 const containerRef = useTemplateRef('container');
 const userList = ref([]);
-for (let i = 0; i <= 2; i++) {
+for (let i = 0; i <= 3; i++) {
   userList.value.push({
     id: i,
     name: `用户-${i}`,
@@ -32,6 +32,7 @@ for (let i = 0; i <= 2; i++) {
 const customWidth = ref({
   0: 240,
 });
+const itemHeight = ref(32);
 const gridHeight = ref(0);
 const gridWidth = ref(0);
 const timeSlots = generateTimeSlots(props.startTime, props.endTime, props.timeInterval);
@@ -53,6 +54,10 @@ const getCellColor = (row, col) => {
   return `hsl(${hue}, 80%, 90%)`;
 };
 
+function onItemHeightChanged(height) {
+  itemHeight.value = height;
+}
+
 onMounted(() => {
   observer = new ResizeObserver(debounce(onContainerResize, 16));
   if (containerRef.value) {
@@ -73,13 +78,14 @@ onBeforeUnmount(() => {
       :row-count="timeSlots.length"
       :col-count="userList.length"
       :item-width="120"
-      :item-height="32"
+      :item-height="itemHeight"
       :width="gridWidth"
       :height="gridHeight"
       :get-item-data="getCellData"
       :columns-width="customWidth"
       :users="userList"
       :time-slots="timeSlots"
+      @item-height-changed="onItemHeightChanged"
     >
       <template #default="{ item, rowIndex, colIndex }">
         <div class="cell-content"></div>

@@ -2,7 +2,7 @@
 import { ref, useTemplateRef, computed, watch } from 'vue';
 import DragList from './drag.vue';
 import { groupTimesByHour } from './time';
-import { debounce } from 'lodash-es';
+import { debounce, throttle } from 'lodash-es';
 
 const DEFAULT_ITEM_HEIGHT = 32;
 
@@ -69,6 +69,14 @@ const scrollXBarRef = useTemplateRef('scrollXBar');
 const scrollYBarRef = useTemplateRef('scrollYBar');
 
 let scrollTicking = false;
+let lastCellHoverResult = {
+  cell: null,
+  clientX: -1,
+  clientY: -1,
+  scrollTop: -1,
+  scrollLeft: -1,
+};
+const throttleOnDragListMove = throttle(onDragListMove, 50);
 
 const currentItemHeight = ref(props.defaultItemHeight);
 const scrollTop = ref(0);
@@ -302,6 +310,106 @@ function handleXScroll(event) {
   if (!containerRef.value) return;
   event.preventDefault();
   containerRef.value.scrollLeft = event.target.scrollLeft;
+}
+
+function isHoveredCellCacheValid(x, y) {
+  // 如果上次没有悬停格子，总是重新计算
+  if (!lastCellHoverResult.cell) return false;
+  // 检查鼠标位置是否变化
+  if (
+    Math.abs(x - lastCellHoverResult.clientX) > 2 ||
+    Math.abs(y - lastCellHoverResult.clientY) > 2
+  ) {
+    return false;
+  }
+  // 检查滚动位置是否变化
+  if (
+    Math.abs(containerRef.value.scrollTop - lastCellHoverResult.scrollTop) > 2 ||
+    Math.abs(containerRef.value.scrollLeft - lastCellHoverResult.scrollLeft) > 2
+  ) {
+    return false;
+  }
+}
+
+function getHoveredCell(x, y) {
+  if (isHoveredCellCacheValid(x, y)) {
+    return lastCellHoverResult.cell;
+  }
+
+  // 计算新的悬停格子
+  const containerRect = containerRef.value.getBoundingClientRect();
+  const mouseX = x - containerRect.left;
+  const mouseY = y - containerRect.top;
+
+  // 快速检查是否在容器内
+  if (mouseX < 0 || mouseX > containerRect.width || mouseY < 0 || mouseY > containerRect.height) {
+    lastCellHoverResult = {
+      cell: null,
+      clientX: x,
+      clientY: y,
+      scrollTop: containerRef.value.scrollTop,
+      scrollLeft: containerRef.value.scrollLeft,
+    };
+    return null;
+  }
+
+  const scrollTop = containerRef.value.scrollTop;
+  const scrollLeft = containerRef.value.scrollLeft;
+  const actualX = mouseX + scrollLeft;
+  const actualY = mouseY + scrollTop;
+
+  const rowIndex = Math.floor(actualY / currentItemHeight.value);
+  const colIndex = Math.floor(actualX / props.itemWidth);
+
+  // 检查是否在有效范围内
+  if (rowIndex >= 0 && rowIndex < props.rowCount && colIndex >= 0 && colIndex < props.colCount) {
+    // 检查是否在当前渲染的范围内（虚拟滚动）
+    if (
+      rowIndex >= startRowIndex.value - props.buffer &&
+      rowIndex <= endRowIndex.value + props.buffer &&
+      colIndex >= startColIndex.value &&
+      colIndex <= endColIndex.value
+    ) {
+      const result = {
+        row: rowIndex,
+        column: colIndex,
+        x: actualX,
+        y: actualY,
+        screenX: x,
+        screenY: y,
+      };
+
+      // 更新缓存
+      lastCellHoverResult = {
+        cell: result,
+        clientX: x,
+        clientY: y,
+        scrollTop: scrollTop,
+        scrollLeft: scrollLeft,
+      };
+
+      return result;
+    }
+  }
+
+  // 更新缓存（无悬停）
+  lastCellHoverResult = {
+    cell: null,
+    clientX: x,
+    clientY: y,
+    scrollTop: scrollTop,
+    scrollLeft: scrollLeft,
+  };
+
+  return null;
+}
+
+function onDragListMove(x, y) {
+  const hoveredCell = getHoveredCell(x, y);
+  if (hoveredCell) {
+    console.log('当前悬停的格子:', hoveredCell);
+    // 在这里处理悬停逻辑
+  }
 }
 
 function getScrollbarWidth() {
@@ -589,9 +697,10 @@ watch(
         }"
       >
         <drag-list
+          :containerRef="containerRef"
           :item-width="props.itemWidth"
           :item-height="currentItemHeight"
-          :containerRef="containerRef"
+          @move="throttleOnDragListMove"
         ></drag-list>
         <div
           v-for="row in visibleRows"

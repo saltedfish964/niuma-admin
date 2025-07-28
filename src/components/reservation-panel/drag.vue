@@ -15,6 +15,8 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(['move']);
+
 let currentDragItem = null;
 let currentDragItemX = 0;
 let currentDragItemY = 0;
@@ -46,8 +48,8 @@ function getDragItemByChild(child) {
 }
 
 function onMousedown(event) {
-  window.addEventListener('mousemove', onMousemove);
-  window.addEventListener('mouseup', onMouseup);
+  document.addEventListener('mousemove', onMousemove);
+  document.addEventListener('mouseup', onMouseup);
   event.preventDefault();
   currentDragItem = getDragItemByChild(event.target);
   currentDragItemX = event.clientX;
@@ -65,11 +67,13 @@ function onMousemove(event) {
 
   currentDragItemX = event.clientX;
   currentDragItemY = event.clientY;
+
+  emit('move', event.clientX, event.clientY);
 }
 
 function onMouseup() {
-  window.removeEventListener('mousemove', onMousemove);
-  window.removeEventListener('mouseup', onMouseup);
+  document.removeEventListener('mousemove', onMousemove);
+  document.removeEventListener('mouseup', onMouseup);
 
   currentDragItemX = 0;
   currentDragItemY = 0;

@@ -102,6 +102,8 @@ const horizontalScrollContentWidth = ref(0);
 const totalHeight = ref(0);
 const totalWidth = ref(0);
 
+const hoveredCell = ref(null);
+
 // 计算列的左侧位置
 const columnLeftPositions = computed(() => {
   const positions = new Array(props.colCount);
@@ -359,7 +361,17 @@ function getHoveredCell(x, y) {
   const actualY = mouseY + scrollTop;
 
   const rowIndex = Math.floor(actualY / currentItemHeight.value);
-  const colIndex = Math.floor(actualX / props.itemWidth);
+
+  // 计算列索引（考虑不同列宽）
+  let colIndex = 0;
+  let accumulatedWidth = 0;
+  for (; colIndex < props.colCount; colIndex++) {
+    const colWidth = getColumnWidth(colIndex);
+    if (actualX < accumulatedWidth + colWidth) {
+      break;
+    }
+    accumulatedWidth += colWidth;
+  }
 
   // 检查是否在有效范围内
   if (rowIndex >= 0 && rowIndex < props.rowCount && colIndex >= 0 && colIndex < props.colCount) {
@@ -405,11 +417,7 @@ function getHoveredCell(x, y) {
 }
 
 function onDragListMove(x, y) {
-  const hoveredCell = getHoveredCell(x, y);
-  if (hoveredCell) {
-    console.log('当前悬停的格子:', hoveredCell);
-    // 在这里处理悬停逻辑
-  }
+  hoveredCell.value = getHoveredCell(x, y);
 }
 
 function getScrollbarWidth() {
@@ -721,6 +729,9 @@ watch(
               'virtual-grid-cell',
               isScrolledToLeft ? 'virtual-grid-cell-first-border-left-none' : '',
               !hasHorizontalScroll ? 'virtual-grid-cell-last-border-right' : '',
+              hoveredCell && hoveredCell.row === row.index && hoveredCell.column === col.index
+                ? 'virtual-grid-cell-hover'
+                : '',
             ]"
             :style="{
               transform: `translateX(${col.left}px)`,
@@ -907,6 +918,9 @@ watch(
   border-top: 1px solid #ddd;
   background-color: #fff;
   overflow: hidden;
+}
+.virtual-grid-cell-hover {
+  background-color: #2d313c;
 }
 .virtual-grid-cell-first-border-left-none:first-child {
   border-left: none;

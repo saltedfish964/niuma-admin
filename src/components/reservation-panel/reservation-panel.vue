@@ -30,7 +30,8 @@ for (let i = 0; i <= 2; i++) {
 }
 // 设置列的宽度
 const customWidth = ref({
-  // 0: 240,
+  0: 240,
+  1: 360,
 });
 const gridHeight = ref(0);
 const gridWidth = ref(0);

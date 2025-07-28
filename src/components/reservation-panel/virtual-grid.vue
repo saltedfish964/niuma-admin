@@ -68,6 +68,7 @@ const containerRef = useTemplateRef('container');
 const scrollXBarRef = useTemplateRef('scrollXBar');
 const scrollYBarRef = useTemplateRef('scrollYBar');
 
+let autoScrollIntervalId = null;
 let scrollTicking = false;
 let lastCellHoverResult = {
   cell: null,
@@ -76,7 +77,7 @@ let lastCellHoverResult = {
   scrollTop: -1,
   scrollLeft: -1,
 };
-const throttleOnDragListMove = throttle(onDragListMove, 50);
+const throttleOnDragListMove = throttle(onDragListMove, 16, { trailing: false });
 
 const currentItemHeight = ref(props.defaultItemHeight);
 const scrollTop = ref(0);
@@ -297,7 +298,7 @@ function handleContainerWheel(event) {
 }
 
 function handleYScroll(event) {
-  if (!containerRef.value || !scrollYBarRef.value) return;
+  if (!containerRef.value || !scrollYBarRef.value || autoScrollIntervalId) return;
   event.preventDefault();
   const scrollPos = scrollYBarRef.value.scrollTop;
   const totalScroll = scrollYBarRef.value.scrollHeight;
@@ -309,9 +310,50 @@ function handleYScroll(event) {
 }
 
 function handleXScroll(event) {
-  if (!containerRef.value) return;
+  if (!containerRef.value || autoScrollIntervalId) return;
   event.preventDefault();
   containerRef.value.scrollLeft = event.target.scrollLeft;
+}
+
+/**
+ * 获取元素的滚动比例（0~1范围）
+ * @param {HTMLElement} element - 要计算滚动比例的DOM元素
+ * @returns {Object} 包含水平和垂直滚动比例的对象，范围0~1
+ */
+function getScrollRatio(element) {
+  if (!element) {
+    return { horizontal: 0, vertical: 0 };
+  }
+
+  // 计算最大滚动距离
+  const maxScrollLeft = element.scrollWidth - element.clientWidth;
+  const maxScrollTop = element.scrollHeight - element.clientHeight;
+
+  // 计算水平滚动比例（处理边界情况）
+  let horizontalRatio = 0;
+  if (maxScrollLeft > 0) {
+    horizontalRatio = element.scrollLeft / maxScrollLeft;
+    // 当接近最大值时，强制设为1（解决精度问题）
+    if (element.scrollLeft + element.clientWidth >= element.scrollWidth - 1) {
+      horizontalRatio = 1;
+    }
+  }
+
+  // 计算垂直滚动比例（处理边界情况）
+  let verticalRatio = 0;
+  if (maxScrollTop > 0) {
+    verticalRatio = element.scrollTop / maxScrollTop;
+    // 当接近最大值时，强制设为1（解决精度问题）
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight - 1) {
+      verticalRatio = 1;
+    }
+  }
+
+  // 确保范围在0~1之间
+  return {
+    horizontal: Math.min(Math.max(horizontalRatio, 0), 1),
+    vertical: Math.min(Math.max(verticalRatio, 0), 1),
+  };
 }
 
 function isHoveredCellCacheValid(x, y) {
@@ -416,8 +458,61 @@ function getHoveredCell(x, y) {
   return null;
 }
 
+function checkEdgeScroll(
+  mouseX,
+  mouseY,
+  scrollInterval = 16,
+  scrollSpeed = 8,
+  scrollThreshold = 10,
+) {
+  // 获取容器边界
+  const containerRect = containerRef.value.getBoundingClientRect();
+
+  // 清除现有滚动定时器
+  clearInterval(autoScrollIntervalId);
+  autoScrollIntervalId = null;
+
+  // 计算滚动方向和速度
+  let scrollX = 0;
+  let scrollY = 0;
+
+  // 水平方向边缘检测
+  if (mouseX < containerRect.left + scrollThreshold) {
+    scrollX = -scrollSpeed;
+  } else if (mouseX > containerRect.right - scrollThreshold) {
+    scrollX = scrollSpeed;
+  }
+
+  // 垂直方向边缘检测
+  if (mouseY < containerRect.top + scrollThreshold) {
+    scrollY = -scrollSpeed;
+  } else if (mouseY > containerRect.bottom - scrollThreshold) {
+    scrollY = scrollSpeed;
+  }
+
+  // 如果需要滚动，启动滚动定时器
+  if (scrollX !== 0 || scrollY !== 0) {
+    autoScrollIntervalId = setInterval(() => {
+      const { horizontal, vertical } = getScrollRatio(containerRef.value);
+      containerRef.value.scrollLeft += scrollX;
+      containerRef.value.scrollTop += scrollY;
+      scrollYBarRef.value.scrollTop =
+        vertical * (scrollYBarRef.value.scrollHeight - scrollYBarRef.value.clientHeight);
+      scrollXBarRef.value.scrollLeft =
+        horizontal * (scrollXBarRef.value.scrollWidth - scrollXBarRef.value.clientWidth);
+    }, scrollInterval);
+  }
+}
+
 function onDragListMove(x, y) {
   hoveredCell.value = getHoveredCell(x, y);
+  checkEdgeScroll(x, y);
+}
+
+function onDragListMoveend() {
+  clearInterval(autoScrollIntervalId);
+  autoScrollIntervalId = null;
+  hoveredCell.value = null;
 }
 
 function getScrollbarWidth() {
@@ -709,6 +804,7 @@ watch(
           :item-width="props.itemWidth"
           :item-height="currentItemHeight"
           @move="throttleOnDragListMove"
+          @moveend="onDragListMoveend"
         ></drag-list>
         <div
           v-for="row in visibleRows"

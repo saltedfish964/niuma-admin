@@ -15,9 +15,10 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['move']);
+const emit = defineEmits(['move', 'moveend']);
 
 let currentDragItem = null;
+let currentDragItemClone = null;
 let currentDragItemX = 0;
 let currentDragItemY = 0;
 
@@ -51,7 +52,24 @@ function onMousedown(event) {
   document.addEventListener('mousemove', onMousemove);
   document.addEventListener('mouseup', onMouseup);
   event.preventDefault();
+
   currentDragItem = getDragItemByChild(event.target);
+  if (!currentDragItem) return;
+
+  // 获取元素在视口中的位置
+  const rect = currentDragItem.getBoundingClientRect();
+
+  currentDragItemClone = currentDragItem.cloneNode(true);
+  currentDragItemClone.style.position = 'fixed';
+  currentDragItemClone.style.left = `${rect.left}px`;
+  currentDragItemClone.style.top = `${rect.top}px`;
+  currentDragItemClone.style.opacity = '0.8';
+  currentDragItemClone.style.pointerEvents = 'none';
+  currentDragItemClone.style.zIndex = '1000';
+  currentDragItemClone.style.backgroundColor = 'red';
+
+  document.body.appendChild(currentDragItemClone);
+
   currentDragItemX = event.clientX;
   currentDragItemY = event.clientY;
 }
@@ -61,9 +79,8 @@ function onMousemove(event) {
   // 计算鼠标拖动的距离
   const dx = event.clientX - currentDragItemX;
   const dy = event.clientY - currentDragItemY;
-  // currentDragItem.style.transform = `translate(${dx}px, ${dy}px)`;
-  currentDragItem.style.left = `${currentDragItem.offsetLeft + dx}px`;
-  currentDragItem.style.top = `${currentDragItem.offsetTop + dy}px`;
+  currentDragItemClone.style.left = `${parseInt(currentDragItemClone.style.left) + dx}px`;
+  currentDragItemClone.style.top = `${parseInt(currentDragItemClone.style.top) + dy}px`;
 
   currentDragItemX = event.clientX;
   currentDragItemY = event.clientY;
@@ -75,8 +92,27 @@ function onMouseup() {
   document.removeEventListener('mousemove', onMousemove);
   document.removeEventListener('mouseup', onMouseup);
 
+  if (currentDragItem && currentDragItemClone) {
+    const cloneRect = currentDragItemClone.getBoundingClientRect();
+    const containerRect = props.containerRef.getBoundingClientRect();
+
+    const newLeft = cloneRect.left - containerRect.left + props.containerRef.scrollLeft;
+    const newTop = cloneRect.top - containerRect.top + props.containerRef.scrollTop;
+
+    currentDragItem.style.left = `${newLeft}px`;
+    currentDragItem.style.top = `${newTop}px`;
+  }
+
+  // 移除克隆元素
+  if (currentDragItemClone) {
+    document.body.removeChild(currentDragItemClone);
+    currentDragItemClone = null;
+  }
+
   currentDragItemX = 0;
   currentDragItemY = 0;
+
+  emit('moveend');
 }
 </script>
 

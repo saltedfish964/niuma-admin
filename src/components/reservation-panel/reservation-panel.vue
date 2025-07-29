@@ -15,19 +15,26 @@ const props = defineProps({
   },
   timeInterval: {
     type: Number,
-    default: 1,
+    default: 30,
   },
 });
 
 let observer;
 const containerRef = useTemplateRef('container');
-const userList = ref([]);
-for (let i = 0; i <= 200; i++) {
-  userList.value.push({
-    id: i,
-    name: `用户-${i}`,
-  });
-}
+const userList = ref([
+  {
+    id: 1,
+    name: '张三',
+  },
+  {
+    id: 2,
+    name: '李四',
+  },
+  {
+    id: 3,
+    name: '王五',
+  },
+]);
 // 设置列的宽度
 const customWidth = ref({
   // 0: 240,
@@ -80,6 +87,9 @@ onBeforeUnmount(() => {
       :columns-width="customWidth"
       :users="userList"
       :time-slots="timeSlots"
+      :start-time="props.startTime"
+      :end-time="props.endTime"
+      :time-interval="props.timeInterval"
     >
       <template #default="{ item, rowIndex, colIndex }">
         <div class="cell-content"></div>

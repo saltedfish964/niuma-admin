@@ -210,6 +210,7 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
     visibleCols,
     isScrolledToLeft,
     isScrolledToTop,
+    columnLeftPositions,
     handleScroll,
     getColumnWidth,
     calcAllSizes,

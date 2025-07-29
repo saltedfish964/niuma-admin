@@ -74,6 +74,18 @@ const props = defineProps({
     type: Number,
     default: 80,
   },
+  startTime: {
+    type: String,
+    default: '08:00',
+  },
+  endTime: {
+    type: String,
+    default: '20:00',
+  },
+  timeInterval: {
+    type: Number,
+    default: 30,
+  },
 });
 
 const containerRef = useTemplateRef('container');
@@ -91,7 +103,7 @@ const autoScrollIntervalId = ref(null);
 const throttleOnDragListMove = throttle(onDragListMove, 16, { trailing: false });
 const socrollYBarWidth = ref(16);
 const socrollXBarHeight = ref(16);
-const hoveredCell = ref(null);
+const currentCell = ref(null);
 
 const {
   currentItemHeight,
@@ -113,6 +125,7 @@ const {
   visibleCols,
   isScrolledToLeft,
   isScrolledToTop,
+  columnLeftPositions,
   handleScroll,
   getColumnWidth,
   calcAllSizes,
@@ -231,6 +244,7 @@ function getHoveredCell(x, y) {
   const actualY = mouseY + scrollTop;
 
   const rowIndex = Math.floor(actualY / currentItemHeight.value);
+  const rowTop = rowIndex * currentItemHeight.value;
 
   // 计算列索引（考虑不同列宽）
   let colIndex = 0;
@@ -242,6 +256,7 @@ function getHoveredCell(x, y) {
     }
     accumulatedWidth += colWidth;
   }
+  const colLeft = accumulatedWidth;
 
   // 检查是否在有效范围内
   if (rowIndex >= 0 && rowIndex < props.rowCount && colIndex >= 0 && colIndex < props.colCount) {
@@ -259,6 +274,10 @@ function getHoveredCell(x, y) {
         y: actualY,
         screenX: x,
         screenY: y,
+        top: rowTop, // 新增：格子的顶部位置
+        left: colLeft, // 新增：格子的左侧位置
+        width: getColumnWidth(colIndex), // 新增：格子宽度
+        height: currentItemHeight.value, // 新增：格子高度
       };
 
       // 更新缓存
@@ -333,14 +352,13 @@ function checkEdgeScroll(
 }
 
 function onDragListMove(x, y) {
-  hoveredCell.value = getHoveredCell(x, y);
+  currentCell.value = getHoveredCell(x, y);
   checkEdgeScroll(x, y);
 }
 
 function onDragListMoveend() {
   clearInterval(autoScrollIntervalId.value);
   autoScrollIntervalId.value = null;
-  hoveredCell.value = null;
 }
 
 function getScrollbarWidth() {
@@ -586,9 +604,17 @@ onUnmounted(() => {
         }"
       >
         <drag-list
-          :containerRef="containerRef"
+          :container="containerRef"
           :item-width="props.itemWidth"
           :item-height="currentItemHeight"
+          :current-cell="currentCell"
+          :start-time="props.startTime"
+          :end-time="props.endTime"
+          :time-interval="props.timeInterval"
+          :total-height="totalHeight"
+          :users="props.users"
+          :column-left-positions="columnLeftPositions"
+          :time-slots="props.timeSlots"
           @move="throttleOnDragListMove"
           @moveend="onDragListMoveend"
         ></drag-list>
@@ -611,9 +637,6 @@ onUnmounted(() => {
               'virtual-grid-cell',
               isScrolledToLeft ? 'virtual-grid-cell-first-border-left-none' : '',
               !hasHorizontalScroll ? 'virtual-grid-cell-last-border-right' : '',
-              hoveredCell && hoveredCell.row === row.index && hoveredCell.column === col.index
-                ? 'virtual-grid-cell-hover'
-                : '',
             ]"
             :style="{
               transform: `translateX(${col.left}px)`,
@@ -800,9 +823,6 @@ onUnmounted(() => {
   border-top: 1px solid #ddd;
   background-color: #fff;
   overflow: hidden;
-}
-.virtual-grid-cell-hover {
-  background-color: #2d313c;
 }
 .virtual-grid-cell-first-border-left-none:first-child {
   border-left: none;

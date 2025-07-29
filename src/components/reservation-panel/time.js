@@ -100,3 +100,56 @@ export function groupTimesByHour(timeList) {
       times: grouped[hour],
     }));
 }
+
+/**
+ * 计算两个 HH:mm 格式时间之间的分钟差
+ * @param {string} start - 开始时间，格式 HH:mm
+ * @param {string} end   - 结束时间，格式 HH:mm
+ * @returns {number}     - 相差的分钟数（始终为非负整数）
+ */
+export function getMinutesDiff(start, end) {
+  const [sh, sm] = start.split(':').map(Number);
+  const [eh, em] = end.split(':').map(Number);
+
+  const totalStart = sh * 60 + sm;
+  const totalEnd = eh * 60 + em;
+
+  const diff = totalEnd >= totalStart ? totalEnd - totalStart : totalEnd + 24 * 60 - totalStart;
+
+  return diff;
+}
+
+/**
+ * 在给定时间基础上增加若干分钟，返回新的 HH:mm 格式时间
+ * @param {string} timeStr - 开始时间，格式 HH:mm
+ * @param {number} minutes - 要增加的分钟数（可正可负）
+ * @returns {string}       - 新的时间，格式 HH:mm，始终落在 00:00–23:59
+ */
+export function addMinutes(timeStr, minutes) {
+  const [h, m] = timeStr.split(':').map(Number);
+
+  const total = (((h * 60 + m + minutes) % (24 * 60)) + 24 * 60) % (24 * 60);
+
+  const hh = String(Math.floor(total / 60)).padStart(2, '0');
+  const mm = String(total % 60).padStart(2, '0');
+
+  return `${hh}:${mm}`;
+}
+
+/**
+ * 判断两个 HH:mm 格式时间的大小关系
+ * @param {string} t1 - 时间1
+ * @param {string} t2 - 时间2
+ * @returns {number}  -  t1 < t2 返回 -1
+ *                      t1 = t2 返回  0
+ *                      t1 > t2 返回  1
+ */
+export function compareTime(t1, t2) {
+  const toMinutes = (t) => {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  };
+  const m1 = toMinutes(t1);
+  const m2 = toMinutes(t2);
+  return m1 < m2 ? -1 : m1 > m2 ? 1 : 0;
+}

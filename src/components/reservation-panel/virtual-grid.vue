@@ -101,6 +101,7 @@ let lastCellHoverResult = {
 };
 const autoScrollIntervalId = ref(null);
 const throttleOnDragListMove = throttle(onDragListMove, 16, { trailing: false });
+const throttleOnHeightResizeMove = throttle(onHeightResizeMove, 16, { trailing: false });
 const socrollYBarWidth = ref(16);
 const socrollXBarHeight = ref(16);
 const currentCell = ref(null);
@@ -354,6 +355,10 @@ function checkEdgeScroll(
 function onDragListMove(x, y) {
   currentCell.value = getHoveredCell(x, y);
   checkEdgeScroll(x, y);
+}
+
+function onHeightResizeMove(x, y) {
+  currentCell.value = getHoveredCell(x, y);
 }
 
 function onDragListMoveend() {
@@ -617,6 +622,7 @@ onUnmounted(() => {
           :time-slots="props.timeSlots"
           @move="throttleOnDragListMove"
           @moveend="onDragListMoveend"
+          @height-resize-move="throttleOnHeightResizeMove"
         ></drag-list>
         <div
           v-for="row in visibleRows"

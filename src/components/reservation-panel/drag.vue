@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, useTemplateRef } from 'vue';
 import { addMinutes, compareTime, getMinutesDiff } from './time';
 
 const props = defineProps({
@@ -48,13 +48,20 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['move', 'moveend']);
+const emit = defineEmits(['move', 'moveend', 'height-resize-move']);
+
+const itemsRef = useTemplateRef('items');
 
 let currentDragItem = null;
 let currentDragItemClone = null;
 let currentDragItemHighlight = null;
 let currentDragItemX = 0;
 let currentDragItemY = 0;
+
+let currentResizeItem = null;
+let startY = null;
+let startHeight = null;
+
 const totalMinutes = computed(() => {
   return getMinutesDiff(props.startTime, props.endTime);
 });
@@ -101,7 +108,19 @@ function calcDragItemStyle(dragItem) {
   };
 }
 
-function updateEventTimeByCell(item, cell) {
+function renderDragItemStyle() {
+  nextTick(() => {
+    itemsRef.value.forEach((item, index) => {
+      const s = calcDragItemStyle(dataList.value[index]);
+      item.style.left = s.left;
+      item.style.top = s.top;
+      item.style.height = s.height;
+      item.style.width = s.width;
+    });
+  });
+}
+
+function updateEventTimeByCellStartTime(item, cell) {
   if (!item || !cell) return;
   const { row, column } = cell;
   const user = props.users[column];
@@ -112,6 +131,24 @@ function updateEventTimeByCell(item, cell) {
     endT = props.endTime;
   }
   item.startTime = startT;
+  item.endTime = endT;
+  item.userId = user.id;
+}
+
+function updateEventTimeByCellEndTime(item, cell) {
+  if (!item || !cell) return;
+  const { row, column } = cell;
+  const user = props.users[column];
+  let endT = addMinutes(props.timeSlots[row], props.timeInterval);
+
+  if (getMinutesDiff(item.startTime, endT) <= 0) {
+    endT = addMinutes(item.startTime, props.timeInterval);
+  }
+
+  if (compareTime(endT, props.endTime) === 1) {
+    endT = props.endTime;
+  }
+
   item.endTime = endT;
   item.userId = user.id;
 }
@@ -192,7 +229,8 @@ function onMouseup() {
   document.removeEventListener('mouseup', onMouseup);
 
   if (currentDragItem) {
-    updateEventTimeByCell(currentActiveItem.value, props.currentCell);
+    updateEventTimeByCellStartTime(currentActiveItem.value, props.currentCell);
+    renderDragItemStyle();
     currentDragItem.style.opacity = '1';
   }
 
@@ -212,11 +250,48 @@ function onMouseup() {
 
   emit('moveend');
 }
+
+function onHeightResizeMousedown(event, item) {
+  document.addEventListener('mousemove', onHeightResizeMousemove);
+  document.addEventListener('mouseup', onHeightResizeMouseup);
+
+  currentActiveItem.value = item;
+
+  startY = event.clientY;
+
+  currentResizeItem = getDragItemByChild(event.target);
+  if (!currentResizeItem) return;
+  startHeight = currentResizeItem.offsetHeight;
+
+  event.preventDefault();
+}
+
+function onHeightResizeMousemove(event) {
+  const newHeight = startHeight + (event.clientY - startY);
+
+  currentResizeItem.style.height = newHeight + 'px';
+
+  emit('height-resize-move', event.clientX, event.clientY);
+}
+
+function onHeightResizeMouseup() {
+  document.removeEventListener('mousemove', onHeightResizeMousemove);
+  document.removeEventListener('mouseup', onHeightResizeMouseup);
+
+  if (currentResizeItem) {
+    updateEventTimeByCellEndTime(currentActiveItem.value, props.currentCell);
+    renderDragItemStyle();
+  }
+}
+
+onMounted(() => {
+  renderDragItemStyle();
+});
 </script>
 
 <template>
   <div class="drag-item-list">
-    <div v-for="item in dataList" :key="item.id" class="drag-item" :style="calcDragItemStyle(item)">
+    <div v-for="item in dataList" :key="item.id" ref="items" class="drag-item">
       <div class="drag-item-content">
         <div
           class="drag-handle"
@@ -224,7 +299,9 @@ function onMouseup() {
           @mousedown="(e) => onMousedown(e, item)"
         ></div>
         <div>{{ item.name }}</div>
+        <div>{{ item.startTime }} - {{ item.endTime }}</div>
       </div>
+      <div class="height-resize-handle" @mousedown="(e) => onHeightResizeMousedown(e, item)"></div>
     </div>
   </div>
 </template>
@@ -241,7 +318,6 @@ function onMouseup() {
   top: 0;
   padding: 0 2px;
   z-index: 1;
-  overflow: hidden;
 }
 .drag-item-content {
   width: 100%;
@@ -255,5 +331,13 @@ function onMouseup() {
   background: #f9c41f;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
+}
+.height-resize-handle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  cursor: ns-resize;
 }
 </style>

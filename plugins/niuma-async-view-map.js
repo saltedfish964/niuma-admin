@@ -33,17 +33,18 @@ function generateAsyncViewMap(options) {
 }
 
 export default function niumaAsyncViewMap(options = {}) {
+  const virtualModuleId = 'virtual:niuma-async-view-map';
+  const resolvedVirtualModuleId = '\0' + virtualModuleId;
   const currentOptions = Object.assign({}, defaultOptions, options);
   return {
     name: 'niuma-async-view-map',
-    enforce: 'pre',
     resolveId: (id) => {
-      return id.startsWith('virtual:niuma-async-view-map')
-        ? `${id.slice('virtual:'.length)}.js`
-        : undefined;
+      if (id === virtualModuleId) {
+        return resolvedVirtualModuleId;
+      }
     },
     load: (id) => {
-      if (id === 'niuma-async-view-map.js') {
+      if (id === resolvedVirtualModuleId) {
         const val = generateAsyncViewMap(currentOptions);
         return `export default ${val};`;
       }

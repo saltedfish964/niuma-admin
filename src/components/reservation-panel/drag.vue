@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, onMounted, ref, useTemplateRef } from 'vue';
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { addMinutes, compareTime, getMinutesDiff } from './time';
 
 const props = defineProps({
@@ -94,30 +94,35 @@ const dataList = ref([
 ]);
 const currentActiveItem = ref(null);
 
-function calcDragItemStyle(dragItem) {
-  const heightMinutes = getMinutesDiff(dragItem.startTime, dragItem.endTime);
-  const topMinutes = getMinutesDiff(props.startTime, dragItem.startTime);
-  let left = 0;
-  const findUserIndex = props.users.findIndex((user) => user.id === dragItem.userId) || 0;
-  left = props.columnLeftPositions[findUserIndex] || 0;
-  return {
-    left: `${left}px`,
-    top: `${topMinutes * oneMinuteHeight.value}px`,
-    height: `${heightMinutes * oneMinuteHeight.value}px`,
-    width: `${props.itemWidth}px`,
-  };
+function dragendUpdateCurrentActiveItemStyle(el, item, cell) {
+  if (!el || !cell || !item) return;
+  const rawDiffMinutes = getMinutesDiff(item.startTime, item.endTime);
+  let height = 0;
+  let multiplicand = rawDiffMinutes / props.timeInterval;
+  let remainder = rawDiffMinutes % props.timeInterval;
+  if (item.endTime === props.endTime && remainder > 0) {
+    height = (parseInt(multiplicand) + 1) * props.itemHeight;
+  } else {
+    height = multiplicand * props.itemHeight;
+  }
+  const { top, left } = cell;
+  el.style.top = `${top}px`;
+  el.style.left = `${left}px`;
+  el.style.height = `${height}px`;
 }
 
-function renderDragItemStyle() {
-  nextTick(() => {
-    itemsRef.value.forEach((item, index) => {
-      const s = calcDragItemStyle(dataList.value[index]);
-      item.style.left = s.left;
-      item.style.top = s.top;
-      item.style.height = s.height;
-      item.style.width = s.width;
-    });
-  });
+function heightResizeUpdateCurrentActiveItemStyle(el, item, cell) {
+  if (!el || !item) return;
+  let height = 0;
+  const rawDiffMinutes = getMinutesDiff(item.startTime, item.endTime);
+  let multiplicand = rawDiffMinutes / props.timeInterval;
+  let remainder = rawDiffMinutes % props.timeInterval;
+  if (item.endTime === props.endTime && remainder > 0) {
+    height = (parseInt(multiplicand) + 1) * props.itemHeight;
+  } else {
+    height = multiplicand * props.itemHeight;
+  }
+  el.style.height = `${height}px`;
 }
 
 function updateEventTimeByCellStartTime(item, cell) {
@@ -230,7 +235,11 @@ function onMouseup() {
 
   if (currentDragItem) {
     updateEventTimeByCellStartTime(currentActiveItem.value, props.currentCell);
-    renderDragItemStyle();
+    dragendUpdateCurrentActiveItemStyle(
+      currentDragItem,
+      currentActiveItem.value,
+      props.currentCell,
+    );
     currentDragItem.style.opacity = '1';
   }
 
@@ -280,12 +289,40 @@ function onHeightResizeMouseup() {
 
   if (currentResizeItem) {
     updateEventTimeByCellEndTime(currentActiveItem.value, props.currentCell);
-    renderDragItemStyle();
+    heightResizeUpdateCurrentActiveItemStyle(
+      currentResizeItem,
+      currentActiveItem.value,
+      props.currentCell,
+    );
   }
 }
 
+function initDragItemStyle() {
+  nextTick(() => {
+    itemsRef.value.forEach((item, index) => {
+      const dragItem = dataList.value[index];
+      const heightMinutes = getMinutesDiff(dragItem.startTime, dragItem.endTime);
+      const topMinutes = getMinutesDiff(props.startTime, dragItem.startTime);
+      let left = 0;
+      const findUserIndex = props.users.findIndex((user) => user.id === dragItem.userId) || 0;
+      left = props.columnLeftPositions[findUserIndex] || 0;
+      item.style.left = `${left}px`;
+      item.style.top = `${topMinutes * oneMinuteHeight.value}px`;
+      item.style.height = `${heightMinutes * oneMinuteHeight.value}px`;
+      item.style.width = `${props.itemWidth}px`;
+    });
+  });
+}
+
+watch(
+  () => props.totalHeight,
+  () => {
+    initDragItemStyle();
+  },
+);
+
 onMounted(() => {
-  renderDragItemStyle();
+  initDragItemStyle();
 });
 </script>
 
@@ -295,7 +332,7 @@ onMounted(() => {
       <div class="drag-item-content">
         <div
           class="drag-handle"
-          :style="{ height: `${props.itemHeight}px` }"
+          :style="{ height: '32px' }"
           @mousedown="(e) => onMousedown(e, item)"
         ></div>
         <div>{{ item.name }}</div>

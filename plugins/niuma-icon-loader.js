@@ -10,35 +10,39 @@ function generateCustomIconsList() {
   return svgFiles;
 }
 
-export default {
-  name: 'niuma-icon-loader',
-  enforce: 'pre',
-  resolveId: (id) => {
-    return id.startsWith('virtual:niuma-icon-loader')
-      ? `${id.slice('virtual:'.length)}.js`
-      : undefined;
-  },
-  load: (id) => {
-    if (id === 'niuma-icon-loader.js') {
-      // iconsList 去重
-      const uniqueList = [
-        ...new Set(ConfigData.iconsList),
-        ...new Set(generateCustomIconsList()),
-      ];
-      const iconsObj = {};
-      uniqueList.forEach((item) => {
-        const [type, name] = item.split(':');
-        iconsObj[item] = {
-          rawName: item,
-          component: `() => import('~icons/${type}/${name}')`,
-        };
-      });
-      const exportCode = uniqueList
-        .map((item) => {
-          return `{ name: '${iconsObj[item].rawName}', component: ${iconsObj[item].component} }`;
-        })
-        .join(', ');
-      return `export default [${exportCode}];`;
-    }
-  },
-};
+export default function niumaIconLoader() {
+  const virtualModuleId = 'virtual:niuma-icon-loader';
+  const resolvedVirtualModuleId = '\0' + virtualModuleId;
+
+  return {
+    name: 'niuma-icon-loader',
+    resolveId: (id) => {
+      if (id === virtualModuleId) {
+        return resolvedVirtualModuleId;
+      }
+    },
+    load: (id) => {
+      if (id === resolvedVirtualModuleId) {
+        // iconsList 去重
+        const uniqueList = [
+          ...new Set(ConfigData.iconsList),
+          ...new Set(generateCustomIconsList()),
+        ];
+        const iconsObj = {};
+        uniqueList.forEach((item) => {
+          const [type, name] = item.split(':');
+          iconsObj[item] = {
+            rawName: item,
+            component: `() => import('~icons/${type}/${name}')`,
+          };
+        });
+        const exportCode = uniqueList
+          .map((item) => {
+            return `{ name: '${iconsObj[item].rawName}', component: ${iconsObj[item].component} }`;
+          })
+          .join(', ');
+        return `export default [${exportCode}];`;
+      }
+    },
+  };
+}

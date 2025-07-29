@@ -11,7 +11,7 @@ import RestartOnFolderChange from './plugins/restart-on-folder-change';
 export default defineConfig({
   plugins: [
     // 用于处理 v-icon 组件
-    NiuMaIconLoader,
+    NiuMaIconLoader(),
     NiuMaAsyncViewMap(),
     RestartOnFolderChange({
       targetDir: './src/assets/icons',

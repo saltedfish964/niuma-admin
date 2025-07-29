@@ -1,10 +1,10 @@
 <script setup>
-import { ref, useTemplateRef, computed, watch } from 'vue';
+import { ref, useTemplateRef, computed, onUnmounted, onMounted } from 'vue';
+import { throttle } from 'lodash-es';
 import DragList from './drag.vue';
 import { groupTimesByHour } from './time';
-import { debounce, throttle } from 'lodash-es';
-
-const DEFAULT_ITEM_HEIGHT = 32;
+import { useVirtualGrid } from './useVirtualGrid';
+import { useDomScroll } from './useDomScroll';
 
 const props = defineProps({
   // 总行数
@@ -25,7 +25,7 @@ const props = defineProps({
   // 单元格高度
   defaultItemHeight: {
     type: Number,
-    default: DEFAULT_ITEM_HEIGHT,
+    default: 32,
   },
   // 可视区域宽度
   width: {
@@ -62,14 +62,24 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  headerHeight: {
+    type: Number,
+    default: 32,
+  },
+  leftFixedWidth: {
+    type: Number,
+    default: 80,
+  },
+  rightFixedWidth: {
+    type: Number,
+    default: 80,
+  },
 });
 
 const containerRef = useTemplateRef('container');
 const scrollXBarRef = useTemplateRef('scrollXBar');
 const scrollYBarRef = useTemplateRef('scrollYBar');
 
-let autoScrollIntervalId = null;
-let scrollTicking = false;
 let lastCellHoverResult = {
   cell: null,
   clientX: -1,
@@ -77,128 +87,47 @@ let lastCellHoverResult = {
   scrollTop: -1,
   scrollLeft: -1,
 };
+const autoScrollIntervalId = ref(null);
 const throttleOnDragListMove = throttle(onDragListMove, 16, { trailing: false });
-
-const currentItemHeight = ref(props.defaultItemHeight);
-const scrollTop = ref(0);
-const scrollLeft = ref(0);
-const headerHeight = ref(32);
-const leftFixedWidth = ref(80);
-const rightFixedWidth = ref(80);
-const socrollYBarWidth = ref(12);
-const socrollXBarHeight = ref(12);
-
-const gridContainerHeight = ref(0);
-const gridContainerWidth = ref(0);
-
-// 判断是否需要显示垂直滚动条
-const hasVerticalScroll = ref(false);
-// 判断是否需要显示水平滚动条
-const hasHorizontalScroll = ref(false);
-
-const verticalScrollContentHeight = ref(0);
-const horizontalScrollContentWidth = ref(0);
-
-// 计算总高度和总宽度
-const totalHeight = ref(0);
-const totalWidth = ref(0);
-
+const socrollYBarWidth = ref(16);
+const socrollXBarHeight = ref(16);
 const hoveredCell = ref(null);
 
-// 计算列的左侧位置
-const columnLeftPositions = computed(() => {
-  const positions = new Array(props.colCount);
-  let left = 0;
-
-  for (let i = 0; i < props.colCount; i++) {
-    positions[i] = left;
-    left += getColumnWidth(i);
-  }
-
-  return positions;
-});
-
-// 计算可见行数
-const visibleRowCount = computed(
-  () => Math.ceil(props.height / currentItemHeight.value) + props.buffer * 2,
+const {
+  currentItemHeight,
+  hasVerticalScroll,
+  hasHorizontalScroll,
+  verticalScrollContentHeight,
+  horizontalScrollContentWidth,
+  scrollTop,
+  scrollLeft,
+  gridContainerHeight,
+  gridContainerWidth,
+  totalHeight,
+  totalWidth,
+  startRowIndex,
+  endRowIndex,
+  visibleRows,
+  startColIndex,
+  endColIndex,
+  visibleCols,
+  isScrolledToLeft,
+  isScrolledToTop,
+  handleScroll,
+  getColumnWidth,
+  calcAllSizes,
+} = useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight);
+const { handleContainerWheel, handleYScroll, handleXScroll } = useDomScroll(
+  containerRef,
+  scrollXBarRef,
+  scrollYBarRef,
+  totalHeight,
+  totalWidth,
+  gridContainerHeight,
+  gridContainerWidth,
+  autoScrollIntervalId,
 );
 
-// 计算起始行索引
-const startRowIndex = computed(() =>
-  Math.max(0, Math.floor(scrollTop.value / currentItemHeight.value) - props.buffer),
-);
-
-// 计算结束行索引
-const endRowIndex = computed(() =>
-  Math.min(props.rowCount, startRowIndex.value + visibleRowCount.value),
-);
-
-// 计算可见行
-const visibleRows = computed(() => {
-  const rows = [];
-  for (let i = startRowIndex.value; i < endRowIndex.value; i++) {
-    rows.push({
-      index: i,
-      top: i * currentItemHeight.value,
-    });
-  }
-  return rows;
-});
-
-// 计算起始列索引 - 考虑不同列宽
-const startColIndex = computed(() => {
-  let index = 0;
-  while (
-    index < props.colCount &&
-    columnLeftPositions.value[index] < scrollLeft.value - getColumnWidth(index) * props.buffer
-  ) {
-    index++;
-  }
-  return Math.max(0, index - props.buffer);
-});
-
-// 计算结束列索引 - 考虑不同列宽
-const endColIndex = computed(() => {
-  let index = startColIndex.value;
-  while (
-    index < props.colCount &&
-    columnLeftPositions.value[index] <=
-      scrollLeft.value + props.width + getColumnWidth(index) * props.buffer
-  ) {
-    index++;
-  }
-  return Math.min(props.colCount, index);
-});
-
-// 计算可见列 - 包含位置和宽度
-const visibleCols = computed(() => {
-  const cols = [];
-  for (let i = startColIndex.value; i < endColIndex.value; i++) {
-    cols.push({
-      index: i,
-      left: columnLeftPositions.value[i],
-      width: getColumnWidth(i),
-    });
-  }
-  return cols;
-});
-// TODO: 虚拟滚动方式，由于分组，如果时间分段过多，会出现空白问题
-// const timeSlotsGroup = computed(() => {
-//   const visibleTimeSlots = props.timeSlots.slice(startRowIndex.value, endRowIndex.value);
-//   const groupTime = groupTimesByHour(props.timeSlots)
-//     .map((group) => {
-//       return {
-//         hour: group.hour,
-//         startIndex: group.startIndex, // 记录该小时的起始索引
-//         top: group.startIndex * currentItemHeight.value, // 计算该小时的顶部位置
-//         times: group.times.filter((time) => {
-//           return visibleTimeSlots.includes(time);
-//         }),
-//       };
-//     })
-//     .filter((group) => group.times.length > 0);
-//   return groupTime;
-// });
 const timeSlotsGroup = computed(() => {
   return groupTimesByHour(props.timeSlots).map((group) => {
     return {
@@ -208,111 +137,9 @@ const timeSlotsGroup = computed(() => {
   });
 });
 
-// 判断 x 轴滚动条是否滚动到最右边
-const isScrolledToRight = computed(() => {
-  // 计算所有列的总宽度（不包括左右固定列）
-  let columnsWidth = 0;
-  for (let i = 0; i < props.colCount; i++) {
-    columnsWidth += getColumnWidth(i);
-  }
-
-  // 计算最大可滚动宽度
-  const maxScrollLeft = columnsWidth - gridContainerWidth.value;
-
-  // 如果最大可滚动宽度小于等于0，或者已经滚动到接近最大位置
-  // 添加1像素的容差值避免浮点数精度问题
-  return maxScrollLeft <= 0 || scrollLeft.value >= maxScrollLeft - 1;
-});
-
-// 判断 y 轴是否滚动到底部
-const isScrolledToBottom = computed(() => {
-  // 计算最大可滚动高度
-  const maxScrollTop = totalHeight.value - gridContainerHeight.value;
-
-  // 如果最大可滚动高度小于等于0，或者已经滚动到接近最大位置
-  // 添加1像素的容差值避免浮点数精度问题
-  return maxScrollTop <= 0 || scrollTop.value >= maxScrollTop - 1;
-});
-
-// 判断 x 轴滚动条是否滚动到最左边
-const isScrolledToLeft = computed(() => {
-  // 当 scrollLeft 为 0 或非常接近 0 时，认为已滚动到最左边
-  return scrollLeft.value <= 1; // 添加1像素的容差值避免浮点数精度问题
-});
-
-// 判断 y 轴是否滚动到最顶部
-const isScrolledToTop = computed(() => {
-  // 当 scrollTop 为 0 或非常接近 0 时，认为已滚动到最顶部
-  return scrollTop.value <= 1; // 添加1像素的容差值避免浮点数精度问题
-});
-
-// 获取指定列的宽度
-function getColumnWidth(colIndex) {
-  return props.columnsWidth[colIndex] || props.itemWidth;
-}
-
 // 获取指定位置的数据
 function getItem(rowIndex, colIndex) {
   return props.getItemData(rowIndex, colIndex);
-}
-
-// 优化滚动事件处理
-function handleScroll(event) {
-  if (!scrollTicking) {
-    window.requestAnimationFrame(() => {
-      scrollTop.value = event.target.scrollTop;
-      scrollLeft.value = event.target.scrollLeft;
-      scrollTicking = false;
-    });
-    scrollTicking = true;
-  }
-}
-
-function handleContainerWheel(event) {
-  if (!containerRef.value || !scrollYBarRef.value || !scrollXBarRef.value) return;
-  event.preventDefault();
-
-  // 垂直滚动
-  if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
-    containerRef.value.scrollTop += event.deltaY;
-
-    const maxContainerScroll = totalHeight.value - gridContainerHeight.value;
-    const maxBarScroll = scrollYBarRef.value.scrollHeight - scrollYBarRef.value.clientHeight;
-    if (maxContainerScroll <= 0) return;
-    const scrollRatio = Math.min(1, Math.max(0, containerRef.value.scrollTop / maxContainerScroll));
-    scrollYBarRef.value.scrollTop = scrollRatio * maxBarScroll;
-  } else {
-    containerRef.value.scrollLeft += e.deltaX;
-
-    const maxContainerScroll = totalWidth.value - gridContainerWidth.value;
-    const maxBarScroll = scrollXBarRef.value.scrollWidth - scrollXBarRef.value.clientWidth;
-
-    if (maxContainerScroll <= 0) return;
-
-    const scrollRatio = Math.min(
-      1,
-      Math.max(0, containerRef.value.scrollLeft / maxContainerScroll),
-    );
-    scrollXBarRef.value.scrollLeft = scrollRatio * maxBarScroll;
-  }
-}
-
-function handleYScroll(event) {
-  if (!containerRef.value || !scrollYBarRef.value || autoScrollIntervalId) return;
-  event.preventDefault();
-  const scrollPos = scrollYBarRef.value.scrollTop;
-  const totalScroll = scrollYBarRef.value.scrollHeight;
-  const visibleSize = scrollYBarRef.value.clientHeight;
-  const maxScroll = Math.max(0, totalScroll - visibleSize);
-  if (maxScroll <= 0) return 0;
-  const percentage = Math.min(1, Math.max(0, scrollPos / maxScroll));
-  containerRef.value.scrollTop = percentage * (totalHeight.value - gridContainerHeight.value);
-}
-
-function handleXScroll(event) {
-  if (!containerRef.value || autoScrollIntervalId) return;
-  event.preventDefault();
-  containerRef.value.scrollLeft = event.target.scrollLeft;
 }
 
 /**
@@ -373,6 +200,7 @@ function isHoveredCellCacheValid(x, y) {
   ) {
     return false;
   }
+  return true;
 }
 
 function getHoveredCell(x, y) {
@@ -469,8 +297,8 @@ function checkEdgeScroll(
   const containerRect = containerRef.value.getBoundingClientRect();
 
   // 清除现有滚动定时器
-  clearInterval(autoScrollIntervalId);
-  autoScrollIntervalId = null;
+  clearInterval(autoScrollIntervalId.value);
+  autoScrollIntervalId.value = null;
 
   // 计算滚动方向和速度
   let scrollX = 0;
@@ -492,7 +320,7 @@ function checkEdgeScroll(
 
   // 如果需要滚动，启动滚动定时器
   if (scrollX !== 0 || scrollY !== 0) {
-    autoScrollIntervalId = setInterval(() => {
+    autoScrollIntervalId.value = setInterval(() => {
       const { horizontal, vertical } = getScrollRatio(containerRef.value);
       containerRef.value.scrollLeft += scrollX;
       containerRef.value.scrollTop += scrollY;
@@ -510,12 +338,13 @@ function onDragListMove(x, y) {
 }
 
 function onDragListMoveend() {
-  clearInterval(autoScrollIntervalId);
-  autoScrollIntervalId = null;
+  clearInterval(autoScrollIntervalId.value);
+  autoScrollIntervalId.value = null;
   hoveredCell.value = null;
 }
 
 function getScrollbarWidth() {
+  if (!containerRef.value) return { yWidth: 0, xHeight: 0 };
   // 创建外层div
   const outer = document.createElement('div');
   outer.style.visibility = 'hidden';
@@ -530,72 +359,29 @@ function getScrollbarWidth() {
 
   // 计算宽度差
   const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
+  const scrollbarHeight = outer.offsetHeight - inner.offsetHeight;
 
   // 清理
   outer.parentNode.removeChild(outer);
 
-  return scrollbarWidth;
+  return { yWidth: scrollbarWidth, xHeight: scrollbarHeight };
 }
 
-function calcAllSizes(componentWidth, componentHeight) {
-  // 重置格子高度
-  currentItemHeight.value = props.defaultItemHeight;
-
-  // 网格可视区域宽高
-  let gridViewWidth = componentWidth;
-  let gridViewHeight = componentHeight;
-
-  // 网格内容宽高
-  let gridContentWidth = 0;
-  let gridContentHeight = 0;
-  for (let i = 0; i < props.colCount; i++) {
-    gridContentWidth += getColumnWidth(i);
-  }
-  gridContentHeight = props.rowCount * currentItemHeight.value;
-
-  gridViewHeight -= headerHeight.value;
-
-  // 是否有垂直滚动条
-  let hasVScroll =
-    gridContentHeight > gridViewHeight ||
-    gridContentHeight > gridViewHeight - socrollXBarHeight.value;
-  // 是否有水平滚动条
-  let hasHScroll =
-    gridContentWidth > gridViewWidth || gridContentWidth > gridViewWidth - socrollYBarWidth.value;
-
-  if (hasHScroll) {
-    gridViewHeight -= socrollXBarHeight.value;
-  }
-
-  gridViewWidth -= leftFixedWidth.value + rightFixedWidth.value;
-
-  hasVerticalScroll.value = hasVScroll;
-  hasHorizontalScroll.value = hasHScroll;
-
-  verticalScrollContentHeight.value = gridContentHeight + headerHeight.value;
-  horizontalScrollContentWidth.value =
-    gridContentWidth + leftFixedWidth.value + rightFixedWidth.value;
-
-  totalHeight.value = gridContentHeight;
-  totalWidth.value = gridContentWidth;
-
-  gridContainerWidth.value = gridViewWidth;
-  gridContainerHeight.value = gridViewHeight;
-
-  if (!hasVScroll) {
-    currentItemHeight.value = gridViewHeight / props.rowCount;
-  } else {
-    currentItemHeight.value = DEFAULT_ITEM_HEIGHT;
-  }
+function initScrollBarSize() {
+  const res = getScrollbarWidth();
+  socrollYBarWidth.value = res.yWidth;
+  socrollXBarHeight.value = res.xHeight;
 }
 
-watch(
-  [() => props.width, () => props.height],
-  debounce(([w, h]) => {
-    calcAllSizes(w, h);
-  }, 100),
-  { immediate: true },
-);
+onMounted(() => {
+  initScrollBarSize();
+  calcAllSizes(props.width, props.height);
+});
+
+onUnmounted(() => {
+  clearInterval(autoScrollIntervalId.value);
+  autoScrollIntervalId.value = null;
+});
 </script>
 
 <template>
@@ -604,9 +390,9 @@ watch(
     <div
       class="v-fixed-header-container"
       :style="{
-        height: `${headerHeight}px`,
+        height: `${props.headerHeight}px`,
         width: `${hasVerticalScroll ? gridContainerWidth - socrollYBarWidth : gridContainerWidth}px`,
-        transform: `translateX(${leftFixedWidth}px)`,
+        transform: `translateX(${props.leftFixedWidth}px)`,
       }"
     >
       <div
@@ -640,8 +426,8 @@ watch(
       class="v-fixed-left-container"
       :style="{
         height: `${props.height}px`,
-        width: `${leftFixedWidth}px`,
-        paddingTop: `${headerHeight}px`,
+        width: `${props.leftFixedWidth}px`,
+        paddingTop: `${props.headerHeight}px`,
       }"
       @wheel="handleContainerWheel"
     >
@@ -686,8 +472,8 @@ watch(
     <div
       class="v-fixed-left-mask"
       :style="{
-        width: `${leftFixedWidth}px`,
-        height: `${headerHeight}px`,
+        width: `${props.leftFixedWidth}px`,
+        height: `${props.headerHeight}px`,
         borderBottom: !isScrolledToTop ? '1px solid #ddd' : 'none',
       }"
     ></div>
@@ -697,9 +483,9 @@ watch(
       class="v-fixed-right-container"
       :style="{
         height: `${props.height}px`,
-        width: `${rightFixedWidth}px`,
+        width: `${props.rightFixedWidth}px`,
         right: `${hasVerticalScroll ? socrollYBarWidth : 0}px`,
-        paddingTop: `${headerHeight}px`,
+        paddingTop: `${props.headerHeight}px`,
       }"
       @wheel="handleContainerWheel"
     >
@@ -742,8 +528,8 @@ watch(
     <div
       class="v-fixed-right-mask"
       :style="{
-        width: `${rightFixedWidth}px`,
-        height: `${headerHeight}px`,
+        width: `${props.rightFixedWidth}px`,
+        height: `${props.headerHeight}px`,
         right: `${hasVerticalScroll ? socrollYBarWidth : 0}px`,
         borderBottom: !isScrolledToTop ? '1px solid #ddd' : 'none',
       }"
@@ -787,7 +573,7 @@ watch(
       :style="{
         height: `${gridContainerHeight}px`,
         width: `${hasVerticalScroll ? gridContainerWidth - socrollYBarWidth : gridContainerWidth}px`,
-        transform: `translateX(${leftFixedWidth}px)`,
+        transform: `translateX(${props.leftFixedWidth}px)`,
       }"
       @scroll="handleScroll"
       @wheel="handleContainerWheel"

@@ -59,6 +59,8 @@ function onMousedown(event) {
   // 获取元素在视口中的位置
   const rect = currentDragItem.getBoundingClientRect();
 
+  currentDragItem.style.opacity = '0.5';
+
   currentDragItemClone = currentDragItem.cloneNode(true);
   currentDragItemClone.style.position = 'fixed';
   currentDragItemClone.style.left = `${rect.left}px`;
@@ -66,7 +68,6 @@ function onMousedown(event) {
   currentDragItemClone.style.opacity = '0.8';
   currentDragItemClone.style.pointerEvents = 'none';
   currentDragItemClone.style.zIndex = '1000';
-  currentDragItemClone.style.backgroundColor = 'red';
 
   document.body.appendChild(currentDragItemClone);
 
@@ -99,6 +100,7 @@ function onMouseup() {
     const newLeft = cloneRect.left - containerRect.left + props.containerRef.scrollLeft;
     const newTop = cloneRect.top - containerRect.top + props.containerRef.scrollTop;
 
+    currentDragItem.style.opacity = '1';
     currentDragItem.style.left = `${newLeft}px`;
     currentDragItem.style.top = `${newTop}px`;
   }

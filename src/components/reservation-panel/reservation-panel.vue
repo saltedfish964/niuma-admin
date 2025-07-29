@@ -15,14 +15,14 @@ const props = defineProps({
   },
   timeInterval: {
     type: Number,
-    default: 15,
+    default: 1,
   },
 });
 
 let observer;
 const containerRef = useTemplateRef('container');
 const userList = ref([]);
-for (let i = 0; i <= 2; i++) {
+for (let i = 0; i <= 200; i++) {
   userList.value.push({
     id: i,
     name: `用户-${i}`,
@@ -30,8 +30,8 @@ for (let i = 0; i <= 2; i++) {
 }
 // 设置列的宽度
 const customWidth = ref({
-  0: 240,
-  1: 360,
+  // 0: 240,
+  // 1: 360,
 });
 const gridHeight = ref(0);
 const gridWidth = ref(0);

@@ -46,6 +46,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  events: {
+    type: Array,
+    default: () => [],
+  },
 });
 
 const emit = defineEmits(['move', 'moveend', 'height-resize-move']);
@@ -62,37 +66,16 @@ let currentResizeItem = null;
 let startY = null;
 let startHeight = null;
 
+const currentEvents = ref(props.events);
+
+const currentActiveItem = ref(null);
+
 const totalMinutes = computed(() => {
   return getMinutesDiff(props.startTime, props.endTime);
 });
 const oneMinuteHeight = computed(() => {
   return props.totalHeight / totalMinutes.value;
 });
-
-const dataList = ref([
-  {
-    id: 1,
-    userId: 1,
-    name: '预约1',
-    startTime: '08:00',
-    endTime: '10:00',
-  },
-  {
-    id: 2,
-    userId: 2,
-    name: '预约2',
-    startTime: '10:00',
-    endTime: '11:00',
-  },
-  {
-    id: 3,
-    userId: 3,
-    name: '预约3',
-    startTime: '12:00',
-    endTime: '14:00',
-  },
-]);
-const currentActiveItem = ref(null);
 
 function dragendUpdateCurrentActiveItemStyle(el, item, cell) {
   if (!el || !cell || !item) return;
@@ -299,17 +282,18 @@ function onHeightResizeMouseup() {
 
 function initDragItemStyle() {
   nextTick(() => {
-    itemsRef.value.forEach((item, index) => {
-      const dragItem = dataList.value[index];
+    itemsRef.value.forEach((elItem, index) => {
+      const dragItem = currentEvents.value[index];
       const heightMinutes = getMinutesDiff(dragItem.startTime, dragItem.endTime);
       const topMinutes = getMinutesDiff(props.startTime, dragItem.startTime);
       let left = 0;
       const findUserIndex = props.users.findIndex((user) => user.id === dragItem.userId) || 0;
       left = props.columnLeftPositions[findUserIndex] || 0;
-      item.style.left = `${left}px`;
-      item.style.top = `${topMinutes * oneMinuteHeight.value}px`;
-      item.style.height = `${heightMinutes * oneMinuteHeight.value}px`;
-      item.style.width = `${props.itemWidth}px`;
+      left += props.itemWidth * dragItem.offset;
+      elItem.style.left = `${left}px`;
+      elItem.style.top = `${topMinutes * oneMinuteHeight.value}px`;
+      elItem.style.height = `${heightMinutes * oneMinuteHeight.value}px`;
+      elItem.style.width = `${props.itemWidth}px`;
     });
   });
 }
@@ -328,7 +312,7 @@ onMounted(() => {
 
 <template>
   <div class="drag-item-list">
-    <div v-for="item in dataList" :key="item.id" ref="items" class="drag-item">
+    <div v-for="item in currentEvents" :key="item.id" ref="items" class="drag-item">
       <div class="drag-item-content">
         <div
           class="drag-handle"

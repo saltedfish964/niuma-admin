@@ -86,6 +86,10 @@ const props = defineProps({
     type: Number,
     default: 30,
   },
+  events: {
+    type: Array,
+    default: () => [],
+  },
 });
 
 const containerRef = useTemplateRef('container');
@@ -620,6 +624,7 @@ onUnmounted(() => {
           :users="props.users"
           :column-left-positions="columnLeftPositions"
           :time-slots="props.timeSlots"
+          :events="props.events"
           @move="throttleOnDragListMove"
           @moveend="onDragListMoveend"
           @height-resize-move="throttleOnHeightResizeMove"

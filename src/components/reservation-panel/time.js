@@ -153,3 +153,13 @@ export function compareTime(t1, t2) {
   const m2 = toMinutes(t2);
   return m1 < m2 ? -1 : m1 > m2 ? 1 : 0;
 }
+
+/**
+ * 将 HH:mm 格式时间转换为总分钟数
+ * @param {string} timeStr - HH:mm 格式时间
+ * @returns
+ */
+export function toMinutes(timeStr) {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
+}

@@ -2,7 +2,7 @@
 import { ref, useTemplateRef, onMounted, onBeforeUnmount } from 'vue';
 import { debounce } from 'lodash-es';
 import VirtualGrid from './virtual-grid.vue';
-import { generateTimeSlots, toMinutes } from './time';
+import { generateTimeSlots } from './time';
 
 const props = defineProps({
   startTime: {
@@ -17,7 +17,7 @@ const props = defineProps({
     type: Number,
     default: 60,
   },
-  users: {
+  resources: {
     type: Array,
     default: () => [],
   },
@@ -34,19 +34,14 @@ const props = defineProps({
 let observer;
 const containerRef = useTemplateRef('container');
 
-const currentUser = ref(props.users);
+const currentResources = ref(props.resources);
 const currentEvents = ref(calculateOffsets(props.events));
 
 // 设置列的宽度
-const customWidth = ref({
-  // 0: 240,
-  // 1: 360,
-});
+const customWidth = ref({});
 const gridHeight = ref(0);
 const gridWidth = ref(0);
 const timeSlots = generateTimeSlots(props.startTime, props.endTime, props.timeInterval);
-
-calculateCustomWidth(calculateMaxOffsets(currentEvents.value));
 
 const getCellData = (row, col) => {
   return `行${row}, 列${col}`;
@@ -58,17 +53,6 @@ function onContainerResize(entries) {
     gridHeight.value = height;
     gridWidth.value = width;
   }
-}
-
-function groupByUserId(appointments) {
-  return appointments.reduce((grouped, item) => {
-    const key = item.userId;
-    if (!grouped[key]) {
-      grouped[key] = [];
-    }
-    grouped[key].push(item);
-    return grouped;
-  }, {});
 }
 
 function hasTimeOverlap(a, b) {
@@ -139,19 +123,15 @@ function calculateMaxOffsets(events = []) {
 function calculateCustomWidth(maxOffsets = {}) {
   Object.keys(maxOffsets).forEach((key) => {
     const val = maxOffsets[key];
-    const colIndex = currentUser.value.findIndex((user) => user.id === val.id);
+    const colIndex = currentResources.value.findIndex((user) => user.id === val.id);
     if (colIndex !== -1) {
       customWidth.value[colIndex] = props.itemWidth * (val.maxOffset + 1);
     }
   });
 }
 
-const getCellColor = (row, col) => {
-  const hue = (row * 5 + col * 7) % 360;
-  return `hsl(${hue}, 80%, 90%)`;
-};
-
 onMounted(() => {
+  calculateCustomWidth(calculateMaxOffsets(currentEvents.value));
   observer = new ResizeObserver(debounce(onContainerResize, 16));
   if (containerRef.value) {
     observer.observe(containerRef.value);
@@ -169,13 +149,13 @@ onBeforeUnmount(() => {
   <div ref="container" class="v-reservation-panel">
     <virtual-grid
       :row-count="timeSlots.length"
-      :col-count="currentUser.length"
+      :col-count="currentResources.length"
       :item-width="props.itemWidth"
       :width="gridWidth"
       :height="gridHeight"
       :get-item-data="getCellData"
       :columns-width="customWidth"
-      :users="currentUser"
+      :resources="currentResources"
       :time-slots="timeSlots"
       :start-time="props.startTime"
       :end-time="props.endTime"

@@ -33,7 +33,7 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-  users: {
+  resources: {
     type: Array,
     default: () => [],
   },
@@ -111,7 +111,7 @@ function heightResizeUpdateCurrentActiveItemStyle(el, item, cell) {
 function updateEventTimeByCellStartTime(item, cell) {
   if (!item || !cell) return;
   const { row, column } = cell;
-  const user = props.users[column];
+  const user = props.resources[column];
   const rawDiffMinutes = getMinutesDiff(item.startTime, item.endTime);
   const startT = props.timeSlots[row];
   let endT = addMinutes(startT, rawDiffMinutes);
@@ -126,7 +126,7 @@ function updateEventTimeByCellStartTime(item, cell) {
 function updateEventTimeByCellEndTime(item, cell) {
   if (!item || !cell) return;
   const { row, column } = cell;
-  const user = props.users[column];
+  const user = props.resources[column];
   let endT = addMinutes(props.timeSlots[row], props.timeInterval);
 
   if (getMinutesDiff(item.startTime, endT) <= 0) {
@@ -287,7 +287,7 @@ function initDragItemStyle() {
       const heightMinutes = getMinutesDiff(dragItem.startTime, dragItem.endTime);
       const topMinutes = getMinutesDiff(props.startTime, dragItem.startTime);
       let left = 0;
-      const findUserIndex = props.users.findIndex((user) => user.id === dragItem.userId) || 0;
+      const findUserIndex = props.resources.findIndex((user) => user.id === dragItem.userId) || 0;
       left = props.columnLeftPositions[findUserIndex] || 0;
       left += props.itemWidth * dragItem.offset;
       elItem.style.left = `${left}px`;

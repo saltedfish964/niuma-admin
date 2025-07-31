@@ -52,8 +52,8 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
-  // 用户列表
-  users: {
+  // 资源列表
+  resources: {
     type: Array,
     default: () => [],
   },
@@ -443,7 +443,7 @@ onUnmounted(() => {
             borderBottom: !isScrolledToTop ? '1px solid #ddd' : 'none',
           }"
         >
-          {{ props.users[col.index]?.name }}
+          {{ props.resources[col.index]?.name }}
         </div>
       </div>
     </div>
@@ -621,7 +621,7 @@ onUnmounted(() => {
           :end-time="props.endTime"
           :time-interval="props.timeInterval"
           :total-height="hasVerticalScroll ? totalHeight : gridContainerHeight"
-          :users="props.users"
+          :resources="props.resources"
           :column-left-positions="columnLeftPositions"
           :time-slots="props.timeSlots"
           :events="props.events"

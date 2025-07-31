@@ -1,5 +1,5 @@
 <script setup>
-import { ref, useTemplateRef, computed, onUnmounted, onMounted } from 'vue';
+import { ref, useTemplateRef, computed, onUnmounted, onMounted, watch } from 'vue';
 import { throttle } from 'lodash-es';
 import DragList from './drag.vue';
 import { groupTimesByHour } from './time';
@@ -92,9 +92,7 @@ const props = defineProps({
   },
 });
 
-const containerRef = useTemplateRef('container');
-const scrollXBarRef = useTemplateRef('scrollXBar');
-const scrollYBarRef = useTemplateRef('scrollYBar');
+const emit = defineEmits(['event-change']);
 
 let lastCellHoverResult = {
   cell: null,
@@ -103,12 +101,17 @@ let lastCellHoverResult = {
   scrollTop: -1,
   scrollLeft: -1,
 };
+
+const containerRef = useTemplateRef('container');
+const scrollXBarRef = useTemplateRef('scrollXBar');
+const scrollYBarRef = useTemplateRef('scrollYBar');
+
 const autoScrollIntervalId = ref(null);
-const throttleOnDragListMove = throttle(onDragListMove, 16, { trailing: false });
-const throttleOnHeightResizeMove = throttle(onHeightResizeMove, 16, { trailing: false });
 const socrollYBarWidth = ref(16);
 const socrollXBarHeight = ref(16);
 const currentCell = ref(null);
+const throttleOnDragListMove = throttle(onDragListMove, 16, { trailing: false });
+const throttleOnHeightResizeMove = throttle(onHeightResizeMove, 16, { trailing: false });
 
 const {
   currentItemHeight,
@@ -400,6 +403,17 @@ function initScrollBarSize() {
   socrollXBarHeight.value = res.xHeight;
 }
 
+function onEventChange(item) {
+  emit('event-change', item);
+}
+
+watch(
+  () => hasHorizontalScroll.value,
+  () => {
+    console.log('hasHorizontalScroll.value', hasHorizontalScroll.value);
+  },
+);
+
 onMounted(() => {
   initScrollBarSize();
   calcAllSizes(props.width, props.height);
@@ -408,6 +422,10 @@ onMounted(() => {
 onUnmounted(() => {
   clearInterval(autoScrollIntervalId.value);
   autoScrollIntervalId.value = null;
+});
+
+defineExpose({
+  calcAllSizes,
 });
 </script>
 
@@ -599,7 +617,7 @@ onUnmounted(() => {
       ref="container"
       :style="{
         height: `${gridContainerHeight}px`,
-        width: `${hasVerticalScroll ? gridContainerWidth - socrollYBarWidth : gridContainerWidth}px`,
+        width: `${gridContainerWidth}px`,
         transform: `translateX(${props.leftFixedWidth}px)`,
       }"
       @scroll="handleScroll"
@@ -628,6 +646,7 @@ onUnmounted(() => {
           @move="throttleOnDragListMove"
           @moveend="onDragListMoveend"
           @height-resize-move="throttleOnHeightResizeMove"
+          @event-change="onEventChange"
         ></drag-list>
         <div
           v-for="row in visibleRows"

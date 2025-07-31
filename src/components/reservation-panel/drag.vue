@@ -1,5 +1,6 @@
 <script setup>
-import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, toValue, useTemplateRef, watch } from 'vue';
+import { useEventBus } from '@src/composables/use-event-bus';
 import { addMinutes, compareTime, getMinutesDiff } from './time';
 
 const props = defineProps({
@@ -52,9 +53,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['move', 'moveend', 'height-resize-move']);
-
-const itemsRef = useTemplateRef('items');
+const emit = defineEmits(['move', 'moveend', 'height-resize-move', 'event-change']);
 
 let currentDragItem = null;
 let currentDragItemClone = null;
@@ -66,8 +65,11 @@ let currentResizeItem = null;
 let startY = null;
 let startHeight = null;
 
-const currentEvents = ref(props.events);
+const bus = useEventBus();
 
+const itemsRef = useTemplateRef('items');
+
+const currentEvents = ref(props.events);
 const currentActiveItem = ref(null);
 
 const totalMinutes = computed(() => {
@@ -89,8 +91,9 @@ function dragendUpdateCurrentActiveItemStyle(el, item, cell) {
     height = multiplicand * props.itemHeight;
   }
   const { top, left } = cell;
+  const newLeft = left + props.itemWidth * item.offset;
   el.style.top = `${top}px`;
-  el.style.left = `${left}px`;
+  el.style.left = `${newLeft}px`;
   el.style.height = `${height}px`;
 }
 
@@ -111,22 +114,25 @@ function heightResizeUpdateCurrentActiveItemStyle(el, item, cell) {
 function updateEventTimeByCellStartTime(item, cell) {
   if (!item || !cell) return;
   const { row, column } = cell;
-  const user = props.resources[column];
+  const resource = props.resources[column];
   const rawDiffMinutes = getMinutesDiff(item.startTime, item.endTime);
   const startT = props.timeSlots[row];
   let endT = addMinutes(startT, rawDiffMinutes);
+  endT = endT === '00:00' ? props.endTime : endT;
   if (compareTime(endT, props.endTime) === 1) {
     endT = props.endTime;
   }
   item.startTime = startT;
   item.endTime = endT;
-  item.userId = user.id;
+  item.resourceId = resource.id;
+
+  emit('event-change', item);
 }
 
 function updateEventTimeByCellEndTime(item, cell) {
   if (!item || !cell) return;
   const { row, column } = cell;
-  const user = props.resources[column];
+  const resource = props.resources[column];
   let endT = addMinutes(props.timeSlots[row], props.timeInterval);
 
   if (getMinutesDiff(item.startTime, endT) <= 0) {
@@ -138,7 +144,9 @@ function updateEventTimeByCellEndTime(item, cell) {
   }
 
   item.endTime = endT;
-  item.userId = user.id;
+  item.resourceId = resource.id;
+
+  emit('event-change', item);
 }
 
 function getDragItemByChild(child) {
@@ -282,13 +290,15 @@ function onHeightResizeMouseup() {
 
 function initDragItemStyle() {
   nextTick(() => {
+    if (!itemsRef.value) return;
     itemsRef.value.forEach((elItem, index) => {
       const dragItem = currentEvents.value[index];
       const heightMinutes = getMinutesDiff(dragItem.startTime, dragItem.endTime);
       const topMinutes = getMinutesDiff(props.startTime, dragItem.startTime);
       let left = 0;
-      const findUserIndex = props.resources.findIndex((user) => user.id === dragItem.userId) || 0;
-      left = props.columnLeftPositions[findUserIndex] || 0;
+      const findResourceIndex =
+        props.resources.findIndex((resource) => resource.id === dragItem.resourceId) || 0;
+      left = props.columnLeftPositions[findResourceIndex] || 0;
       left += props.itemWidth * dragItem.offset;
       elItem.style.left = `${left}px`;
       elItem.style.top = `${topMinutes * oneMinuteHeight.value}px`;
@@ -306,7 +316,10 @@ watch(
 );
 
 onMounted(() => {
-  initDragItemStyle();
+  bus.on('update-current-events', (data) => {
+    currentEvents.value = toValue(data);
+    initDragItemStyle();
+  });
 });
 </script>
 

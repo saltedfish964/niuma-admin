@@ -1,4 +1,4 @@
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 import { debounce } from 'lodash-es';
 
 export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
@@ -114,6 +114,8 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
     return scrollTop.value <= 1; // 添加1像素的容差值避免浮点数精度问题
   });
 
+  const debounceCalcAllSizes = debounce(calcAllSizes, 100);
+
   // 获取指定列的宽度
   function getColumnWidth(colIndex) {
     return props.columnsWidth[colIndex] || props.itemWidth;
@@ -136,7 +138,7 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
     currentItemHeight.value = props.defaultItemHeight;
 
     // 网格可视区域宽高
-    let gridViewWidth = componentWidth;
+    let gridViewWidth = componentWidth - (props.leftFixedWidth + props.rightFixedWidth);
     let gridViewHeight = componentHeight;
 
     // 网格内容宽高
@@ -156,12 +158,9 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
     // 是否有水平滚动条
     let hasHScroll =
       gridContentWidth > gridViewWidth || gridContentWidth > gridViewWidth - socrollYBarWidth.value;
-
     if (hasHScroll) {
       gridViewHeight -= socrollXBarHeight.value;
     }
-
-    gridViewWidth -= props.leftFixedWidth + props.rightFixedWidth;
 
     hasVerticalScroll.value = hasVScroll;
     hasHorizontalScroll.value = hasHScroll;
@@ -173,7 +172,7 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
     totalHeight.value = gridContentHeight;
     totalWidth.value = gridContentWidth;
 
-    gridContainerWidth.value = gridViewWidth;
+    gridContainerWidth.value = hasVScroll ? gridViewWidth - socrollYBarWidth.value : gridViewWidth;
     gridContainerHeight.value = gridViewHeight;
 
     if (!hasVScroll) {
@@ -183,12 +182,9 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
     }
   }
 
-  watch(
-    [() => props.width, () => props.height],
-    debounce(([w, h]) => {
-      calcAllSizes(w, h);
-    }, 100),
-  );
+  watch([() => props.width, () => props.height, () => props.events], ([w, h]) => {
+    debounceCalcAllSizes(w, h);
+  });
 
   return {
     currentItemHeight,

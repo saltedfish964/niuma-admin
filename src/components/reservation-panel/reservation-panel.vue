@@ -1,6 +1,7 @@
 <script setup>
-import { ref, useTemplateRef, onMounted, onBeforeUnmount } from 'vue';
+import { ref, useTemplateRef, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { debounce } from 'lodash-es';
+import { useEventBus } from '@src/composables/use-event-bus';
 import VirtualGrid from './virtual-grid.vue';
 import { generateTimeSlots } from './time';
 
@@ -32,10 +33,13 @@ const props = defineProps({
 });
 
 let observer;
+
+const bus = useEventBus();
+
 const containerRef = useTemplateRef('container');
 
 const currentResources = ref(props.resources);
-const currentEvents = ref(calculateOffsets(props.events));
+const currentEvents = ref([]);
 
 // 设置列的宽度
 const customWidth = ref({});
@@ -50,8 +54,8 @@ const getCellData = (row, col) => {
 function onContainerResize(entries) {
   for (let entry of entries) {
     const { width, height } = entry.contentRect;
-    gridHeight.value = height;
     gridWidth.value = width;
+    gridHeight.value = height;
   }
 }
 
@@ -70,9 +74,9 @@ function hasTimeOverlap(a, b) {
 }
 
 function calculateOffsets(appointments) {
-  // 按 userId 分组
-  const groupedByUserId = appointments.reduce((groups, item) => {
-    const key = item.userId;
+  // 按 resourceId 分组
+  const groupedByResourceId = appointments.reduce((groups, item) => {
+    const key = item.resourceId;
     if (!groups[key]) {
       groups[key] = [];
     }
@@ -81,7 +85,7 @@ function calculateOffsets(appointments) {
   }, {});
 
   // 计算每个分组的 offset
-  Object.values(groupedByUserId).forEach((group) => {
+  Object.values(groupedByResourceId).forEach((group) => {
     // 按 startTime 排序
     group.sort((a, b) => a.startTime.localeCompare(b.startTime));
 
@@ -109,13 +113,13 @@ function calculateOffsets(appointments) {
 function calculateMaxOffsets(events = []) {
   const result = {};
   events.forEach((event) => {
-    if (!result[event.userId]) {
-      result[event.userId] = {
+    if (!result[event.resourceId]) {
+      result[event.resourceId] = {
         maxOffset: 0,
-        id: event.userId,
+        id: event.resourceId,
       };
     }
-    result[event.userId].maxOffset = Math.max(result[event.userId].maxOffset, event.offset);
+    result[event.resourceId].maxOffset = Math.max(result[event.resourceId].maxOffset, event.offset);
   });
   return result;
 }
@@ -123,15 +127,38 @@ function calculateMaxOffsets(events = []) {
 function calculateCustomWidth(maxOffsets = {}) {
   Object.keys(maxOffsets).forEach((key) => {
     const val = maxOffsets[key];
-    const colIndex = currentResources.value.findIndex((user) => user.id === val.id);
+    const colIndex = currentResources.value.findIndex((resource) => resource.id === val.id);
     if (colIndex !== -1) {
       customWidth.value[colIndex] = props.itemWidth * (val.maxOffset + 1);
     }
   });
 }
 
-onMounted(() => {
+function onEventChange(item) {
+  const index = currentEvents.value.findIndex((e) => e.id === item.id);
+  if (index !== -1) {
+    currentEvents.value[index].startTime = item.startTime;
+    currentEvents.value[index].endTime = item.endTime;
+    currentEvents.value[index].resourceId = item.resourceId;
+  }
+  currentEvents.value = calculateOffsets(
+    currentEvents.value.map((item) => {
+      const newItem = { ...item };
+      delete newItem.offset;
+      return newItem;
+    }),
+  );
   calculateCustomWidth(calculateMaxOffsets(currentEvents.value));
+  nextTick(() => {
+    bus.emit('calc-all-sizes');
+    bus.emit('update-current-events', currentEvents.value);
+  });
+}
+
+onMounted(() => {
+  currentEvents.value = calculateOffsets(props.events);
+  calculateCustomWidth(calculateMaxOffsets(currentEvents.value));
+  bus.emit('update-current-events', currentEvents.value);
   observer = new ResizeObserver(debounce(onContainerResize, 16));
   if (containerRef.value) {
     observer.observe(containerRef.value);
@@ -161,6 +188,7 @@ onBeforeUnmount(() => {
       :end-time="props.endTime"
       :time-interval="props.timeInterval"
       :events="currentEvents"
+      @event-change="onEventChange"
     >
       <template #default="{ item, rowIndex, colIndex }">
         <div class="cell-content"></div>

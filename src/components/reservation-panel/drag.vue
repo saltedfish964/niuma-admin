@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, onMounted, ref, toValue, useTemplateRef, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useEventBus } from '@src/composables/use-event-bus';
 import { addMinutes, compareTime, getMinutesDiff } from './time';
 
@@ -69,7 +69,7 @@ const bus = useEventBus();
 
 const itemsRef = useTemplateRef('items');
 
-const currentEvents = ref(props.events);
+const currentEvents = ref(props.events.map((item) => ({ ...item, key: `${item.id}` })));
 const currentActiveItem = ref(null);
 
 const totalMinutes = computed(() => {
@@ -126,7 +126,12 @@ function updateEventTimeByCellStartTime(item, cell) {
   item.endTime = endT;
   item.resourceId = resource.id;
 
-  emit('event-change', item);
+  const newItem = {
+    ...item,
+  };
+  delete newItem.key;
+
+  emit('event-change', newItem);
 }
 
 function updateEventTimeByCellEndTime(item, cell) {
@@ -146,7 +151,11 @@ function updateEventTimeByCellEndTime(item, cell) {
   item.endTime = endT;
   item.resourceId = resource.id;
 
-  emit('event-change', item);
+  const newItem = {
+    ...item,
+  };
+  delete newItem.key;
+  emit('event-change', newItem);
 }
 
 function getDragItemByChild(child) {
@@ -232,6 +241,16 @@ function onMouseup() {
       props.currentCell,
     );
     currentDragItem.style.opacity = '1';
+    // 拖拽完成后，滚动到当前元素
+    nextTick(() => {
+      const scrollEle = itemsRef.value.find((el) => {
+        const key = el.getAttribute('data-key');
+        return key === currentActiveItem.value.key;
+      });
+      setTimeout(() => {
+        if (scrollEle) scrollEle.scrollIntoView();
+      });
+    });
   }
 
   if (currentDragItemHighlight) {
@@ -317,15 +336,22 @@ watch(
 
 onMounted(() => {
   bus.on('update-current-events', (data) => {
-    currentEvents.value = toValue(data);
+    currentEvents.value = data.map((item) => ({ ...item, key: `${item.id}` }));
     initDragItemStyle();
   });
+  initDragItemStyle();
 });
 </script>
 
 <template>
   <div class="drag-item-list">
-    <div v-for="item in currentEvents" :key="item.id" ref="items" class="drag-item">
+    <div
+      v-for="item in currentEvents"
+      :key="item.id"
+      :data-key="item.key"
+      ref="items"
+      class="drag-item"
+    >
       <div class="drag-item-content">
         <div
           class="drag-handle"
@@ -362,7 +388,7 @@ onMounted(() => {
   overflow: hidden;
 }
 .drag-handle {
-  background: #f9c41f;
+  background: #3e74fd;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 }

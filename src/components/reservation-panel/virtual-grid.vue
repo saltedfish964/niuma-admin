@@ -1,5 +1,5 @@
 <script setup>
-import { ref, useTemplateRef, computed, onUnmounted, onMounted, watch } from 'vue';
+import { ref, useTemplateRef, computed, onUnmounted, onMounted, watch, nextTick } from 'vue';
 import { throttle } from 'lodash-es';
 import DragList from './drag.vue';
 import { groupTimesByHour } from './time';
@@ -407,12 +407,15 @@ function onEventChange(item) {
   emit('event-change', item);
 }
 
-watch(
-  () => hasHorizontalScroll.value,
-  () => {
-    console.log('hasHorizontalScroll.value', hasHorizontalScroll.value);
-  },
-);
+watch([() => hasVerticalScroll.value, () => hasHorizontalScroll.value], () => {
+  const { horizontal, vertical } = getScrollRatio(containerRef.value);
+  nextTick(() => {
+    scrollYBarRef.value.scrollTop =
+      vertical * (scrollYBarRef.value.scrollHeight - scrollYBarRef.value.clientHeight);
+    scrollXBarRef.value.scrollLeft =
+      horizontal * (scrollXBarRef.value.scrollWidth - scrollXBarRef.value.clientWidth);
+  });
+});
 
 onMounted(() => {
   initScrollBarSize();

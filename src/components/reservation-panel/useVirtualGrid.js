@@ -1,4 +1,4 @@
-import { ref, computed, watch, nextTick } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { debounce } from 'lodash-es';
 
 export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {

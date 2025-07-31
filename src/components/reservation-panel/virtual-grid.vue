@@ -1,5 +1,5 @@
 <script setup>
-import { ref, useTemplateRef, computed, onUnmounted, onMounted, watch, nextTick } from 'vue';
+import { ref, useTemplateRef, computed, onUnmounted, onMounted, nextTick } from 'vue';
 import { throttle } from 'lodash-es';
 import DragList from './drag.vue';
 import { groupTimesByHour } from './time';
@@ -110,6 +110,7 @@ const autoScrollIntervalId = ref(null);
 const socrollYBarWidth = ref(16);
 const socrollXBarHeight = ref(16);
 const currentCell = ref(null);
+const lockScroll = ref(false);
 const throttleOnDragListMove = throttle(onDragListMove, 16, { trailing: false });
 const throttleOnHeightResizeMove = throttle(onHeightResizeMove, 16, { trailing: false });
 
@@ -147,6 +148,7 @@ const { handleContainerWheel, handleYScroll, handleXScroll } = useDomScroll(
   gridContainerHeight,
   gridContainerWidth,
   autoScrollIntervalId,
+  lockScroll,
 );
 
 const timeSlotsGroup = computed(() => {
@@ -407,15 +409,25 @@ function onEventChange(item) {
   emit('event-change', item);
 }
 
-watch([() => hasVerticalScroll.value, () => hasHorizontalScroll.value], () => {
+function updateScrollBarOffset() {
+  lockScroll.value = true;
   const { horizontal, vertical } = getScrollRatio(containerRef.value);
   nextTick(() => {
     scrollYBarRef.value.scrollTop =
       vertical * (scrollYBarRef.value.scrollHeight - scrollYBarRef.value.clientHeight);
     scrollXBarRef.value.scrollLeft =
       horizontal * (scrollXBarRef.value.scrollWidth - scrollXBarRef.value.clientWidth);
+    setTimeout(() => {
+      lockScroll.value = false;
+    }, 200);
   });
-});
+}
+
+function onEventScrollToViewEnd() {
+  setTimeout(() => {
+    updateScrollBarOffset();
+  }, 100);
+}
 
 onMounted(() => {
   initScrollBarSize();
@@ -650,6 +662,7 @@ defineExpose({
           @moveend="onDragListMoveend"
           @height-resize-move="throttleOnHeightResizeMove"
           @event-change="onEventChange"
+          @event-scroll-to-view-end="onEventScrollToViewEnd"
         ></drag-list>
         <div
           v-for="row in visibleRows"

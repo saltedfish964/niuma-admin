@@ -7,9 +7,11 @@ export function useDomScroll(
   gridContainerHeight,
   gridContainerWidth,
   autoScrollIntervalId,
+  lockScroll,
 ) {
   function handleContainerWheel(event) {
-    if (!containerRef.value || !scrollYBarRef.value || !scrollXBarRef.value) return;
+    if (!containerRef.value || !scrollYBarRef.value || !scrollXBarRef.value || lockScroll.value)
+      return;
     event.preventDefault();
 
     // 垂直滚动
@@ -39,7 +41,13 @@ export function useDomScroll(
   }
 
   function handleYScroll(event) {
-    if (!containerRef.value || !scrollYBarRef.value || autoScrollIntervalId.value) return;
+    if (
+      !containerRef.value ||
+      !scrollYBarRef.value ||
+      autoScrollIntervalId.value ||
+      lockScroll.value
+    )
+      return;
     event.preventDefault();
     const scrollPos = scrollYBarRef.value.scrollTop;
     const totalScroll = scrollYBarRef.value.scrollHeight;
@@ -51,7 +59,7 @@ export function useDomScroll(
   }
 
   function handleXScroll(event) {
-    if (!containerRef.value || autoScrollIntervalId.value) return;
+    if (!containerRef.value || autoScrollIntervalId.value || lockScroll.value) return;
     event.preventDefault();
     containerRef.value.scrollLeft = event.target.scrollLeft;
   }

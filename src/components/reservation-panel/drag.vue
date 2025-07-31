@@ -53,7 +53,13 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['move', 'moveend', 'height-resize-move', 'event-change']);
+const emit = defineEmits([
+  'move',
+  'moveend',
+  'height-resize-move',
+  'event-change',
+  'event-scroll-to-view-end',
+]);
 
 let currentDragItem = null;
 let currentDragItemClone = null;
@@ -248,7 +254,10 @@ function onMouseup() {
         return key === currentActiveItem.value.key;
       });
       setTimeout(() => {
-        if (scrollEle) scrollEle.scrollIntoView();
+        if (scrollEle) {
+          scrollEle.scrollIntoView();
+          emit('event-scroll-to-view-end');
+        }
       });
     });
   }

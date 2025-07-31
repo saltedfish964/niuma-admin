@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue';
 import VColorPicker from '@src/components/color-picker/color-picker.vue';
-import { set } from 'lodash-es';
 
 const selectedColor = ref('#3498db');
 const swatches = ref([

@@ -68,10 +68,35 @@ const resources = ref([
     name: '王五',
   },
 ]);
+
+/**
+ *
+ * @param currentResource
+ * @param currentTime HH:mm
+ */
+function cellDisabled(currentResource, currentTime) {
+  const now = new Date();
+  const nowHour = now.getHours().toString().padStart(2, '0');
+  const nowMinute = now.getMinutes().toString().padStart(2, '0');
+  const [cellHour, cellMinute] = currentTime.split(':');
+
+  if (
+    parseInt(cellHour) < nowHour ||
+    (parseInt(cellHour) === nowHour && parseInt(cellMinute) < nowMinute)
+  ) {
+    return true;
+  }
+
+  return false;
+}
 </script>
 
 <template>
   <div style="width: 100%; height: 100%; padding: 50px">
-    <v-reservation-panel :events="events" :resources="resources"></v-reservation-panel>
+    <v-reservation-panel
+      :events="events"
+      :resources="resources"
+      :cell-disabled="cellDisabled"
+    ></v-reservation-panel>
   </div>
 </template>

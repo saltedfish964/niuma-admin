@@ -90,6 +90,9 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  cellDisabled: {
+    type: Function,
+  },
 });
 
 const emit = defineEmits(['event-change']);
@@ -138,6 +141,7 @@ const {
   handleScroll,
   getColumnWidth,
   calcAllSizes,
+  cellDisabledState,
 } = useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight);
 const { handleContainerWheel, handleYScroll, handleXScroll } = useDomScroll(
   containerRef,
@@ -659,6 +663,7 @@ defineExpose({
           :column-left-positions="columnLeftPositions"
           :time-slots="props.timeSlots"
           :events="props.events"
+          :cell-disabled="props.cellDisabled"
           @move="throttleOnDragListMove"
           @moveend="onDragListMoveend"
           @height-resize-move="throttleOnHeightResizeMove"
@@ -684,6 +689,7 @@ defineExpose({
               'virtual-grid-cell',
               isScrolledToLeft ? 'virtual-grid-cell-first-border-left-none' : '',
               !hasHorizontalScroll ? 'virtual-grid-cell-last-border-right' : '',
+              cellDisabledState(col.index, row.index) ? 'virtual-grid-cell-disabled' : '',
             ]"
             :style="{
               transform: `translateX(${col.left}px)`,
@@ -876,5 +882,8 @@ defineExpose({
 }
 .virtual-grid-cell-last-border-right:last-child {
   border-right: 1px solid #ddd;
+}
+.virtual-grid-cell-disabled {
+  background: #f9f9f9;
 }
 </style>

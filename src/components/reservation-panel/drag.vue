@@ -51,6 +51,9 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  cellDisabled: {
+    type: Function,
+  },
 });
 
 const emit = defineEmits([
@@ -120,6 +123,13 @@ function heightResizeUpdateCurrentActiveItemStyle(el, item, cell) {
 
 function updateEventTimeByCellStartTime(item, cell) {
   if (!item || !cell) return;
+  const isDisabled = props.cellDisabled
+    ? props.cellDisabled(props.resources[cell.column], props.timeSlots[cell.row])
+    : false;
+  if (isDisabled) {
+    emit('event-change', item);
+    return;
+  }
   const { row, column } = cell;
   const resource = props.resources[column];
   const rawDiffMinutes = getMinutesDiff(item.startTime, item.endTime);

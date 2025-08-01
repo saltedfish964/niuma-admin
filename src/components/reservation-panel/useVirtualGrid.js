@@ -56,10 +56,11 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
   const visibleRows = computed(() => {
     const rows = [];
     for (let i = startRowIndex.value; i < endRowIndex.value; i++) {
-      rows.push({
+      const row = {
         index: i,
         top: i * currentItemHeight.value,
-      });
+      };
+      rows.push(row);
     }
     return rows;
   });
@@ -93,11 +94,12 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
   const visibleCols = computed(() => {
     const cols = [];
     for (let i = startColIndex.value; i < endColIndex.value; i++) {
-      cols.push({
+      const col = {
         index: i,
         left: columnLeftPositions.value[i],
         width: getColumnWidth(i),
-      });
+      };
+      cols.push(col);
     }
     return cols;
   });
@@ -182,6 +184,10 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
     }
   }
 
+  function cellDisabledState(x, y) {
+    return props.cellDisabled ? props.cellDisabled(props.resources[x], props.timeSlots[y]) : false;
+  }
+
   watch([() => props.width, () => props.height, () => props.events], ([w, h]) => {
     debounceCalcAllSizes(w, h);
   });
@@ -210,5 +216,6 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
     handleScroll,
     getColumnWidth,
     calcAllSizes,
+    cellDisabledState,
   };
 }

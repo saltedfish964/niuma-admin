@@ -373,6 +373,7 @@ function onHeightResizeMove(x, y) {
 function onDragListMoveend() {
   clearInterval(autoScrollIntervalId.value);
   autoScrollIntervalId.value = null;
+  currentCell.value = null;
 }
 
 function getScrollbarWidth() {
@@ -451,7 +452,7 @@ defineExpose({
       class="v-fixed-header-container"
       :style="{
         height: `${props.headerHeight}px`,
-        width: `${hasVerticalScroll ? gridContainerWidth - socrollYBarWidth : gridContainerWidth}px`,
+        width: `${gridContainerWidth}px`,
         transform: `translateX(${props.leftFixedWidth}px)`,
       }"
     >

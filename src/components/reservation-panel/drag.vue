@@ -248,14 +248,22 @@ function onMouseup() {
     );
     currentDragItem.style.opacity = '1';
     // 拖拽完成后，滚动到当前元素
+    const activeKey = currentActiveItem.value.key;
     nextTick(() => {
       const scrollEle = itemsRef.value.find((el) => {
         const key = el.getAttribute('data-key');
-        return key === currentActiveItem.value.key;
+        return key === activeKey;
       });
       setTimeout(() => {
         if (scrollEle) {
-          scrollEle.scrollIntoView();
+          const scrollRect = scrollEle.getBoundingClientRect();
+          const containerRect = props.container.getBoundingClientRect();
+          const top = scrollRect.top - containerRect.top;
+          const left = scrollRect.left - containerRect.left;
+          props.container.scrollTo({
+            top,
+            left,
+          });
           emit('event-scroll-to-view-end');
         }
       });

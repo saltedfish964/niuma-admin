@@ -54,6 +54,9 @@ const props = defineProps({
   cellDisabled: {
     type: Function,
   },
+  eventDisabled: {
+    type: Function,
+  },
 });
 
 const emit = defineEmits([
@@ -187,6 +190,9 @@ function getDragItemByChild(child) {
 }
 
 function onMousedown(event, item) {
+  const isDisabled = props.eventDisabled ? props.eventDisabled(item) : false;
+  if (isDisabled) return;
+
   document.addEventListener('mousemove', onMousemove);
   document.addEventListener('mouseup', onMouseup);
   event.preventDefault();
@@ -317,6 +323,8 @@ function onMouseup() {
 }
 
 function onHeightResizeMousedown(event, item) {
+  const isDisabled = props.eventDisabled ? props.eventDisabled(item) : false;
+  if (isDisabled) return;
   document.addEventListener('mousemove', onHeightResizeMousemove);
   document.addEventListener('mouseup', onHeightResizeMouseup);
 
@@ -396,7 +404,10 @@ onMounted(() => {
       :key="item.id"
       :data-key="item.key"
       ref="items"
-      class="drag-item"
+      :class="[
+        'drag-item',
+        props.eventDisabled && props.eventDisabled(item) ? 'drag-item-disabled' : '',
+      ]"
     >
       <div class="drag-item-content">
         <div
@@ -407,7 +418,13 @@ onMounted(() => {
         <div>{{ item.name }}</div>
         <div>{{ item.startTime }} - {{ item.endTime }}</div>
       </div>
-      <div class="height-resize-handle" @mousedown="(e) => onHeightResizeMousedown(e, item)"></div>
+      <div
+        :class="[
+          'height-resize-handle',
+          props.eventDisabled && props.eventDisabled(item) ? 'height-resize-handle-disabled' : '',
+        ]"
+        @mousedown="(e) => onHeightResizeMousedown(e, item)"
+      ></div>
     </div>
   </div>
 </template>
@@ -424,6 +441,10 @@ onMounted(() => {
   top: 0;
   padding: 0 2px;
   z-index: 1;
+}
+.drag-item-disabled,
+.height-resize-handle {
+  cursor: not-allowed;
 }
 .drag-item-content {
   width: 100%;

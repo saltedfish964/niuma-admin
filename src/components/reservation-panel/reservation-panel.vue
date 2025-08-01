@@ -33,6 +33,9 @@ const props = defineProps({
   cellDisabled: {
     type: Function,
   },
+  eventDisabled: {
+    type: Function,
+  },
 });
 
 let observer;
@@ -192,6 +195,7 @@ onBeforeUnmount(() => {
       :time-interval="props.timeInterval"
       :events="currentEvents"
       :cell-disabled="props.cellDisabled"
+      :event-disabled="props.eventDisabled"
       @event-change="onEventChange"
     >
       <template #default="{ item, rowIndex, colIndex }">

@@ -93,6 +93,9 @@ const props = defineProps({
   cellDisabled: {
     type: Function,
   },
+  eventDisabled: {
+    type: Function,
+  },
 });
 
 const emit = defineEmits(['event-change']);
@@ -664,6 +667,7 @@ defineExpose({
           :time-slots="props.timeSlots"
           :events="props.events"
           :cell-disabled="props.cellDisabled"
+          :event-disabled="props.eventDisabled"
           @move="throttleOnDragListMove"
           @moveend="onDragListMoveend"
           @height-resize-move="throttleOnHeightResizeMove"

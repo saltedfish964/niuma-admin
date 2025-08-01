@@ -89,6 +89,10 @@ function cellDisabled(currentResource, currentTime) {
 
   return false;
 }
+
+function eventDisabled(event) {
+  return event.id === 1;
+}
 </script>
 
 <template>
@@ -97,6 +101,7 @@ function cellDisabled(currentResource, currentTime) {
       :events="events"
       :resources="resources"
       :cell-disabled="cellDisabled"
+      :event-disabled="eventDisabled"
     ></v-reservation-panel>
   </div>
 </template>

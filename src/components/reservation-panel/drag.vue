@@ -61,6 +61,7 @@ const emit = defineEmits([
   'event-scroll-to-view-end',
 ]);
 
+let containerElClone = null;
 let currentDragItem = null;
 let currentDragItemClone = null;
 let currentDragItemHighlight = null;
@@ -187,16 +188,30 @@ function onMousedown(event, item) {
 
   // 获取元素在视口中的位置
   const rect = currentDragItem.getBoundingClientRect();
+  const cRect = props.container.getBoundingClientRect();
+
+  // 克隆一个一模一样的 container
+  containerElClone = props.container.cloneNode(true);
+  containerElClone.innerHTML = '';
+  containerElClone.style.position = 'fixed';
+  containerElClone.style.left = `${cRect.left}px`;
+  containerElClone.style.top = `${cRect.top}px`;
+  containerElClone.style.zIndex = '99';
+  containerElClone.style.watch = `${cRect.width}px`;
+  containerElClone.style.height = `${cRect.height}px`;
+  containerElClone.style.transform = 'none';
+  containerElClone.style.overflow = 'hidden';
 
   currentDragItemHighlight = currentDragItem.cloneNode(true);
   currentDragItemHighlight.innerHTML = '';
   currentDragItemHighlight.style.zIndex = '99';
   currentDragItemHighlight.style.opacity = '0';
   currentDragItemHighlight.style.background = 'rgba(0, 0, 0, 0.2)';
-  currentDragItemHighlight.style.position = 'fixed';
+  currentDragItemHighlight.style.position = 'absolute';
   currentDragItemHighlight.style.left = `${0}px`;
   currentDragItemHighlight.style.top = `${0}px`;
-  document.body.appendChild(currentDragItemHighlight);
+  containerElClone.appendChild(currentDragItemHighlight);
+  document.body.appendChild(containerElClone);
 
   currentDragItemClone = currentDragItem.cloneNode(true);
   currentDragItemClone.style.position = 'fixed';
@@ -221,12 +236,14 @@ function onMousemove(event) {
   currentDragItemClone.style.top = `${parseInt(currentDragItemClone.style.top) + dy}px`;
 
   if (currentDragItemHighlight && props.currentCell) {
-    const cRect = props.container.getBoundingClientRect();
-
-    currentDragItemHighlight.style.left = `${props.currentCell.left + cRect.x - props.container.scrollLeft}px`;
-    currentDragItemHighlight.style.top = `${props.currentCell.top + cRect.y - props.container.scrollTop}px`;
+    currentDragItemHighlight.style.left = `${props.currentCell.left - props.container.scrollLeft}px`;
+    currentDragItemHighlight.style.top = `${props.currentCell.top - props.container.scrollTop}px`;
     currentDragItemHighlight.style.width = `${props.currentCell.width}px`;
     currentDragItemHighlight.style.opacity = '1';
+  }
+
+  if (!props.currentCell) {
+    currentDragItemHighlight.style.opacity = '0';
   }
 
   currentDragItemX = event.clientX;
@@ -271,8 +288,10 @@ function onMouseup() {
   }
 
   if (currentDragItemHighlight) {
-    document.body.removeChild(currentDragItemHighlight);
+    currentDragItemHighlight.remove();
+    containerElClone.remove();
     currentDragItemHighlight = null;
+    containerElClone = null;
   }
 
   // 移除克隆元素

@@ -73,6 +73,16 @@ const props = defineProps({
     type: Number,
     default: 120,
   },
+  /**
+   * 默认单元格高度
+   */
+  defaultItemHeight: {
+    type: Number,
+    default: 32,
+  },
+  /**
+   * 是否显示时间线
+   */
   showTimeLine: {
     type: Boolean,
     default: true,
@@ -108,6 +118,8 @@ const props = defineProps({
 });
 
 let observer;
+let resizeTimer = null;
+const resizeCount = ref(0);
 
 const bus = useEventBus();
 
@@ -127,6 +139,34 @@ const getCellData = (row, col) => {
 };
 
 function onContainerResize(entries) {
+  // 增加执行次数计数
+  resizeCount.value += 1;
+
+  // 检查是否超过频率限制
+  if (resizeCount.value > 30) {
+    // 停止观察并清理
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+    // 清除定时器
+    if (resizeTimer) {
+      clearTimeout(resizeTimer);
+      resizeTimer = null;
+    }
+    // 抛出错误
+    throw new Error('包含此组件的元素未设置宽高');
+  }
+
+  // 重置计数器的定时器逻辑
+  if (resizeTimer) {
+    clearTimeout(resizeTimer);
+  }
+  resizeTimer = setTimeout(() => {
+    resizeCount.value = 0;
+  }, 1000);
+
+  // 原有的尺寸处理逻辑
   for (let entry of entries) {
     const { width, height } = entry.contentRect;
     gridWidth.value = width;
@@ -209,16 +249,21 @@ function calculateCustomWidth(maxOffsets = {}) {
   });
 }
 
-function onEventChange(item) {
-  const index = currentEvents.value.findIndex((e) => e.id === item.id);
-  if (index !== -1) {
-    currentEvents.value[index].startTime = item.startTime;
-    currentEvents.value[index].endTime = item.endTime;
-    currentEvents.value[index].resourceId = item.resourceId;
+function onEventChange({ type, event }) {
+  if (type === 'add') {
+    currentEvents.value.push(event);
+  }
+  if (type === 'update') {
+    const index = currentEvents.value.findIndex((e) => e.id === event.id);
+    if (index !== -1) {
+      currentEvents.value[index].startTime = event.startTime;
+      currentEvents.value[index].endTime = event.endTime;
+      currentEvents.value[index].resourceId = event.resourceId;
+    }
   }
   currentEvents.value = calculateOffsets(
-    currentEvents.value.map((item) => {
-      const newItem = { ...item };
+    currentEvents.value.map((event) => {
+      const newItem = { ...event };
       delete newItem.offset;
       return newItem;
     }),
@@ -228,6 +273,10 @@ function onEventChange(item) {
     bus.emit('calc-all-sizes');
     bus.emit('update-current-events', currentEvents.value);
   });
+}
+
+function addEvent(event) {
+  bus.emit('add-event', event);
 }
 
 onMounted(() => {
@@ -244,6 +293,13 @@ onBeforeUnmount(() => {
   if (observer) {
     observer.disconnect();
   }
+  if (resizeTimer) {
+    clearTimeout(resizeTimer);
+  }
+});
+
+defineExpose({
+  addEvent,
 });
 </script>
 

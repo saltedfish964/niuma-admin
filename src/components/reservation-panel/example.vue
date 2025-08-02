@@ -1,6 +1,8 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import VReservationPanel from './reservation-panel.vue';
+
+const reservationPanel = useTemplateRef('reservationPanel');
 
 const events = ref([
   {
@@ -81,15 +83,57 @@ function cellDisabled(currentResource, currentTime) {
 function eventDisabled(event) {
   return event.id === 1;
 }
+
+function addEvent() {
+  reservationPanel.value.addEvent({
+    id: Date.now(),
+    resourceId: 1,
+    name: '预约8',
+    startTime: '15:00',
+    endTime: '17:00',
+  });
+}
 </script>
 
 <template>
-  <div style="width: 100%; height: 100%; padding: 50px">
-    <v-reservation-panel
-      :events="events"
-      :resources="resources"
-      :cell-disabled="cellDisabled"
-      :event-disabled="eventDisabled"
-    ></v-reservation-panel>
+  <div class="container">
+    <div class="card">
+      <div class="controls">
+        <a-button type="primary" @click="addEvent">添加预约</a-button>
+      </div>
+      <div class="panel">
+        <v-reservation-panel
+          ref="reservationPanel"
+          :events="events"
+          :resources="resources"
+          :cell-disabled="cellDisabled"
+          :event-disabled="eventDisabled"
+        ></v-reservation-panel>
+      </div>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.container {
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+}
+.card {
+  height: 100%;
+  padding: 8px;
+  background: var(--nm-color-bg-container, #ffffff);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+}
+.controls {
+  flex: none;
+  padding-bottom: 8px;
+}
+.panel {
+  flex: 1;
+  overflow: auto;
+}
+</style>

@@ -134,12 +134,12 @@ async function updateEventTimeByCellStartTime(item, cell) {
     ? props.cellDisabled(props.resources[cell.column], props.timeSlots[cell.row])
     : false;
   if (isDisabled) {
-    emit('event-change', item);
+    emit('event-change', { type: 'update', event: item });
     return;
   }
   const beforeEventDropResult = await props.beforeEventDrop(item);
   if (!beforeEventDropResult) {
-    emit('event-change', item);
+    emit('event-change', { type: 'update', event: item });
     return;
   }
   const { row, column } = cell;
@@ -160,7 +160,7 @@ async function updateEventTimeByCellStartTime(item, cell) {
   };
   delete newItem.key;
 
-  emit('event-change', newItem);
+  emit('event-change', { type: 'update', event: newItem });
 }
 
 function updateEventTimeByCellEndTime(item, cell) {
@@ -184,7 +184,7 @@ function updateEventTimeByCellEndTime(item, cell) {
     ...item,
   };
   delete newItem.key;
-  emit('event-change', newItem);
+  emit('event-change', { type: 'update', event: newItem });
 }
 
 function getDragItemByChild(child) {
@@ -390,6 +390,31 @@ function initDragItemStyle() {
   });
 }
 
+function checkMissingFields(obj, requiredFields) {
+  const objKeys = Object.keys(obj);
+  return requiredFields.filter((field) => !objKeys.includes(field));
+}
+
+function addEvent(event) {
+  if (!event) return;
+  const requiredFields = ['id', 'resourceId', 'name', 'startTime', 'endTime'];
+  const missingFields = checkMissingFields(event, requiredFields);
+  if (missingFields.length > 0) {
+    console.error(`缺少字段: ${missingFields.join(', ')}`);
+    return;
+  }
+
+  // 判断是否有重复的事件
+  const existingEvent = currentEvents.value.find((item) => item.id === event.id);
+  if (existingEvent) {
+    console.error('已存在 id 为 ', event.id, ' 的事件');
+    return;
+  }
+
+  currentEvents.value.push(event);
+  emit('event-change', { type: 'add', event });
+}
+
 watch(
   () => props.totalHeight,
   () => {
@@ -402,6 +427,7 @@ onMounted(() => {
     currentEvents.value = data.map((item) => ({ ...item, key: `${item.id}` }));
     initDragItemStyle();
   });
+  bus.on('add-event', addEvent);
   initDragItemStyle();
 });
 </script>

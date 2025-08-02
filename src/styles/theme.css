@@ -1,10 +1,16 @@
 :root {
   --nm-border-color: rgba(5, 5, 5, 0.06);
+  --nm-scrollbar-bg: #ffffff;
+  --nm-scrollbar-thumb-bg: #b2b2b2;
+  --nm-scrollbar-thumb-bg-hover: #7f7f7f;
   --nm-border: 1px solid var(--nm-border-color);
 }
 
 [data-theme='dark']:root {
   --nm-border-color: rgba(253, 253, 253, 0.12);
+  --nm-scrollbar-bg: #2c2c2c;
+  --nm-scrollbar-thumb-bg: #9f9f9f;
+  --nm-scrollbar-thumb-bg-hover: #d1d1d1;
 }
 
 /* dark mode 过渡动画 */

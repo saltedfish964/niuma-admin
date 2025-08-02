@@ -157,7 +157,7 @@ function onTransitionEnd(event) {
             </div>
           </transition>
         </div>
-        <div class="secondary-menu-content mini-scroll-black">
+        <div class="secondary-menu-content mini-scroll">
           <a-menu
             mode="inline"
             v-model:open-keys="layoutStore.secondaryMenuOpenKeys"

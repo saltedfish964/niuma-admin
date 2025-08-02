@@ -481,7 +481,7 @@ defineExpose({
           :style="{
             transform: `translateX(${col.left}px)`,
             width: `${col.width}px`,
-            borderBottom: !isScrolledToTop ? '1px solid #ddd' : 'none',
+            borderBottom: !isScrolledToTop ? 'var(--nm-border, 1px solid #ddd)' : 'none',
           }"
         >
           {{ props.resources[col.index]?.name }}
@@ -542,7 +542,7 @@ defineExpose({
       :style="{
         width: `${props.leftFixedWidth}px`,
         height: `${props.headerHeight}px`,
-        borderBottom: !isScrolledToTop ? '1px solid #ddd' : 'none',
+        borderBottom: !isScrolledToTop ? 'var(--nm-border, 1px solid #ddd)' : 'none',
       }"
     ></div>
 
@@ -599,7 +599,7 @@ defineExpose({
         width: `${props.rightFixedWidth}px`,
         height: `${props.headerHeight}px`,
         right: `${hasVerticalScroll ? socrollYBarWidth : 0}px`,
-        borderBottom: !isScrolledToTop ? '1px solid #ddd' : 'none',
+        borderBottom: !isScrolledToTop ? 'var(--nm-border, 1px solid #ddd)' : 'none',
       }"
     ></div>
 
@@ -618,6 +618,12 @@ defineExpose({
         }"
       ></div>
     </div>
+    <!-- X 滚动条右边遮罩 -->
+    <div
+      v-show="hasVerticalScroll && !hasHorizontalScroll"
+      class="v-y-scrollbar-mask"
+      :style="{ width: `${socrollXBarHeight}px`, height: `${socrollXBarHeight}px` }"
+    ></div>
 
     <!-- X 滚动条 -->
     <div
@@ -634,6 +640,12 @@ defineExpose({
         }"
       ></div>
     </div>
+    <!-- X 滚动条右边遮罩 -->
+    <div
+      v-show="hasHorizontalScroll && !hasVerticalScroll"
+      class="v-x-scrollbar-mask"
+      :style="{ width: `${socrollXBarHeight}px`, height: `${socrollXBarHeight}px` }"
+    ></div>
 
     <div
       class="virtual-grid-container"
@@ -719,8 +731,8 @@ defineExpose({
   width: 100%;
   height: 100%;
   position: relative;
-  border-bottom: 1px solid #ddd;
-  border-right: 1px solid #ddd;
+  border-bottom: var(--nm-border, 1px solid #ddd);
+  border-right: var(--nm-border, 1px solid #ddd);
 }
 .virtual-grid-container {
   overflow: auto;
@@ -728,7 +740,7 @@ defineExpose({
   overflow: hidden;
 }
 .v-fixed-header-container {
-  border-top: 1px solid #ddd;
+  border-top: var(--nm-border, 1px solid #ddd);
   overflow: hidden;
 }
 .v-fixed-header {
@@ -740,14 +752,14 @@ defineExpose({
   position: absolute;
   box-sizing: border-box;
   height: 100%;
-  border-left: 1px solid #ddd;
-  background-color: #fff;
+  border-left: var(--nm-border, 1px solid #ddd);
+  background-color: var(--nm-color-bg-container);
 }
 .v-fixed-header-col-first-border-left-none:first-child {
   border-left: none;
 }
 .v-fixed-header-col-last-border-right:last-child {
-  border-right: 1px solid #ddd;
+  border-right: var(--nm-border, 1px solid #ddd);
 }
 /* 左边固定 */
 .v-fixed-left-container {
@@ -755,9 +767,8 @@ defineExpose({
   top: 0;
   left: 0;
   height: 100%;
-  background-color: #f9f9f9;
-  border-right: 1px solid #ddd;
-  border-left: 1px solid #ddd;
+  border-right: var(--nm-border, 1px solid #ddd);
+  border-left: var(--nm-border, 1px solid #ddd);
   z-index: 10;
 }
 .v-fixed-left-container .v-time-item-container {
@@ -771,12 +782,12 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
-  border-left: 1px solid #ddd;
-  border-top: 1px solid #ddd;
+  border-left: var(--nm-border, 1px solid #ddd);
+  border-top: var(--nm-border, 1px solid #ddd);
   width: 100%;
 }
 .v-fixed-left-container .v-time-item-hour {
-  border-top: 1px solid #ddd;
+  border-top: var(--nm-border, 1px solid #ddd);
   flex: none;
   display: flex;
   align-items: center;
@@ -787,10 +798,10 @@ defineExpose({
   position: absolute;
   top: 0;
   left: 0;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
-  border-top: 1px solid #ddd;
-  background: #ffffff;
+  border-left: var(--nm-border, 1px solid #ddd);
+  border-right: var(--nm-border, 1px solid #ddd);
+  border-top: var(--nm-border, 1px solid #ddd);
+  background: var(--nm-color-bg-container);
   z-index: 20;
 }
 /* 右边固定 */
@@ -798,10 +809,9 @@ defineExpose({
   position: absolute;
   top: 0;
   height: 100%;
-  background-color: #f9f9f9;
   overflow: hidden;
   z-index: 10;
-  border-left: 1px solid #ddd;
+  border-left: var(--nm-border, 1px solid #ddd);
 }
 .v-fixed-right-container .v-time-item-container {
   position: absolute;
@@ -811,7 +821,7 @@ defineExpose({
   display: flex;
 }
 .v-fixed-right-container .v-time-item-hour {
-  border-top: 1px solid #ddd;
+  border-top: var(--nm-border, 1px solid #ddd);
   flex: none;
   display: flex;
   align-items: center;
@@ -822,20 +832,20 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: center;
-  border-right: 1px solid #ddd;
-  border-top: 1px solid #ddd;
+  border-right: var(--nm-border, 1px solid #ddd);
+  border-top: var(--nm-border, 1px solid #ddd);
   width: 100%;
 }
 .v-fixed-right-mask {
   position: absolute;
   top: 0;
-  border-left: 1px solid #ddd;
-  border-top: 1px solid #ddd;
-  background: #ffffff;
+  border-left: var(--nm-border, 1px solid #ddd);
+  border-top: var(--nm-border, 1px solid #ddd);
+  background: var(--nm-color-bg-container);
   z-index: 20;
 }
 .v-time-item-container-border-bottom:last-child {
-  border-bottom: 1px solid #ddd;
+  border-bottom: var(--nm-border, 1px solid #ddd);
 }
 /* Y 滚动条 */
 .v-y-scrollbar {
@@ -843,11 +853,19 @@ defineExpose({
   top: 0;
   right: 0;
   height: 100%;
-  background-color: #ffffff;
-  border-left: 1px solid #ddd;
-  border-top: 1px solid #ddd;
+  background-color: var(--nm-color-bg-container);
+  border-left: var(--nm-border, 1px solid #ddd);
+  border-top: var(--nm-border, 1px solid #ddd);
   overflow: auto;
   z-index: 20;
+}
+.v-y-scrollbar-mask {
+  background: var(--nm-scrollbar-bg, #2c2c2c);
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  border-left: var(--nm-border, 1px solid #ddd);
 }
 /* X 滚动条 */
 .v-x-scrollbar {
@@ -855,11 +873,19 @@ defineExpose({
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: #ffffff;
-  border-left: 1px solid #ddd;
-  border-top: 1px solid #ddd;
+  background-color: var(--nm-color-bg-container);
+  border-left: var(--nm-border, 1px solid #ddd);
+  border-top: var(--nm-border, 1px solid #ddd);
   overflow: auto;
   z-index: 20;
+}
+.v-x-scrollbar-mask {
+  background: var(--nm-scrollbar-bg, #2c2c2c);
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  border-top: var(--nm-border, 1px solid #ddd);
 }
 .virtual-grid-content {
   position: relative;
@@ -870,24 +896,24 @@ defineExpose({
   width: 100%;
 }
 .virtual-grid-row-last-border-bottom:last-child {
-  border-bottom: 1px solid #ddd;
+  border-bottom: var(--nm-border, 1px solid #ddd);
 }
 .virtual-grid-cell {
   height: 100%;
   position: absolute;
   box-sizing: border-box;
-  border-left: 1px solid #ddd;
-  border-top: 1px solid #ddd;
-  background-color: #fff;
+  border-left: var(--nm-border, 1px solid #ddd);
+  border-top: var(--nm-border, 1px solid #ddd);
+  background-color: var(--nm-color-bg-container);
   overflow: hidden;
 }
 .virtual-grid-cell-first-border-left-none:first-child {
   border-left: none;
 }
 .virtual-grid-cell-last-border-right:last-child {
-  border-right: 1px solid #ddd;
+  border-right: var(--nm-border, 1px solid #ddd);
 }
 .virtual-grid-cell-disabled {
-  background: #f9f9f9;
+  background: var(--nm-color-fill-tertiary, #f9f9f9);
 }
 </style>

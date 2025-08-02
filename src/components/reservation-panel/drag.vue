@@ -449,13 +449,13 @@ onMounted(() => {
 .drag-item-content {
   width: 100%;
   height: 100%;
-  border: 1px solid #ddd;
-  background-color: #f5f5f5;
+  border: var(--nm-border, 1px solid #ddd);
+  background-color: var(--nm-color-bg-container, #f5f5f5);
   border-radius: 4px;
   overflow: hidden;
 }
 .drag-handle {
-  background: #3e74fd;
+  background: var(--nm-primary-color, #3e74fd);
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 }

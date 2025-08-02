@@ -210,7 +210,8 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   position: relative;
-  background: #ffffff;
+  color: var(--nm-color-text, rgba(0, 0, 0, 0.88));
+  background: var(--nm-color-bg-container);
   overflow: hidden;
 }
 .cell-content {

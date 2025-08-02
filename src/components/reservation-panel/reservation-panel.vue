@@ -6,33 +6,88 @@ import VirtualGrid from './virtual-grid.vue';
 import { generateTimeSlots } from './time';
 
 const props = defineProps({
+  /**
+   * 开始时间
+   */
   startTime: {
     type: String,
     default: '07:00',
   },
+  /**
+   * 结束时间
+   */
   endTime: {
     type: String,
     default: '20:00',
   },
+  /**
+   * 时间间隔
+   */
   timeInterval: {
     type: Number,
     default: 60,
   },
+  /**
+   * 资源(如：用户、场地等)
+   * @description 需要包含 id 和 name，扩展属性建议放在 meta
+   * @example
+   *  [
+        {
+          id: 1,
+          name: '员工 1',
+          meta: {
+            color: '#FF0000',
+          },
+        },
+      ]
+   */
   resources: {
     type: Array,
     default: () => [],
   },
+  /**
+   * 事件(如：会议、活动等)
+   * @description 需要包含 id、resourceId、name、startTime、endTime，扩展属性建议放在 meta
+   * @example
+   *  [
+        {
+          id: 1,
+          resourceId: 1,
+          name: '预约1',
+          startTime: '08:00',
+          endTime: '10:00',
+          meta: {
+            color: '#FF0000',
+          },
+        },
+      ]
+   */
   events: {
     type: Array,
     default: () => [],
   },
+  /**
+   * 单元格宽度
+   */
   itemWidth: {
     type: Number,
     default: 120,
   },
+  /**
+   * 控制单元格是否禁用的回调
+   * @description 被禁用的单元格，无法放下 event
+   * @param {object} resource 资源
+   * @param {string} time 时间 HH:mm
+   * @returns {boolean}
+   */
   cellDisabled: {
     type: Function,
   },
+  /**
+   * 控制事件是否禁用的回调(是否允许拖拽)
+   * @param {object} event 事件
+   * @returns {boolean}
+   */
   eventDisabled: {
     type: Function,
   },

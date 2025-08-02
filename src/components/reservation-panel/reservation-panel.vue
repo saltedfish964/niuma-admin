@@ -11,7 +11,7 @@ const props = defineProps({
    */
   startTime: {
     type: String,
-    default: '07:00',
+    default: '00:00',
   },
   /**
    * 结束时间
@@ -72,6 +72,10 @@ const props = defineProps({
   itemWidth: {
     type: Number,
     default: 120,
+  },
+  showTimeLine: {
+    type: Boolean,
+    default: true,
   },
   /**
    * 控制单元格是否禁用的回调
@@ -262,6 +266,7 @@ onBeforeUnmount(() => {
       :cell-disabled="props.cellDisabled"
       :event-disabled="props.eventDisabled"
       :before-event-drop="props.beforeEventDrop"
+      :show-time-line="props.showTimeLine"
       @event-change="onEventChange"
     >
       <template #default="{ item, rowIndex, colIndex }">

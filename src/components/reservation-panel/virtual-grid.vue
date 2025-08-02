@@ -90,6 +90,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  showTimeLine: {
+    type: Boolean,
+    default: true,
+  },
   cellDisabled: {
     type: Function,
   },
@@ -111,6 +115,7 @@ let lastCellHoverResult = {
   scrollTop: -1,
   scrollLeft: -1,
 };
+let timeLineTimer = null;
 
 const containerRef = useTemplateRef('container');
 const scrollXBarRef = useTemplateRef('scrollXBar');
@@ -121,6 +126,8 @@ const socrollYBarWidth = ref(16);
 const socrollXBarHeight = ref(16);
 const currentCell = ref(null);
 const lockScroll = ref(false);
+const showTimeLine = ref(false);
+const timeLineTop = ref(0);
 const throttleOnDragListMove = throttle(onDragListMove, 16, { trailing: false });
 const throttleOnHeightResizeMove = throttle(onHeightResizeMove, 16, { trailing: false });
 
@@ -441,14 +448,65 @@ function onEventScrollToViewEnd() {
   }, 100);
 }
 
+function calculateTimeLineTop() {
+  if (!props.showTimeLine) {
+    showTimeLine.value = false;
+    return;
+  }
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const [ssHours, ssMinutes] = props.startTime.split(':');
+  const [eeHours, eeMinutes] = props.endTime.split(':');
+
+  const ssHoursNumber = Number(ssHours);
+  const eeHoursNumber = Number(eeHours);
+  const ssMinutesNumber = Number(ssMinutes);
+  const eeMinutesNumber = Number(eeMinutes);
+
+  showTimeLine.value =
+    (hours > ssHoursNumber || (hours === ssHoursNumber && minutes >= ssMinutesNumber)) &&
+    (hours < eeHoursNumber || (hours === eeHoursNumber && minutes <= eeMinutesNumber));
+
+  if (!showTimeLine.value) return;
+
+  // 计算一共有多少分钟
+  const totalMinutes = (eeHoursNumber - ssHoursNumber) * 60 + (eeMinutesNumber - ssMinutesNumber);
+  const allHeight = hasVerticalScroll.value ? totalHeight.value : gridContainerHeight.value;
+  const oneMinuteHeight = allHeight / totalMinutes;
+
+  const nowMinutes = hours * 60 + minutes;
+  const diffMinutes = nowMinutes - ssHoursNumber * 60 - ssMinutesNumber;
+
+  timeLineTop.value = oneMinuteHeight * diffMinutes;
+}
+
+function startTimeLineTimer() {
+  if (!timeLineTimer) {
+    calculateTimeLineTop();
+    timeLineTimer = setInterval(() => {
+      calculateTimeLineTop();
+    }, 1000);
+  }
+}
+
+function stopTimeLineTimer() {
+  if (timeLineTimer) {
+    clearInterval(timeLineTimer);
+    timeLineTimer = null;
+  }
+}
+
 onMounted(() => {
   initScrollBarSize();
   calcAllSizes(props.width, props.height);
+  startTimeLineTimer();
 });
 
 onUnmounted(() => {
   clearInterval(autoScrollIntervalId.value);
   autoScrollIntervalId.value = null;
+  stopTimeLineTimer();
 });
 
 defineExpose({
@@ -727,6 +785,16 @@ defineExpose({
           </div>
         </div>
       </div>
+      <!-- 时间线 -->
+      <div
+        v-if="showTimeLine"
+        class="v-time-line"
+        :style="{ transform: `translateX(${scrollLeft}px)`, top: `${timeLineTop}px` }"
+      >
+        <!-- 左箭头 -->
+        <div class="v-time-line-arrow-left" :style="{ left: `${socrollXBarHeight}px` }"></div>
+        <div class="v-time-line-arrow-right" :style="{ right: `${socrollXBarHeight}px` }"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -920,5 +988,31 @@ defineExpose({
 }
 .virtual-grid-cell-disabled {
   background: var(--nm-color-fill-tertiary, #f9f9f9);
+}
+/* 时间线 */
+.v-time-line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--nm-primary-color, #3e74fd);
+}
+.v-time-line-arrow-left {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 10px solid var(--nm-primary-color, #3e74fd);
+  transform: rotate(90deg) translateX(-4px) translateY(14px);
+}
+.v-time-line-arrow-right {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 10px solid var(--nm-primary-color, #3e74fd);
+  transform: rotate(270deg) translateX(4px) translateY(14px);
 }
 </style>

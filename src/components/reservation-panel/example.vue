@@ -75,18 +75,6 @@ const resources = ref([
  * @param currentTime HH:mm
  */
 function cellDisabled(currentResource, currentTime) {
-  const now = new Date();
-  const nowHour = now.getHours().toString().padStart(2, '0');
-  const nowMinute = now.getMinutes().toString().padStart(2, '0');
-  const [cellHour, cellMinute] = currentTime.split(':');
-
-  if (
-    parseInt(cellHour) < nowHour ||
-    (parseInt(cellHour) === nowHour && parseInt(cellMinute) < nowMinute)
-  ) {
-    return true;
-  }
-
   return false;
 }
 

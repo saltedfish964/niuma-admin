@@ -96,6 +96,10 @@ const props = defineProps({
   eventDisabled: {
     type: Function,
   },
+  beforeEventDrop: {
+    type: Function,
+    default: () => Promise.resolve(true),
+  },
 });
 
 const emit = defineEmits(['event-change']);
@@ -680,6 +684,7 @@ defineExpose({
           :events="props.events"
           :cell-disabled="props.cellDisabled"
           :event-disabled="props.eventDisabled"
+          :before-event-drop="props.beforeEventDrop"
           @move="throttleOnDragListMove"
           @moveend="onDragListMoveend"
           @height-resize-move="throttleOnHeightResizeMove"

@@ -57,6 +57,10 @@ const props = defineProps({
   eventDisabled: {
     type: Function,
   },
+  beforeEventDrop: {
+    type: Function,
+    default: () => Promise.resolve(true),
+  },
 });
 
 const emit = defineEmits([
@@ -124,12 +128,17 @@ function heightResizeUpdateCurrentActiveItemStyle(el, item, cell) {
   el.style.height = `${height}px`;
 }
 
-function updateEventTimeByCellStartTime(item, cell) {
+async function updateEventTimeByCellStartTime(item, cell) {
   if (!item || !cell) return;
   const isDisabled = props.cellDisabled
     ? props.cellDisabled(props.resources[cell.column], props.timeSlots[cell.row])
     : false;
   if (isDisabled) {
+    emit('event-change', item);
+    return;
+  }
+  const beforeEventDropResult = await props.beforeEventDrop(item);
+  if (!beforeEventDropResult) {
     emit('event-change', item);
     return;
   }
@@ -268,18 +277,31 @@ function onMousemove(event) {
   emit('move', event.clientX, event.clientY);
 }
 
-function onMouseup() {
+async function onMouseup() {
   document.removeEventListener('mousemove', onMousemove);
   document.removeEventListener('mouseup', onMouseup);
 
+  if (currentDragItemHighlight) {
+    currentDragItemHighlight.remove();
+    containerElClone.remove();
+    currentDragItemHighlight = null;
+    containerElClone = null;
+  }
+
+  // 移除克隆元素
+  if (currentDragItemClone) {
+    document.body.removeChild(currentDragItemClone);
+    currentDragItemClone = null;
+  }
+
   if (currentDragItem) {
-    updateEventTimeByCellStartTime(currentActiveItem.value, props.currentCell);
+    currentDragItem.style.opacity = '1';
+    await updateEventTimeByCellStartTime(currentActiveItem.value, props.currentCell);
     dragendUpdateCurrentActiveItemStyle(
       currentDragItem,
       currentActiveItem.value,
       props.currentCell,
     );
-    currentDragItem.style.opacity = '1';
     // 拖拽完成后，滚动到当前元素
     const activeKey = currentActiveItem.value.key;
     nextTick(() => {
@@ -301,19 +323,6 @@ function onMouseup() {
         }
       });
     });
-  }
-
-  if (currentDragItemHighlight) {
-    currentDragItemHighlight.remove();
-    containerElClone.remove();
-    currentDragItemHighlight = null;
-    containerElClone = null;
-  }
-
-  // 移除克隆元素
-  if (currentDragItemClone) {
-    document.body.removeChild(currentDragItemClone);
-    currentDragItemClone = null;
   }
 
   currentDragItemX = 0;

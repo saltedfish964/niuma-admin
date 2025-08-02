@@ -82,6 +82,7 @@ const props = defineProps({
    */
   cellDisabled: {
     type: Function,
+    default: () => false,
   },
   /**
    * 控制事件是否禁用的回调(是否允许拖拽)
@@ -90,6 +91,15 @@ const props = defineProps({
    */
   eventDisabled: {
     type: Function,
+    default: () => false,
+  },
+  /**
+   * event 放下之前的回调，返回 false 可阻止事件放下，支持 Promise
+   * @param {object} event 事件
+   */
+  beforeEventDrop: {
+    type: Function,
+    default: () => Promise.resolve(true),
   },
 });
 
@@ -251,6 +261,7 @@ onBeforeUnmount(() => {
       :events="currentEvents"
       :cell-disabled="props.cellDisabled"
       :event-disabled="props.eventDisabled"
+      :before-event-drop="props.beforeEventDrop"
       @event-change="onEventChange"
     >
       <template #default="{ item, rowIndex, colIndex }">

@@ -426,6 +426,14 @@ function addEvent(event) {
   emit('event-change', { type: 'add', event });
 }
 
+function removeEventById(id) {
+  if (!id) return;
+  const existingEvent = currentEvents.value.find((item) => item.id === id);
+  if (!existingEvent) return;
+  currentEvents.value = currentEvents.value.filter((item) => item.id !== id);
+  emit('event-change', { type: 'remove', event: existingEvent });
+}
+
 watch(
   () => props.totalHeight,
   () => {
@@ -439,12 +447,9 @@ onMounted(() => {
     initDragItemStyle();
   });
   bus.on('add-event', addEvent);
+  bus.on('remove-event-by-id', removeEventById);
   initDragItemStyle();
 });
-
-function testClick() {
-  console.log('拖拽');
-}
 </script>
 
 <template>

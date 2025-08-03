@@ -261,6 +261,9 @@ function onEventChange({ type, event }) {
       currentEvents.value[index].resourceId = event.resourceId;
     }
   }
+  if (type === 'remove') {
+    currentEvents.value = currentEvents.value.filter((e) => e.id !== event.id);
+  }
   currentEvents.value = calculateOffsets(
     currentEvents.value.map((event) => {
       const newItem = { ...event };
@@ -277,6 +280,10 @@ function onEventChange({ type, event }) {
 
 function addEvent(event) {
   bus.emit('add-event', event);
+}
+
+function removeEventById(id) {
+  bus.emit('remove-event-by-id', id);
 }
 
 onMounted(() => {
@@ -300,6 +307,7 @@ onBeforeUnmount(() => {
 
 defineExpose({
   addEvent,
+  removeEventById,
 });
 </script>
 

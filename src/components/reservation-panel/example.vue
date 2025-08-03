@@ -1,6 +1,7 @@
 <script setup>
 import { ref, useTemplateRef } from 'vue';
 import VReservationPanel from './reservation-panel.vue';
+import { remove } from 'lodash-es';
 
 const reservationPanel = useTemplateRef('reservationPanel');
 
@@ -93,6 +94,10 @@ function addEvent() {
     endTime: '17:00',
   });
 }
+
+function removeEvent(event) {
+  reservationPanel.value.removeEventById(event.id);
+}
 </script>
 
 <template>
@@ -117,7 +122,8 @@ function addEvent() {
           <template #drag-handle="{ event }">
             <div style="height: 100%">
               <!-- 给元素加上 data-drag，可以拖拽 -->
-              <button data-drag>拖拽区域</button>
+              <button data-drag>拖拽</button>
+              <button @click="removeEvent(event)">删除</button>
             </div>
           </template>
         </v-reservation-panel>

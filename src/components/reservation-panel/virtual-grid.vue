@@ -42,11 +42,6 @@ const props = defineProps({
     type: Number,
     default: 5,
   },
-  // 数据获取函数
-  getItemData: {
-    type: Function,
-    default: (row, col) => `Item (${row}, ${col})`,
-  },
   // 列宽配置，格式: { columnIndex: width }
   columnsWidth: {
     type: Object,
@@ -177,11 +172,6 @@ const timeSlotsGroup = computed(() => {
     };
   });
 });
-
-// 获取指定位置的数据
-function getItem(rowIndex, colIndex) {
-  return props.getItemData(rowIndex, colIndex);
-}
 
 /**
  * 获取元素的滚动比例（0~1范围）
@@ -756,6 +746,9 @@ defineExpose({
           <template #drag-handle="{ event }">
             <slot name="drag-handle" :event="event"></slot>
           </template>
+          <template #drag-content="{ event }">
+            <slot name="drag-content" :event="event"> </slot>
+          </template>
         </drag-list>
         <div
           v-for="row in visibleRows"
@@ -784,12 +777,12 @@ defineExpose({
             }"
           >
             <slot
-              :item="getItem(row.index, col.index)"
+              name="cell-item"
               :row-index="row.index"
               :col-index="col.index"
-            >
-              {{ getItem(row.index, col.index) }}
-            </slot>
+              :resource="props.resources[col.index]"
+              :time-slot="props.timeSlots[row.index]"
+            ></slot>
           </div>
         </div>
       </div>

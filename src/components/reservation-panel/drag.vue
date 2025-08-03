@@ -467,14 +467,21 @@ onMounted(() => {
       <div class="drag-item-content">
         <div
           class="drag-handle"
-          :style="{ height: '32px' }"
           :ref="(el) => setDragRef(el, index)"
           @mousedown="(e) => onMousedown(e, item, index)"
         >
-          <slot name="drag-handle" :event="item"></slot>
+          <slot name="drag-handle" :event="item">
+            <div class="drag-handle-content" data-drag></div>
+          </slot>
         </div>
-        <div>{{ item.name }}</div>
-        <div>{{ item.startTime }} - {{ item.endTime }}</div>
+        <div class="drag-content">
+          <slot name="drag-content" :event="item">
+            <div class="default-drag-content">
+              <div>{{ item.name }}</div>
+              <div>{{ item.startTime }} - {{ item.endTime }}</div>
+            </div>
+          </slot>
+        </div>
       </div>
       <div
         :class="[
@@ -511,11 +518,25 @@ onMounted(() => {
   background-color: var(--nm-color-bg-container, #f5f5f5);
   border-radius: 4px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .drag-handle {
   background: var(--nm-primary-color, #3e74fd);
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
+  flex: none;
+}
+.drag-handle-content {
+  height: 32px;
+}
+.drag-content {
+  flex: 1;
+  overflow: hidden;
+}
+.default-drag-content {
+  padding: 8px;
+  height: 100%;
 }
 .height-resize-handle {
   position: absolute;

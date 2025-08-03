@@ -339,8 +339,17 @@ defineExpose({
       <template #drag-handle="{ event }">
         <slot name="drag-handle" :event="event"></slot>
       </template>
-      <template #default="{ item, rowIndex, colIndex }">
-        <div class="cell-content"></div>
+      <template #drag-content="{ event }">
+        <slot name="drag-content" :event="event"> </slot>
+      </template>
+      <template #cell-item="{ rowIndex, colIndex, resource, timeSlot }">
+        <slot
+          name="cell-item"
+          :row-index="rowIndex"
+          :col-index="colIndex"
+          :resource="resource"
+          :time-slot="timeSlot"
+        ></slot>
       </template>
     </virtual-grid>
   </div>
@@ -354,8 +363,5 @@ defineExpose({
   color: var(--nm-color-text, rgba(0, 0, 0, 0.88));
   background: var(--nm-color-bg-container);
   overflow: hidden;
-}
-.cell-content {
-  height: 100%;
 }
 </style>

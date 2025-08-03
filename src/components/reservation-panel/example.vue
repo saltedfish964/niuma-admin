@@ -1,7 +1,6 @@
 <script setup>
 import { ref, useTemplateRef } from 'vue';
 import VReservationPanel from './reservation-panel.vue';
-import { remove } from 'lodash-es';
 
 const reservationPanel = useTemplateRef('reservationPanel');
 
@@ -86,17 +85,35 @@ function eventDisabled(event) {
 }
 
 function addEvent() {
+  // 随机 resourceId
+  const resourceId = Math.floor(Math.random() * resources.value.length) + 1;
+  // 随机一个 9 到 17 之间的时间
+  const hour = Math.floor(Math.random() * (15 - 9 + 1)) + 9;
+  const startTime = `${hour.toString().padStart(2, '0')}:00`;
+  const endTime = `${(hour + 2).toString().padStart(2, '0')}:00`;
   reservationPanel.value.addEvent({
     id: Date.now(),
-    resourceId: 1,
+    resourceId,
     name: '预约8',
-    startTime: '15:00',
-    endTime: '17:00',
+    startTime,
+    endTime,
   });
 }
 
 function removeEvent(event) {
   reservationPanel.value.removeEventById(event.id);
+}
+
+function beforeEventDrop(event) {
+  return new Promise((resolve) => {
+    let result = confirm('您确定要执行此操作吗？');
+    if (result) {
+      resolve(true);
+    } else {
+      resolve(false);
+    }
+  });
+  // return true;
 }
 </script>
 
@@ -113,10 +130,17 @@ function removeEvent(event) {
           :resources="resources"
           :cell-disabled="cellDisabled"
           :event-disabled="eventDisabled"
+          :before-event-drop="beforeEventDrop"
         >
           <template #header-item="{ resource }">
             <div style="height: 100%; display: flex; align-items: center; padding: 0 8px">
               {{ resource.name }}
+            </div>
+          </template>
+          <template #drag-handle="{ event }">
+            <div class="custom-drag-handle">
+              <span data-drag>拖拽</span>
+              <button @click="removeEvent(event)">删除</button>
             </div>
           </template>
         </v-reservation-panel>
@@ -146,5 +170,8 @@ function removeEvent(event) {
 .panel {
   flex: 1;
   overflow: auto;
+}
+.custom-drag-handle {
+  height: 32px;
 }
 </style>

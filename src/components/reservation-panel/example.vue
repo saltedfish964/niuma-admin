@@ -114,6 +114,12 @@ function addEvent() {
               {{ resource.name }}
             </div>
           </template>
+          <template #drag-handle="{ event }">
+            <div style="height: 100%">
+              <!-- 给元素加上 data-drag，可以拖拽 -->
+              <button data-drag>拖拽区域</button>
+            </div>
+          </template>
         </v-reservation-panel>
       </div>
     </div>

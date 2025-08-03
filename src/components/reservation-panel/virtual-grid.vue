@@ -752,7 +752,11 @@ defineExpose({
           @height-resize-move="throttleOnHeightResizeMove"
           @event-change="onEventChange"
           @event-scroll-to-view-end="onEventScrollToViewEnd"
-        ></drag-list>
+        >
+          <template #drag-handle="{ event }">
+            <slot name="drag-handle" :event="event"></slot>
+          </template>
+        </drag-list>
         <div
           v-for="row in visibleRows"
           :key="row.index"

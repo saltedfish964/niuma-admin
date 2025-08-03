@@ -328,6 +328,9 @@ defineExpose({
       <template #header-item="{ resource }">
         <slot name="header-item" :resource="resource"></slot>
       </template>
+      <template #drag-handle="{ event }">
+        <slot name="drag-handle" :event="event"></slot>
+      </template>
       <template #default="{ item, rowIndex, colIndex }">
         <div class="cell-content"></div>
       </template>

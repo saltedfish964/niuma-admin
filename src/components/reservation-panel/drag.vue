@@ -88,6 +88,7 @@ const itemsRef = useTemplateRef('items');
 
 const currentEvents = ref(props.events.map((item) => ({ ...item, key: `${item.id}` })));
 const currentActiveItem = ref(null);
+const dragRefs = ref([]);
 
 const totalMinutes = computed(() => {
   return getMinutesDiff(props.startTime, props.endTime);
@@ -95,6 +96,10 @@ const totalMinutes = computed(() => {
 const oneMinuteHeight = computed(() => {
   return props.totalHeight / totalMinutes.value;
 });
+
+function setDragRef(el, index) {
+  dragRefs.value[index] = el;
+}
 
 function dragendUpdateCurrentActiveItemStyle(el, item, cell) {
   if (!el || !cell || !item) return;
@@ -198,9 +203,15 @@ function getDragItemByChild(child) {
   return null;
 }
 
-function onMousedown(event, item) {
+function onMousedown(event, item, index) {
   const isDisabled = props.eventDisabled ? props.eventDisabled(item) : false;
   if (isDisabled) return;
+
+  // 判断是否点击到了拖拽元素
+  const isDragElement = event.target.hasAttribute('data-drag');
+  const currentRef = dragRefs.value[index];
+  const isDefaultDragHandle = event.target === currentRef;
+  if (!isDragElement && !isDefaultDragHandle) return;
 
   document.addEventListener('mousemove', onMousemove);
   document.addEventListener('mouseup', onMouseup);
@@ -430,12 +441,16 @@ onMounted(() => {
   bus.on('add-event', addEvent);
   initDragItemStyle();
 });
+
+function testClick() {
+  console.log('拖拽');
+}
 </script>
 
 <template>
   <div class="drag-item-list">
     <div
-      v-for="item in currentEvents"
+      v-for="(item, index) in currentEvents"
       :key="item.id"
       :data-key="item.key"
       ref="items"
@@ -448,8 +463,11 @@ onMounted(() => {
         <div
           class="drag-handle"
           :style="{ height: '32px' }"
-          @mousedown="(e) => onMousedown(e, item)"
-        ></div>
+          :ref="(el) => setDragRef(el, index)"
+          @mousedown="(e) => onMousedown(e, item, index)"
+        >
+          <slot name="drag-handle" :event="item"></slot>
+        </div>
         <div>{{ item.name }}</div>
         <div>{{ item.startTime }} - {{ item.endTime }}</div>
       </div>

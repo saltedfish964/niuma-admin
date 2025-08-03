@@ -791,11 +791,7 @@ defineExpose({
         v-if="showTimeLine"
         class="v-time-line"
         :style="{ transform: `translateX(${scrollLeft}px)`, top: `${timeLineTop}px` }"
-      >
-        <!-- 左箭头 -->
-        <div class="v-time-line-arrow-left" :style="{ left: `${socrollXBarHeight}px` }"></div>
-        <div class="v-time-line-arrow-right" :style="{ right: `${socrollXBarHeight}px` }"></div>
-      </div>
+      ></div>
     </div>
   </div>
 </template>
@@ -995,26 +991,8 @@ defineExpose({
   position: absolute;
   left: 0;
   width: 100%;
-  height: 2px;
+  height: 1px;
   background: var(--nm-primary-color, #3e74fd);
   z-index: 1;
-}
-.v-time-line-arrow-left {
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 3px solid transparent;
-  border-right: 3px solid transparent;
-  border-bottom: 6px solid var(--nm-primary-color, #3e74fd);
-  transform: rotate(90deg) translateX(-2px) translateY(12px);
-}
-.v-time-line-arrow-right {
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 3px solid transparent;
-  border-right: 3px solid transparent;
-  border-bottom: 6px solid var(--nm-primary-color, #3e74fd);
-  transform: rotate(270deg) translateX(2px) translateY(12px);
 }
 </style>

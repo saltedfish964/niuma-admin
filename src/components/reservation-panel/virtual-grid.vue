@@ -548,7 +548,9 @@ defineExpose({
             borderBottom: !isScrolledToTop ? 'var(--nm-border, 1px solid #ddd)' : 'none',
           }"
         >
-          {{ props.resources[col.index]?.name }}
+          <slot name="header-item" :resource="props.resources[col.index]">
+            {{ props.resources[col.index]?.name }}
+          </slot>
         </div>
       </div>
     </div>

@@ -108,7 +108,13 @@ function addEvent() {
           :resources="resources"
           :cell-disabled="cellDisabled"
           :event-disabled="eventDisabled"
-        ></v-reservation-panel>
+        >
+          <template #header-item="{ resource }">
+            <div style="height: 100%; display: flex; align-items: center; padding: 0 8px">
+              {{ resource.name }}
+            </div>
+          </template>
+        </v-reservation-panel>
       </div>
     </div>
   </div>

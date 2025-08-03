@@ -325,6 +325,9 @@ defineExpose({
       :show-time-line="props.showTimeLine"
       @event-change="onEventChange"
     >
+      <template #header-item="{ resource }">
+        <slot name="header-item" :resource="resource"></slot>
+      </template>
       <template #default="{ item, rowIndex, colIndex }">
         <div class="cell-content"></div>
       </template>

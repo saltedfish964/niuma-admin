@@ -69,14 +69,14 @@ const props = defineProps({
   /**
    * 单元格宽度
    */
-  itemWidth: {
+  cellWidth: {
     type: Number,
     default: 120,
   },
   /**
    * 默认单元格高度
    */
-  defaultItemHeight: {
+  cellHeight: {
     type: Number,
     default: 32,
   },
@@ -86,6 +86,13 @@ const props = defineProps({
   showTimeLine: {
     type: Boolean,
     default: true,
+  },
+  /**
+   * 表头高度
+   */
+  headerHeight: {
+    type: Number,
+    default: 32,
   },
   /**
    * 控制单元格是否禁用的回调
@@ -244,7 +251,7 @@ function calculateCustomWidth(maxOffsets = {}) {
     const val = maxOffsets[key];
     const colIndex = currentResources.value.findIndex((resource) => resource.id === val.id);
     if (colIndex !== -1) {
-      customWidth.value[colIndex] = props.itemWidth * (val.maxOffset + 1);
+      customWidth.value[colIndex] = props.cellWidth * (val.maxOffset + 1);
     }
   });
 }
@@ -316,7 +323,8 @@ defineExpose({
     <virtual-grid
       :row-count="timeSlots.length"
       :col-count="currentResources.length"
-      :item-width="props.itemWidth"
+      :cell-width="props.cellWidth"
+      :cell-height="props.cellHeight"
       :width="gridWidth"
       :height="gridHeight"
       :get-item-data="getCellData"
@@ -331,6 +339,7 @@ defineExpose({
       :event-disabled="props.eventDisabled"
       :before-event-drop="props.beforeEventDrop"
       :show-time-line="props.showTimeLine"
+      :header-height="props.headerHeight"
       @event-change="onEventChange"
     >
       <template #header-item="{ resource }">

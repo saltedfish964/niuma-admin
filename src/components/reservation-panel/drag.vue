@@ -4,11 +4,11 @@ import { useEventBus } from '@src/composables/use-event-bus';
 import { addMinutes, compareTime, getMinutesDiff } from './time';
 
 const props = defineProps({
-  itemWidth: {
+  cellWidth: {
     type: Number,
-    default: 240,
+    default: 120,
   },
-  itemHeight: {
+  cellHeight: {
     type: Number,
     default: 32,
   },
@@ -108,27 +108,27 @@ function dragendUpdateCurrentActiveItemStyle(el, item, cell) {
   let multiplicand = rawDiffMinutes / props.timeInterval;
   let remainder = rawDiffMinutes % props.timeInterval;
   if (item.endTime === props.endTime && remainder > 0) {
-    height = (parseInt(multiplicand) + 1) * props.itemHeight;
+    height = (parseInt(multiplicand) + 1) * props.cellHeight;
   } else {
-    height = multiplicand * props.itemHeight;
+    height = multiplicand * props.cellHeight;
   }
   const { top, left } = cell;
-  const newLeft = left + props.itemWidth * item.offset;
+  const newLeft = left + props.cellWidth * item.offset;
   el.style.top = `${top}px`;
   el.style.left = `${newLeft}px`;
   el.style.height = `${height}px`;
 }
 
-function heightResizeUpdateCurrentActiveItemStyle(el, item, cell) {
+function heightResizeUpdateCurrentActiveItemStyle(el, item) {
   if (!el || !item) return;
   let height = 0;
   const rawDiffMinutes = getMinutesDiff(item.startTime, item.endTime);
   let multiplicand = rawDiffMinutes / props.timeInterval;
   let remainder = rawDiffMinutes % props.timeInterval;
   if (item.endTime === props.endTime && remainder > 0) {
-    height = (parseInt(multiplicand) + 1) * props.itemHeight;
+    height = (parseInt(multiplicand) + 1) * props.cellHeight;
   } else {
-    height = multiplicand * props.itemHeight;
+    height = multiplicand * props.cellHeight;
   }
   el.style.height = `${height}px`;
 }
@@ -373,11 +373,7 @@ function onHeightResizeMouseup() {
 
   if (currentResizeItem) {
     updateEventTimeByCellEndTime(currentActiveItem.value, props.currentCell);
-    heightResizeUpdateCurrentActiveItemStyle(
-      currentResizeItem,
-      currentActiveItem.value,
-      props.currentCell,
-    );
+    heightResizeUpdateCurrentActiveItemStyle(currentResizeItem, currentActiveItem.value);
   }
 }
 
@@ -392,11 +388,11 @@ function initDragItemStyle() {
       const findResourceIndex =
         props.resources.findIndex((resource) => resource.id === dragItem.resourceId) || 0;
       left = props.columnLeftPositions[findResourceIndex] || 0;
-      left += props.itemWidth * dragItem.offset;
+      left += props.cellWidth * dragItem.offset;
       elItem.style.left = `${left}px`;
       elItem.style.top = `${topMinutes * oneMinuteHeight.value}px`;
       elItem.style.height = `${heightMinutes * oneMinuteHeight.value}px`;
-      elItem.style.width = `${props.itemWidth}px`;
+      elItem.style.width = `${props.cellWidth}px`;
     });
   });
 }

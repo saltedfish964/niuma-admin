@@ -18,12 +18,12 @@ const props = defineProps({
     required: true,
   },
   // 默认单元格宽度
-  itemWidth: {
+  cellWidth: {
     type: Number,
     default: 100,
   },
   // 单元格高度
-  defaultItemHeight: {
+  cellHeight: {
     type: Number,
     default: 32,
   },
@@ -723,8 +723,8 @@ defineExpose({
       >
         <drag-list
           :container="containerRef"
-          :item-width="props.itemWidth"
-          :item-height="currentItemHeight"
+          :cell-width="props.cellWidth"
+          :cell-height="currentItemHeight"
           :current-cell="currentCell"
           :start-time="props.startTime"
           :end-time="props.endTime"

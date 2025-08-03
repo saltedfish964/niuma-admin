@@ -3,7 +3,7 @@ import { debounce } from 'lodash-es';
 
 export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
   // 默认格子高度
-  const currentItemHeight = ref(props.defaultItemHeight);
+  const currentItemHeight = ref(props.cellHeight);
 
   const scrollTop = ref(0);
   const scrollLeft = ref(0);
@@ -120,7 +120,7 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
 
   // 获取指定列的宽度
   function getColumnWidth(colIndex) {
-    return props.columnsWidth[colIndex] || props.itemWidth;
+    return props.columnsWidth[colIndex] || props.cellHeight;
   }
 
   // 滚动事件处理
@@ -137,7 +137,7 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
 
   function calcAllSizes(componentWidth, componentHeight) {
     // 重置格子高度
-    currentItemHeight.value = props.defaultItemHeight;
+    currentItemHeight.value = props.cellHeight;
 
     // 网格可视区域宽高
     let gridViewWidth = componentWidth - (props.leftFixedWidth + props.rightFixedWidth);
@@ -180,7 +180,7 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
     if (!hasVScroll) {
       currentItemHeight.value = gridViewHeight / props.rowCount;
     } else {
-      currentItemHeight.value = props.defaultItemHeight;
+      currentItemHeight.value = props.cellHeight;
     }
   }
 
@@ -188,9 +188,18 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
     return props.cellDisabled ? props.cellDisabled(props.resources[x], props.timeSlots[y]) : false;
   }
 
-  watch([() => props.width, () => props.height, () => props.events], ([w, h]) => {
-    debounceCalcAllSizes(w, h);
-  });
+  watch(
+    [
+      () => props.width,
+      () => props.height,
+      () => props.events,
+      () => props.resources,
+      () => props.cellHeight,
+    ],
+    ([w, h]) => {
+      debounceCalcAllSizes(w, h);
+    },
+  );
 
   return {
     currentItemHeight,

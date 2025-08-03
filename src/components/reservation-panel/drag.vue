@@ -2,6 +2,7 @@
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useEventBus } from '@src/composables/use-event-bus';
 import { addMinutes, compareTime, getMinutesDiff } from './time';
+import { checkMissingFields } from './check-missing-fields';
 
 const props = defineProps({
   cellWidth: {
@@ -395,11 +396,6 @@ function initDragItemStyle() {
       elItem.style.width = `${props.cellWidth}px`;
     });
   });
-}
-
-function checkMissingFields(obj, requiredFields) {
-  const objKeys = Object.keys(obj);
-  return requiredFields.filter((field) => !objKeys.includes(field));
 }
 
 function addEvent(event) {

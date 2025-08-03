@@ -285,6 +285,35 @@ function onEventChange({ type, event }) {
   });
 }
 
+function filterEvents(events = []) {
+  const [sHours, sMinutes] = props.startTime.split(':');
+  const [eHours, eMinutes] = props.endTime.split(':');
+  const sHoursNum = Number(sHours);
+  const eHoursNum = Number(eHours);
+  const sMinutesNum = Number(sMinutes);
+  const eMinutesNum = Number(eMinutes);
+  const result = events.filter((event) => {
+    const newEvent = { ...event };
+    const [ssHours, ssMinutes] = newEvent.startTime.split(':');
+    const [eeHours, eeMinutes] = newEvent.endTime.split(':');
+    const ssHoursNum = Number(ssHours);
+    const eeHoursNum = Number(eeHours);
+    const ssMinutesNum = Number(ssMinutes);
+    const eeMinutesNum = Number(eeMinutes);
+    const isVisible =
+      (sHoursNum <= ssHoursNum || (sHoursNum === ssHoursNum && sMinutesNum <= ssMinutesNum)) &&
+      (eHoursNum >= eeHoursNum || (eHoursNum === eeHoursNum && eMinutesNum >= eeMinutesNum));
+
+    if (!isVisible) {
+      console.warn(`id 为 ${event.id} 的事件不在预定的时间范围内，已被过滤`);
+    }
+
+    return isVisible;
+  });
+
+  return result;
+}
+
 function addEvent(event) {
   bus.emit('add-event', event);
 }
@@ -294,7 +323,8 @@ function removeEventById(id) {
 }
 
 onMounted(() => {
-  currentEvents.value = calculateOffsets(props.events);
+  currentEvents.value = filterEvents(props.events);
+  currentEvents.value = calculateOffsets(currentEvents.value);
   calculateCustomWidth(calculateMaxOffsets(currentEvents.value));
   bus.emit('update-current-events', currentEvents.value);
   observer = new ResizeObserver(debounce(onContainerResize, 16));

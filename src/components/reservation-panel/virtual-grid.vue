@@ -3,8 +3,8 @@ import { ref, useTemplateRef, computed, onUnmounted, onMounted, nextTick } from 
 import { throttle } from 'lodash-es';
 import DragList from './drag.vue';
 import { groupTimesByHour } from './time';
-import { useVirtualGrid } from './useVirtualGrid';
-import { useDomScroll } from './useDomScroll';
+import { useVirtualGrid } from './use-virtual-grid';
+import { useDomScroll } from './use-dom-scroll';
 
 const props = defineProps({
   // 总行数

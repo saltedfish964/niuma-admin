@@ -449,36 +449,38 @@ function onEventScrollToViewEnd() {
 }
 
 function calculateTimeLineTop() {
-  if (!props.showTimeLine) {
-    showTimeLine.value = false;
-    return;
-  }
-  const now = new Date();
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  const [ssHours, ssMinutes] = props.startTime.split(':');
-  const [eeHours, eeMinutes] = props.endTime.split(':');
+  setTimeout(() => {
+    if (!props.showTimeLine) {
+      showTimeLine.value = false;
+      return;
+    }
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const [ssHours, ssMinutes] = props.startTime.split(':');
+    const [eeHours, eeMinutes] = props.endTime.split(':');
 
-  const ssHoursNumber = Number(ssHours);
-  const eeHoursNumber = Number(eeHours);
-  const ssMinutesNumber = Number(ssMinutes);
-  const eeMinutesNumber = Number(eeMinutes);
+    const ssHoursNumber = Number(ssHours);
+    const eeHoursNumber = Number(eeHours);
+    const ssMinutesNumber = Number(ssMinutes);
+    const eeMinutesNumber = Number(eeMinutes);
 
-  showTimeLine.value =
-    (hours > ssHoursNumber || (hours === ssHoursNumber && minutes >= ssMinutesNumber)) &&
-    (hours < eeHoursNumber || (hours === eeHoursNumber && minutes <= eeMinutesNumber));
+    showTimeLine.value =
+      (hours > ssHoursNumber || (hours === ssHoursNumber && minutes >= ssMinutesNumber)) &&
+      (hours < eeHoursNumber || (hours === eeHoursNumber && minutes <= eeMinutesNumber));
 
-  if (!showTimeLine.value) return;
+    if (!showTimeLine.value) return;
 
-  // 计算一共有多少分钟
-  const totalMinutes = (eeHoursNumber - ssHoursNumber) * 60 + (eeMinutesNumber - ssMinutesNumber);
-  const allHeight = hasVerticalScroll.value ? totalHeight.value : gridContainerHeight.value;
-  const oneMinuteHeight = allHeight / totalMinutes;
+    // 计算一共有多少分钟
+    const totalMinutes = (eeHoursNumber - ssHoursNumber) * 60 + (eeMinutesNumber - ssMinutesNumber);
+    const allHeight = hasVerticalScroll.value ? totalHeight.value : gridContainerHeight.value;
+    const oneMinuteHeight = allHeight / totalMinutes;
 
-  const nowMinutes = hours * 60 + minutes;
-  const diffMinutes = nowMinutes - ssHoursNumber * 60 - ssMinutesNumber;
+    const nowMinutes = hours * 60 + minutes;
+    const diffMinutes = nowMinutes - ssHoursNumber * 60 - ssMinutesNumber;
 
-  timeLineTop.value = oneMinuteHeight * diffMinutes;
+    timeLineTop.value = oneMinuteHeight * diffMinutes;
+  }, 200);
 }
 
 function startTimeLineTimer() {
@@ -996,23 +998,24 @@ defineExpose({
   width: 100%;
   height: 2px;
   background: var(--nm-primary-color, #3e74fd);
+  z-index: 1;
 }
 .v-time-line-arrow-left {
   position: absolute;
   width: 0;
   height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 10px solid var(--nm-primary-color, #3e74fd);
-  transform: rotate(90deg) translateX(-4px) translateY(14px);
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 6px solid var(--nm-primary-color, #3e74fd);
+  transform: rotate(90deg) translateX(-2px) translateY(12px);
 }
 .v-time-line-arrow-right {
   position: absolute;
   width: 0;
   height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 10px solid var(--nm-primary-color, #3e74fd);
-  transform: rotate(270deg) translateX(4px) translateY(14px);
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: 6px solid var(--nm-primary-color, #3e74fd);
+  transform: rotate(270deg) translateX(2px) translateY(12px);
 }
 </style>

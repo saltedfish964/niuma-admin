@@ -120,7 +120,7 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
 
   // 获取指定列的宽度
   function getColumnWidth(colIndex) {
-    return props.columnsWidth[colIndex] || props.cellHeight;
+    return props.columnsWidth[colIndex] || props.cellWidth;
   }
 
   // 滚动事件处理

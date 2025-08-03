@@ -20,7 +20,7 @@ const props = defineProps({
   // 默认单元格宽度
   cellWidth: {
     type: Number,
-    default: 100,
+    default: 120,
   },
   // 单元格高度
   cellHeight: {
@@ -721,6 +721,7 @@ defineExpose({
         height: `${gridContainerHeight}px`,
         width: `${gridContainerWidth}px`,
         transform: `translateX(${props.leftFixedWidth}px)`,
+        borderTop: props.resources.length === 0 ? 'var(--nm-border, 1px solid #ddd)' : 'none',
       }"
       @scroll="handleScroll"
       @wheel="handleContainerWheel"

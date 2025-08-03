@@ -469,7 +469,7 @@ function calculateTimeLineTop() {
     const nowMinutes = hours * 60 + minutes;
     const diffMinutes = nowMinutes - ssHoursNumber * 60 - ssMinutesNumber;
 
-    timeLineTop.value = oneMinuteHeight * diffMinutes;
+    timeLineTop.value = oneMinuteHeight * diffMinutes + props.headerHeight;
   }, 200);
 }
 
@@ -703,6 +703,17 @@ defineExpose({
       :style="{ width: `${socrollXBarHeight}px`, height: `${socrollXBarHeight}px` }"
     ></div>
 
+    <!-- 时间线 -->
+    <div
+      v-if="showTimeLine"
+      class="v-time-line"
+      :style="{
+        width: `${gridContainerWidth}px`,
+        transform: `translateX(${props.leftFixedWidth}px) translateY(${-scrollTop}px)`,
+        top: `${timeLineTop}px`,
+      }"
+    ></div>
+
     <div
       class="virtual-grid-container"
       ref="container"
@@ -786,12 +797,6 @@ defineExpose({
           </div>
         </div>
       </div>
-      <!-- 时间线 -->
-      <div
-        v-if="showTimeLine"
-        class="v-time-line"
-        :style="{ transform: `translateX(${scrollLeft}px)`, top: `${timeLineTop}px` }"
-      ></div>
     </div>
   </div>
 </template>
@@ -990,7 +995,6 @@ defineExpose({
 .v-time-line {
   position: absolute;
   left: 0;
-  width: 100%;
   height: 1px;
   background: var(--nm-primary-color, #3e74fd);
   z-index: 1;

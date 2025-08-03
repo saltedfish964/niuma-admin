@@ -18,14 +18,14 @@ const props = defineProps({
    */
   endTime: {
     type: String,
-    default: '20:00',
+    default: '23:00',
   },
   /**
    * 时间间隔
    */
   timeInterval: {
     type: Number,
-    default: 60,
+    default: 30,
   },
   /**
    * 资源(如：用户、场地等)

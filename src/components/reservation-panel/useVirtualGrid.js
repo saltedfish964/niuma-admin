@@ -155,8 +155,8 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
 
     // 是否有垂直滚动条
     let hasVScroll =
-      gridContentHeight > gridViewHeight ||
-      gridContentHeight > gridViewHeight - socrollXBarHeight.value;
+      gridContentHeight > gridViewHeight + props.headerHeight ||
+      gridContentHeight > gridViewHeight + props.headerHeight - socrollXBarHeight.value;
     // 是否有水平滚动条
     let hasHScroll =
       gridContentWidth > gridViewWidth || gridContentWidth > gridViewWidth - socrollYBarWidth.value;

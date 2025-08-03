@@ -11,14 +11,14 @@ const props = defineProps({
    */
   startTime: {
     type: String,
-    default: '00:00',
+    default: '09:00',
   },
   /**
    * 结束时间
    */
   endTime: {
     type: String,
-    default: '23:00',
+    default: '17:00',
   },
   /**
    * 时间间隔

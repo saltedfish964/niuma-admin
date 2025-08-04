@@ -1,7 +1,9 @@
 <script setup>
-import VReservationPanelExample from '@src/components/reservation-panel/example.vue';
+defineOptions({
+  name: 'Overview',
+});
 </script>
 
 <template>
-  <v-reservation-panel-example></v-reservation-panel-example>
+  <div>概览</div>
 </template>

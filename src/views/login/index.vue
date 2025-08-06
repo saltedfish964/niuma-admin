@@ -199,7 +199,7 @@ async function onLogin() {
     background: #141414;
   }
   [data-theme='dark'] .right-content {
-    background: #1d1d1d;
+    background: #141414;
   }
 }
 </style>

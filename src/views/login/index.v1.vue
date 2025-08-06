@@ -30,20 +30,14 @@ async function onLogin() {
 </script>
 
 <template>
-  <div class="container">
-    <div
-      class="left-content"
-      :style="{
-        background: layoutStore.darkMode
-          ? '#141414'
-          : 'linear-gradient(to right, #458cfb, #f2f6fe)',
-      }"
-    >
-      <div class="background-deep">
-        <div class="background-inner"></div>
-        <div class="background-img"></div>
-      </div>
-    </div>
+  <div
+    class="background"
+    :style="{
+      backgroundImage: layoutStore.darkMode ? '' : 'linear-gradient(to right, #458cfb, #f2f6fe)',
+      backgroundColor: layoutStore.darkMode ? '#141414' : '',
+    }"
+  >
+    <div class="background-img"></div>
     <div class="right-content">
       <div class="header">
         <span class="title"> Niuma Admin </span>
@@ -62,6 +56,7 @@ async function onLogin() {
               ? ''
               : '0 0 #0000, 0 0 #0000, 0 25px 50px -12px rgb(0 0 0 / 0.25)',
             background: layoutStore.darkMode ? '' : '#ffffffaa',
+            border: layoutStore.darkMode ? 'var(--nm-border)' : '',
           }"
         >
           <div class="form-content-title">登录</div>
@@ -93,7 +88,7 @@ async function onLogin() {
 </template>
 
 <style scoped>
-.container {
+.background {
   height: 100vh;
   width: 100vw;
   overflow: auto;
@@ -106,18 +101,13 @@ async function onLogin() {
   background-position: center;
   background-repeat: no-repeat;
   display: none;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
+  flex-grow: 1;
 }
 .right-content {
   width: 100%;
   flex: none;
   display: flex;
   flex-direction: column;
-  background: var(--nm-color-bg-container);
 }
 .header {
   padding: 1.5rem;
@@ -127,7 +117,7 @@ async function onLogin() {
   justify-content: space-between;
 }
 .header .title {
-  color: var(--nm-color-text);
+  color: #ffffff;
   font-size: 1.5rem;
   font-weight: 700;
 }
@@ -163,43 +153,11 @@ async function onLogin() {
   color: #66748b;
 }
 @media (min-width: 1280px) {
-  .left-content {
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-  }
   .background-img {
     display: block;
-    width: 100%;
-    height: 100%;
-  }
-  .background-deep {
-    background: #f0f2f5;
-    width: 100%;
-    height: 100%;
-  }
-  .background-inner {
-    background: linear-gradient(
-      154deg,
-      #07070915 30%,
-      color-mix(in srgb, var(--nm-primary-color) 30%, transparent) 48%,
-      #07070915 64%
-    );
-    width: 100%;
-    height: 100%;
-    filter: blur(100px);
   }
   .right-content {
-    flex: none;
-    width: 34%;
-
-    border-left: var(--nm-border);
-  }
-  [data-theme='dark'] .background-deep {
-    background: #141414;
-  }
-  [data-theme='dark'] .right-content {
-    background: #1d1d1d;
+    width: 50%;
   }
 }
 </style>

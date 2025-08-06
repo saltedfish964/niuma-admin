@@ -1,8 +1,8 @@
 <script setup>
 import { ref, nextTick, onMounted, onUnmounted, computed } from 'vue';
 import { debounce } from 'lodash-es';
-import CloseIcon from './close-icon.vue';
 import { useLayoutStore } from '@src/store/modules/layout';
+import VIcon from '@src/components/icon/icon.vue';
 
 const emit = defineEmits(['select']);
 
@@ -12,6 +12,8 @@ const isScrolling = ref(false);
 const tabItemRefs = ref();
 const tabItemListRef = ref();
 const hiddenTabs = ref([]);
+// 立刻隐藏 tab 的下拉菜单，解决最大化时下拉菜单定位不正确的问题
+const immediatelyHiddenDropdown = ref(false);
 const activeTabKey = computed(() => layoutStore.activeTabKey);
 
 let container = null;
@@ -140,9 +142,31 @@ function updateHiddenTabs() {
   }
 }
 
-function closeHandler(e, tab) {
-  e.stopPropagation();
+function closeHandler(tab) {
   removeTabByKey(tab.key);
+}
+
+function toggleFullscreen(tab) {
+  layoutStore.toggleIsContentFullscreen();
+  tabClickHandler(tab);
+}
+
+function onContextMenuClick(info, tab) {
+  immediatelyHiddenDropdown.value = true;
+  setTimeout(() => {
+    immediatelyHiddenDropdown.value = false;
+  }, 300);
+  const key = info.key;
+  switch (key) {
+    case 'close':
+      closeHandler(tab);
+      break;
+    case 'fullscreen':
+      toggleFullscreen(tab);
+      break;
+    default:
+      break;
+  }
 }
 
 // 监听容器变化
@@ -184,17 +208,45 @@ onUnmounted(() => {
           :data-key="tab.key"
         >
           <slot name="tab-item" :tab="tab">
-            <div class="v-tabs-item-content" @click="tabClickHandler(tab)">
-              <div v-if="activeTabKey === tab.key" class="v-tabs-item-content-dot">
-                <div class="v-tabs-item-content-dot-inner"></div>
-              </div>
-              <div class="v-tabs-item-content-name">{{ tab.name }}</div>
-              <div v-if="tab.closable" class="v-tabs-item-content-close">
-                <div class="v-tabs-item-content-close-icon" @click="(e) => closeHandler(e, tab)">
-                  <close-icon></close-icon>
+            <a-dropdown
+              :trigger="['contextmenu']"
+              :overlay-className="immediatelyHiddenDropdown ? 'hide-dropdown' : ''"
+            >
+              <div class="v-tabs-item-content" @click="tabClickHandler(tab)">
+                <div v-if="activeTabKey === tab.key" class="v-tabs-item-content-dot">
+                  <div class="v-tabs-item-content-dot-inner"></div>
+                </div>
+                <div class="v-tabs-item-content-name">{{ tab.name }}</div>
+                <div v-if="tab.closable" class="v-tabs-item-content-close">
+                  <div class="v-tabs-item-content-close-icon" @click.stop="closeHandler(tab)">
+                    <v-icon name="ant-design-icon-close-outlined" size="12px"></v-icon>
+                  </div>
                 </div>
               </div>
-            </div>
+              <template #overlay>
+                <a-menu @click="(info) => onContextMenuClick(info, tab)">
+                  <!-- 让菜单项的宽度最少 160px -->
+                  <div style="width: 160px"></div>
+                  <a-menu-item key="close" :disabled="!tab.closable">
+                    <template #icon>
+                      <v-icon name="ant-design-icon-close-outlined"></v-icon>
+                    </template>
+                    <span>关闭</span>
+                  </a-menu-item>
+                  <a-menu-item key="fullscreen">
+                    <template #icon>
+                      <v-icon
+                        v-if="!layoutStore.isContentFullscreen"
+                        name="proicons-icon-full-screen-maximize"
+                        size="20"
+                      ></v-icon>
+                      <v-icon v-else name="proicons-icon-full-screen-minimize" size="20"></v-icon>
+                    </template>
+                    <span>{{ layoutStore.isContentFullscreen ? '还原' : '最大化' }}</span>
+                  </a-menu-item>
+                </a-menu>
+              </template>
+            </a-dropdown>
           </slot>
         </div>
       </TransitionGroup>
@@ -331,5 +383,11 @@ onUnmounted(() => {
     transform: scale(2.4);
     opacity: 0;
   }
+}
+</style>
+
+<style>
+.hide-dropdown {
+  display: none;
 }
 </style>

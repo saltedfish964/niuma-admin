@@ -6,7 +6,7 @@ import { useLayoutStore } from '@src/store/modules/layout';
 import MainMenuItem from '@src/layout/main/main-menu-item.vue';
 import { findTreePathBFS } from '@src/utils/tree';
 import VIcon from '@src/components/icon/icon.vue';
-import TabsController from './tabs/tabs.vue';
+import TabsController from './tabs.vue';
 import HeaderAvatar from './avatar.vue';
 import HeaderBreadcrumb from './breadcrumb.vue';
 import HeaderSetting from './setting.vue';

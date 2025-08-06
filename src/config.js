@@ -84,6 +84,7 @@ const iconsList = [
   'ant-design:setting-outlined',
   'proicons:full-screen-maximize',
   'proicons:full-screen-minimize',
+  'ant-design:close-outlined',
 ];
 
 /**

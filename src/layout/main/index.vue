@@ -206,7 +206,11 @@ function onTransitionEnd(event) {
         </div>
       </div>
       <div class="content-body">
-        <router-view></router-view>
+        <router-view v-slot="{ Component }">
+          <transition name="scale" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
       </div>
     </div>
   </div>
@@ -373,6 +377,17 @@ function onTransitionEnd(event) {
 .main-menu-leave-from {
   width: 60px;
   opacity: 1;
+}
+/* 路由过渡动画 */
+.scale-enter-active,
+.scale-leave-active {
+  transition: all 0.2s ease;
+}
+
+.scale-enter-from,
+.scale-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
 }
 </style>
 

@@ -21,12 +21,12 @@ defineOptions({
 
 <style scoped>
 .page-container {
-  padding: 8px;
+  padding: 16px;
   height: 100%;
 }
 .body {
   height: 100%;
-  border-radius: 4px;
+  border-radius: 8px;
   background: var(--nm-color-bg-container);
   display: flex;
   justify-content: center;

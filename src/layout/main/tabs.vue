@@ -152,17 +152,28 @@ function toggleFullscreen(tab) {
 }
 
 function closeLeftHandler(tab) {
-  const ok = layoutStore.closeLeftTabsByKey(tab);
+  const ok = layoutStore.closeLeftTabs(tab);
   if (ok) {
     tabClickHandler(tab);
   }
 }
 
 function closeRightHandler(tab) {
-  const ok = layoutStore.closeRightTabsByKey(tab);
+  const ok = layoutStore.closeRightTabs(tab);
   if (ok) {
     tabClickHandler(tab);
   }
+}
+
+function closeOtherHandler(tab) {
+  layoutStore.closeOtherTabs(tab);
+  if (activeTabKey.value !== tab.key) {
+    tabClickHandler(tab);
+  }
+}
+
+function refreshPage(tab) {
+  layoutStore.refreshCurrentTab(tab);
 }
 
 function onContextMenuClick(info, tab) {
@@ -184,9 +195,19 @@ function onContextMenuClick(info, tab) {
     case 'close-right':
       closeRightHandler(tab);
       break;
+    case 'close-other':
+      closeOtherHandler(tab);
+      break;
+    case 'refresh':
+      refreshPage(tab);
+      break;
     default:
       break;
   }
+}
+
+function refreshMenuDisabled(tab) {
+  return tab.key !== activeTabKey.value;
 }
 
 // 监听容器变化
@@ -253,6 +274,12 @@ onUnmounted(() => {
                     </template>
                     <span>关闭</span>
                   </a-menu-item>
+                  <a-menu-item key="refresh" :disabled="refreshMenuDisabled(tab)">
+                    <template #icon>
+                      <v-icon name="ant-design-icon-reload-outlined"></v-icon>
+                    </template>
+                    <span>重新加载</span>
+                  </a-menu-item>
                   <a-menu-item key="fullscreen">
                     <template #icon>
                       <v-icon
@@ -264,7 +291,13 @@ onUnmounted(() => {
                     </template>
                     <span>{{ layoutStore.isContentFullscreen ? '还原' : '最大化' }}</span>
                   </a-menu-item>
-                  <a-menu-divider> </a-menu-divider>
+                  <a-menu-divider></a-menu-divider>
+                  <a-menu-item key="close-other">
+                    <template #icon>
+                      <v-icon name="ant-design-icon-swap-outlined" size="20"></v-icon>
+                    </template>
+                    <span>关闭其他标签</span>
+                  </a-menu-item>
                   <a-menu-item key="close-left">
                     <template #icon>
                       <v-icon name="icon-park-outline-icon-to-left" size="20"></v-icon>

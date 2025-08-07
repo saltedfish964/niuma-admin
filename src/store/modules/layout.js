@@ -69,6 +69,7 @@ export const useLayoutStore = defineStore(
     // tabs
     const activeTabKey = ref('');
     const tabsList = ref([]);
+    const renderRouteView = ref(true);
 
     // breadcrumb
     const breadcrumbList = computed(() => {
@@ -122,7 +123,7 @@ export const useLayoutStore = defineStore(
       tabsList.value.push(tab);
     }
 
-    function closeLeftTabsByKey(tab) {
+    function closeLeftTabs(tab) {
       // 判断左边是否有选中的 tab
       const hasActiveTab = tabsList.value.find((item) => item.key === activeTabKey.value);
       if (hasActiveTab) {
@@ -136,7 +137,7 @@ export const useLayoutStore = defineStore(
       return false;
     }
 
-    function closeRightTabsByKey(tab) {
+    function closeRightTabs(tab) {
       // 判断右边是否有选中的 tab
       const hasActiveTab = tabsList.value.find((item) => item.key === activeTabKey.value);
       if (hasActiveTab) {
@@ -217,6 +218,20 @@ export const useLayoutStore = defineStore(
       hasMainMenu.value = has;
     }
 
+    async function refreshCurrentTab(tab) {
+      const currentTab = getActiveTab();
+      if (currentTab.key !== tab.key) return;
+      renderRouteView.value = false;
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      renderRouteView.value = true;
+    }
+
+    function closeOtherTabs(tab) {
+      tabsList.value = tabsList.value.filter((item) => {
+        return item.key === tab.key;
+      });
+    }
+
     function $reset() {
       menuActiveKey.value = undefined;
       menuList.value = [];
@@ -236,6 +251,7 @@ export const useLayoutStore = defineStore(
       secondaryMenuList,
       activeTabKey,
       tabsList,
+      renderRouteView,
       menuCollapsed,
       breadcrumbList,
       darkMode,
@@ -252,8 +268,10 @@ export const useLayoutStore = defineStore(
       setSecondaryMenuOpenKeys,
       hasTab,
       addTab,
-      closeLeftTabsByKey,
-      closeRightTabsByKey,
+      closeLeftTabs,
+      closeRightTabs,
+      refreshCurrentTab,
+      closeOtherTabs,
       updateTabClosable,
       removeTabByKey,
       updateTabByKey,

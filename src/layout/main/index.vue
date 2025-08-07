@@ -208,7 +208,7 @@ function onTransitionEnd(event) {
       <div class="content-body">
         <router-view v-slot="{ Component }">
           <transition name="scale" mode="out-in">
-            <component :is="Component" />
+            <component v-if="layoutStore.renderRouteView" :is="Component" />
           </transition>
         </router-view>
       </div>

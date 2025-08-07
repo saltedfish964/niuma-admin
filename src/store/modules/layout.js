@@ -122,6 +122,35 @@ export const useLayoutStore = defineStore(
       tabsList.value.push(tab);
     }
 
+    function closeLeftTabsByKey(tab) {
+      // 判断左边是否有选中的 tab
+      const hasActiveTab = tabsList.value.find((item) => item.key === activeTabKey.value);
+      if (hasActiveTab) {
+        activeTabKey.value = tab.key;
+        tabsList.value = tabsList.value.slice(
+          tabsList.value.findIndex((item) => item.key === tab.key),
+        );
+        updateTabClosable();
+        return true;
+      }
+      return false;
+    }
+
+    function closeRightTabsByKey(tab) {
+      // 判断右边是否有选中的 tab
+      const hasActiveTab = tabsList.value.find((item) => item.key === activeTabKey.value);
+      if (hasActiveTab) {
+        activeTabKey.value = tab.key;
+        tabsList.value = tabsList.value.slice(
+          0,
+          tabsList.value.findIndex((item) => item.key === tab.key) + 1,
+        );
+        updateTabClosable();
+        return true;
+      }
+      return false;
+    }
+
     function removeTabByKey(key) {
       tabsList.value = tabsList.value.filter((tab) => tab.key !== key);
     }
@@ -223,6 +252,8 @@ export const useLayoutStore = defineStore(
       setSecondaryMenuOpenKeys,
       hasTab,
       addTab,
+      closeLeftTabsByKey,
+      closeRightTabsByKey,
       updateTabClosable,
       removeTabByKey,
       updateTabByKey,

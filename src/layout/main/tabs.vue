@@ -151,6 +151,20 @@ function toggleFullscreen(tab) {
   tabClickHandler(tab);
 }
 
+function closeLeftHandler(tab) {
+  const ok = layoutStore.closeLeftTabsByKey(tab);
+  if (ok) {
+    tabClickHandler(tab);
+  }
+}
+
+function closeRightHandler(tab) {
+  const ok = layoutStore.closeRightTabsByKey(tab);
+  if (ok) {
+    tabClickHandler(tab);
+  }
+}
+
 function onContextMenuClick(info, tab) {
   immediatelyHiddenDropdown.value = true;
   setTimeout(() => {
@@ -163,6 +177,12 @@ function onContextMenuClick(info, tab) {
       break;
     case 'fullscreen':
       toggleFullscreen(tab);
+      break;
+    case 'close-left':
+      closeLeftHandler(tab);
+      break;
+    case 'close-right':
+      closeRightHandler(tab);
       break;
     default:
       break;
@@ -243,6 +263,19 @@ onUnmounted(() => {
                       <v-icon v-else name="proicons-icon-full-screen-minimize" size="20"></v-icon>
                     </template>
                     <span>{{ layoutStore.isContentFullscreen ? '还原' : '最大化' }}</span>
+                  </a-menu-item>
+                  <a-menu-divider> </a-menu-divider>
+                  <a-menu-item key="close-left">
+                    <template #icon>
+                      <v-icon name="icon-park-outline-icon-to-left" size="20"></v-icon>
+                    </template>
+                    <span>关闭左侧标签</span>
+                  </a-menu-item>
+                  <a-menu-item key="close-right">
+                    <template #icon>
+                      <v-icon name="icon-park-outline-icon-to-right" size="20"></v-icon>
+                    </template>
+                    <span>关闭右侧标签</span>
                   </a-menu-item>
                 </a-menu>
               </template>

@@ -85,6 +85,8 @@ const iconsList = [
   'proicons:full-screen-maximize',
   'proicons:full-screen-minimize',
   'ant-design:close-outlined',
+  'icon-park-outline:to-right',
+  'icon-park-outline:to-left',
 ];
 
 /**

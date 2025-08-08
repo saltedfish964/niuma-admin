@@ -12,6 +12,14 @@ const layoutStore = useLayoutStore();
 
 const menuList = ref([
   {
+    key: 'doc',
+    label: '文档',
+    icon: () => h(VIcon, { name: 'ant-design-icon-file-text-outlined' }),
+  },
+  {
+    type: 'divider',
+  },
+  {
     key: 'logout',
     label: '退出登录',
     icon: () => h(VIcon, { name: 'material-symbols-icon-logout-rounded' }),
@@ -24,6 +32,9 @@ function onMenuClick({ key }) {
       userStore.$reset();
       layoutStore.$reset();
       router.replace('/login');
+      break;
+    case 'doc':
+      window.open('https://niuma-admin-doc.salted-fish.top/');
       break;
     default:
       break;
@@ -48,7 +59,7 @@ function onMenuClick({ key }) {
           <a-tag style="margin: 0" color="green">在线</a-tag>
         </div>
         <a-divider style="margin: 8px 0 0 0" />
-        <a-menu :items="menuList" @click="onMenuClick"></a-menu>
+        <a-menu :items="menuList" :selectable="false" @click="onMenuClick"></a-menu>
       </div>
     </template>
   </a-dropdown>

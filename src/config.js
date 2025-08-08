@@ -89,6 +89,7 @@ const iconsList = [
   'icon-park-outline:to-left',
   'ant-design:swap-outlined',
   'ant-design:reload-outlined',
+  'ant-design:file-text-outlined',
 ];
 
 /**

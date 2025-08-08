@@ -47,6 +47,10 @@ function mainMenuClickHandler(menu) {
   if (menu.path) {
     router.push(menu.path);
   }
+  if (menu?.meta?.outlink) {
+    window.open(menu?.meta?.outlink, '_blank');
+    return;
+  }
   layoutStore.setMenuActiveKey(menu.key);
 }
 
@@ -85,6 +89,10 @@ function updateOpenKeys() {
 }
 
 async function secondaryMenuSelectHandler({ item, keyPath }) {
+  if (item?.meta?.outlink) {
+    window.open(item?.meta?.outlink, '_blank');
+    return;
+  }
   if (isEqual(keyPath, layoutStore.secondaryMenuActiveKey)) {
     return;
   }

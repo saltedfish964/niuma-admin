@@ -7,14 +7,11 @@ export function getMenu() {
     setTimeout(() => {
       resolve([
         {
-          key: 'test',
-          title: '测试',
-          path: '/test-iframe',
+          key: 'doc',
+          title: '文档',
           meta: {
-            icon: 'material-symbols-icon-iframe',
-            layout: 'main',
-            component: 'iframe',
-            iframeSrc: 'https://juejin.cn/',
+            icon: 'ant-design-icon-file-text-outlined',
+            outlink: 'https://niuma-admin-doc.salted-fish.top/',
           },
         },
       ]);

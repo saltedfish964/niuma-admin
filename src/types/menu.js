@@ -5,6 +5,8 @@
  * @property {string} component - 路由组件
  * @property {boolean} hide - 是否隐藏菜单
  * @property {boolean} unloadRouter - 不加载路由
+ * @property {string} iframeSrc - iframe 链接
+ * @property {string} outlink - 外部链接
  */
 
 /**

@@ -352,10 +352,7 @@ function onTransitionEnd(event) {
 .content-body {
   flex: 1;
   overflow: auto;
-  background: #f0f2f5;
-}
-[data-theme='dark'] .content-body {
-  background: #010c17;
+  background: var(--nm-color-bg-layout);
 }
 
 /* 动画 */

@@ -118,7 +118,7 @@ function beforeEventDrop(event) {
 </script>
 
 <template>
-  <div class="container">
+  <div class="reservation-panel-example-container">
     <div class="card">
       <div class="controls">
         <a-button type="primary" @click="addEvent">添加预约</a-button>
@@ -150,7 +150,7 @@ function beforeEventDrop(event) {
 </template>
 
 <style scoped>
-.container {
+.reservation-panel-example-container {
   width: 100%;
   height: 100%;
   padding: 8px;

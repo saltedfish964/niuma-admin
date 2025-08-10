@@ -30,7 +30,7 @@ async function onLogin() {
 </script>
 
 <template>
-  <div class="container">
+  <div class="login-view-container">
     <div
       class="left-content"
       :style="{
@@ -93,7 +93,7 @@ async function onLogin() {
 </template>
 
 <style scoped>
-.container {
+.login-view-container {
   height: 100vh;
   width: 100vw;
   overflow: auto;

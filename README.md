@@ -6,11 +6,11 @@ vue3 简易后台模板。
 
 登录
 
-![](./doc//img//login.png)
+![](./doc/img/login.png)
 
 基础布局
 
-![](./doc//img/layout.png)
+![](./doc/img/layout.png)
 
 ## 使用
 

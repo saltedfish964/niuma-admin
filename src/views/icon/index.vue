@@ -97,7 +97,7 @@ async function copyHandler(item) {
 </script>
 
 <template>
-  <div class="container">
+  <div class="icon-view-container">
     <a-row class="icon-list" :gutter="[16, 16]">
       <a-col
         v-for="item in currentIconList"
@@ -181,7 +181,7 @@ async function copyHandler(item) {
 </template>
 
 <style scoped>
-.container {
+.icon-view-container {
   padding: 16px;
 }
 .icon-list {

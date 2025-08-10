@@ -90,6 +90,9 @@ const iconsList = [
   'ant-design:swap-outlined',
   'ant-design:reload-outlined',
   'ant-design:file-text-outlined',
+  'ant-design:info-circle-outlined',
+  'ant-design:caret-down-filled',
+  'ant-design:caret-up-filled',
 ];
 
 /**

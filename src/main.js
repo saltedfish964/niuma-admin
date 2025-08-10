@@ -9,6 +9,7 @@ import 'dayjs/locale/zh-cn';
 import 'ant-design-vue/dist/reset.css';
 import '@src/styles//theme.css';
 import '@src/styles/scroll.css';
+import '@src/styles/tailwind.css';
 
 dayjs.locale('zh-cn');
 

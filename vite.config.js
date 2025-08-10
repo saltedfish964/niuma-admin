@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import Icons from 'unplugin-icons/vite';
 import { FileSystemIconLoader } from 'unplugin-icons/loaders';
+import tailwindcss from '@tailwindcss/vite';
 import NiuMaIconLoader from './plugins/niuma-icon-loader';
 import NiuMaAsyncViewMap from './plugins/niuma-async-view-map';
 import RestartOnFolderChange from './plugins/restart-on-folder-change';
@@ -30,6 +31,7 @@ export default defineConfig({
         props.height = '1em';
       },
     }),
+    tailwindcss(),
   ],
   resolve: {
     alias: {

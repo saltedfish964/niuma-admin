@@ -1,3 +1,7 @@
+html {
+  font-size: 16px;
+}
+
 :root {
   --nm-border-color: rgba(5, 5, 5, 0.06);
   --nm-scrollbar-bg: #ffffff;

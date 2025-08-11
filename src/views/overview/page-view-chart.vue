@@ -11,9 +11,13 @@ echarts.use([TooltipComponent, GridComponent, LineChart, CanvasRenderer]);
 
 const chartRef = useTemplateRef('chart');
 
-onMounted(() => {
+let chartInstance = null;
+let stopResizeObserver = null;
+
+onMounted(async () => {
+  await new Promise((resolve) => setTimeout(resolve, 60));
   if (!chartRef.value) return;
-  const chartInstance = echarts.init(chartRef.value);
+  chartInstance = echarts.init(chartRef.value);
   // 获取过去14天的日期
   const xAxisData = [];
   for (let i = 0; i < 14; i++) {
@@ -72,19 +76,23 @@ onMounted(() => {
     ],
   };
 
-  const { stop: stopResizeObserver } = useResizeObserver(chartRef.value, () => {
+  const { stop } = useResizeObserver(chartRef.value, () => {
     chartInstance.resize();
     chartInstance.setOption(option);
   });
 
-  onBeforeMount(() => {
-    if (chartInstance) {
-      chartInstance.dispose();
-    }
-    if (stopResizeObserver) {
-      stopResizeObserver();
-    }
-  });
+  stopResizeObserver = stop;
+});
+
+onBeforeMount(() => {
+  if (chartInstance) {
+    chartInstance.dispose();
+    chartInstance = null;
+  }
+  if (stopResizeObserver) {
+    stopResizeObserver();
+    stopResizeObserver = null;
+  }
 });
 </script>
 

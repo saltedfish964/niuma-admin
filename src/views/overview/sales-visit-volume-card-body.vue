@@ -21,10 +21,13 @@ const props = defineProps({
 });
 
 const chartRef = useTemplateRef('chart');
+let chartInstance = null;
+let stopResizeObserver = null;
 
-onMounted(() => {
+onMounted(async () => {
+  await new Promise((resolve) => setTimeout(resolve, 60));
   if (!chartRef.value) return;
-  const chartInstance = echarts.init(chartRef.value);
+  chartInstance = echarts.init(chartRef.value);
   const option = {
     tooltip: {
       trigger: 'axis',
@@ -88,19 +91,23 @@ onMounted(() => {
     ],
   };
 
-  const { stop: stopResizeObserver } = useResizeObserver(chartRef.value, () => {
+  const { stop } = useResizeObserver(chartRef.value, () => {
     chartInstance.resize();
     chartInstance.setOption(option);
   });
 
-  onBeforeMount(() => {
-    if (chartInstance) {
-      chartInstance.dispose();
-    }
-    if (stopResizeObserver) {
-      stopResizeObserver();
-    }
-  });
+  stopResizeObserver = stop;
+});
+
+onBeforeMount(() => {
+  if (chartInstance) {
+    chartInstance.dispose();
+    chartInstance = null;
+  }
+  if (stopResizeObserver) {
+    stopResizeObserver();
+    stopResizeObserver = null;
+  }
 });
 </script>
 

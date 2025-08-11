@@ -10,10 +10,13 @@ import { useResizeObserver } from '@vueuse/core';
 echarts.use([TooltipComponent, TitleComponent, PieChart, CanvasRenderer, LabelLayout]);
 
 const chartRef = useTemplateRef('chart');
+let chartInstance = null;
+let stopResizeObserver = null;
 
-onMounted(() => {
+onMounted(async () => {
+  await new Promise((resolve) => setTimeout(resolve, 60));
   if (!chartRef.value) return;
-  const chartInstance = echarts.init(chartRef.value);
+  chartInstance = echarts.init(chartRef.value);
   const option = {
     title: {
       text: '销售额',
@@ -48,19 +51,22 @@ onMounted(() => {
     ],
   };
 
-  const { stop: stopResizeObserver } = useResizeObserver(chartRef.value, () => {
+  const { stop } = useResizeObserver(chartRef.value, () => {
     chartInstance.resize();
     chartInstance.setOption(option);
   });
+  stopResizeObserver = stop;
+});
 
-  onBeforeMount(() => {
-    if (chartInstance) {
-      chartInstance.dispose();
-    }
-    if (stopResizeObserver) {
-      stopResizeObserver();
-    }
-  });
+onBeforeMount(() => {
+  if (chartInstance) {
+    chartInstance.dispose();
+    chartInstance = null;
+  }
+  if (stopResizeObserver) {
+    stopResizeObserver();
+    stopResizeObserver = null;
+  }
 });
 </script>
 

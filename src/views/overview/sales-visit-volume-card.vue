@@ -1,14 +1,11 @@
 <script setup lang="js">
-import { ref } from 'vue';
-import {
-  Card as ACard,
-  Button as AButton,
-  RangePicker as ARangePicker,
-  Row as ARow,
-  Col as ACol,
-} from 'ant-design-vue';
+import { ref, defineAsyncComponent } from 'vue';
+import { Card as ACard, Button as AButton, RangePicker as ARangePicker } from 'ant-design-vue';
 import dayjs from 'dayjs';
-import SalesVisitVolumeCardBody from './sales-visit-volume-card-body.vue';
+
+const SalesVisitVolumeCardBody = defineAsyncComponent(
+  () => import('./sales-visit-volume-card-body.vue'),
+);
 
 const tabList = ref([
   {

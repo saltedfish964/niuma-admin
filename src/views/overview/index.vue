@@ -1,4 +1,5 @@
 <script setup>
+import { defineAsyncComponent } from 'vue';
 import {
   Tooltip as ATooltip,
   Row as ARow,
@@ -8,11 +9,12 @@ import {
   Progress as AProgress,
 } from 'ant-design-vue';
 import VIcon from '@src/components/icon/icon.vue';
-import PageViewChart from './page-view-chart.vue';
-import PayChart from './pay-chart.vue';
 import SalesVisitVolumeCard from './sales-visit-volume-card.vue';
-import HotSearchCard from './hot-search-card.vue';
-import SalesProportionCard from './sales-proportion-card.vue';
+
+const PageViewChart = defineAsyncComponent(() => import('./page-view-chart.vue'));
+const PayChart = defineAsyncComponent(() => import('./pay-chart.vue'));
+const HotSearchCard = defineAsyncComponent(() => import('./hot-search-card.vue'));
+const SalesProportionCard = defineAsyncComponent(() => import('./sales-proportion-card.vue'));
 
 defineOptions({
   name: 'Overview',
@@ -155,25 +157,3 @@ defineOptions({
     </a-row>
   </div>
 </template>
-
-<style scoped>
-.body {
-  height: 100%;
-  border-radius: 8px;
-  background: var(--nm-color-bg-container);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.content h1 {
-  text-align: center;
-}
-.img-container {
-  display: flex;
-  justify-content: center;
-}
-.img-container .img {
-  height: 100%;
-  color: var(--nm-color-text);
-}
-</style>

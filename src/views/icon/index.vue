@@ -1,81 +1,22 @@
 <script setup>
-import { message } from 'ant-design-vue';
+import {
+  message,
+  Row as ARow,
+  Col as ACol,
+  BadgeRibbon as ABadgeRibbon,
+  Card as ACard,
+  TypographyTitle as ATypographyTitle,
+  TypographyParagraph as ATypographyParagraph,
+  TypographyText as ATypographyText,
+  TypographyLink as ATypographyLink,
+  Image as AImage,
+} from 'ant-design-vue';
 import iconList from 'virtual:niuma-icon-loader';
 import { useClipboard } from '@src/composables/use-clipboard';
 import VIcon from '@src/components/icon/icon.vue';
 
 const [messageApi, contextHolder] = message.useMessage();
 const { copy, error } = useClipboard();
-
-const preText = `├─.gitignore
-├─.prettierrc
-├─.vscode
-│ └─extensions.json
-├─doc
-│ └─images
-│   └─preview.png
-├─index.html
-├─package-lock.json
-├─package.json
-├─plugins
-│ ├─niuma-icon-loader.js
-│ └─restart-on-folder-change.js
-├─public
-│ └─vite.svg
-├─README.md
-├─src
-│ ├─App.vue
-│ ├─assets
-│ │ └─icons
-│ │   ├─example.svg
-│ │   ├─gitee.svg
-│ │   ├─juejin.svg
-│ │   ├─vite.svg
-│ │   └─vue.svg
-│ ├─components
-│ │ ├─icon
-│ │ │ └─icon.vue
-│ │ └─tabs
-│ │   ├─close-icon.vue
-│ │   └─tabs.vue
-│ ├─config.js
-│ ├─hooks
-│ │ └─useClipboard.js
-│ ├─layout
-│ │ └─default
-│ │   ├─index.vue
-│ │   └─main-menu-item.vue
-│ ├─main.js
-│ ├─router
-│ │ ├─index.js
-│ │ └─modules
-│ │   ├─default.js
-│ │   └─not-found.js
-│ ├─store
-│ │ ├─index.js
-│ │ └─modules
-│ │   ├─layout.js
-│ │   └─user.js
-│ ├─styles
-│ │ ├─root.css
-│ │ └─scroll.css
-│ ├─utils
-│ │ ├─antd-components-register.js
-│ │ └─tree.js
-│ └─views
-│   ├─home
-│   │ └─index.vue
-│   ├─icon
-│   │ └─index.vue
-│   ├─iframe
-│   │ └─index.vue
-│   ├─not-found
-│   │ └─index.vue
-│   ├─overview
-│   │ └─index.vue
-│   └─workbench
-│     └─index.vue
-└─vite.config.js`;
 
 const currentIconList = iconList.map((item) => {
   const [type, icon] = item.name.split(':');

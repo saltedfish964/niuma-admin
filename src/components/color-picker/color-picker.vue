@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import { Popover as APopover } from 'ant-design-vue';
 import ColorPickerPanel from './color-picker-panel.vue';
 
 const props = defineProps({

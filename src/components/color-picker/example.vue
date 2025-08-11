@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import { Button as AButton } from 'ant-design-vue';
 import VColorPicker from '@src/components/color-picker/color-picker.vue';
 
 const selectedColor = ref('#3498db');

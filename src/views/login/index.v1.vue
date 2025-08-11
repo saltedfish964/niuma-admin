@@ -1,6 +1,14 @@
 <script setup>
 /// <reference path="../../types/menu.js" />
 import { useRouter } from 'vue-router';
+import {
+  Switch as ASwitch,
+  Form as AForm,
+  FormItem as AFormItem,
+  Input as AInput,
+  InputPassword as AInputPassword,
+  Button as AButton,
+} from 'ant-design-vue';
 import { useLayoutStore } from '@src/store/modules/layout';
 import { useUserStore } from '@src/store/modules/user';
 import { getMenu } from '@src/api/menu';

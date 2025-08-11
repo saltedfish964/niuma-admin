@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import { Drawer as ADrawer, Switch as ASwitch, Divider as ADivider } from 'ant-design-vue';
 import VIcon from '@src/components/icon/icon.vue';
 import VColorPickerPanel from '@src/components/color-picker/color-picker-panel.vue';
 import { useLayoutStore } from '@src/store/modules/layout';

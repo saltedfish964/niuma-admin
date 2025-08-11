@@ -72,6 +72,7 @@ const iconsList = [
   'ant-design:caret-down-filled',
   'ant-design:caret-up-filled',
   'ant-design:desktop-outlined',
+  'ant-design:plus-outlined',
 ];
 
 /**

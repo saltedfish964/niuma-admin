@@ -22,7 +22,7 @@ defineOptions({
 </script>
 
 <template>
-  <div class="p-[16px] w-full h-full overflow-auto">
+  <div class="p-4 w-full h-full overflow-auto">
     <a-row :gutter="[16, 16]">
       <a-col :xl="6" :lg="12" :md="24" :sm="24" :xs="24">
         <a-card title="总销售额" :bordered="false">
@@ -36,7 +36,7 @@ defineOptions({
           <div class="h-[38px] text-[30px] pb-[8px]">¥ 126,560</div>
           <div class="h-[46px] relative">
             <div class="absolute bottom-0 w-full flex">
-              <div class="pr-[16px] flex items-center">
+              <div class="pr-4 flex items-center">
                 <span>周同比</span>
                 <span class="pl-[8px]">12%</span>
                 <v-icon
@@ -125,7 +125,7 @@ defineOptions({
           <a-divider style="margin: 8px 0"></a-divider>
           <div class="h-[22px] relative">
             <div class="absolute bottom-0 w-full flex">
-              <div class="pr-[16px] flex items-center">
+              <div class="pr-4 flex items-center">
                 <span>周同比</span>
                 <span class="pl-[8px]">12%</span>
                 <v-icon

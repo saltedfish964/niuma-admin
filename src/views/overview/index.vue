@@ -11,6 +11,8 @@ import VIcon from '@src/components/icon/icon.vue';
 import PageViewChart from './page-view-chart.vue';
 import PayChart from './pay-chart.vue';
 import SalesVisitVolumeCard from './sales-visit-volume-card.vue';
+import HotSearchCard from './hot-search-card.vue';
+import SalesProportionCard from './sales-proportion-card.vue';
 
 defineOptions({
   name: 'Overview',
@@ -18,7 +20,7 @@ defineOptions({
 </script>
 
 <template>
-  <div class="page-container">
+  <div class="p-[16px] w-full h-full overflow-auto">
     <a-row :gutter="[16, 16]">
       <a-col :xl="6" :lg="12" :md="24" :sm="24" :xs="24">
         <a-card title="总销售额" :bordered="false">
@@ -144,16 +146,17 @@ defineOptions({
       <a-col :span="24">
         <sales-visit-volume-card></sales-visit-volume-card>
       </a-col>
+      <a-col :lg="12" :md="24" :sm="24" :xs="24">
+        <hot-search-card></hot-search-card>
+      </a-col>
+      <a-col :lg="12" :md="24" :sm="24" :xs="24">
+        <sales-proportion-card></sales-proportion-card>
+      </a-col>
     </a-row>
   </div>
 </template>
 
 <style scoped>
-.page-container {
-  padding: 16px;
-  height: 100%;
-  overflow: auto;
-}
 .body {
   height: 100%;
   border-radius: 8px;

@@ -73,7 +73,7 @@ function onDateButtonClick(key) {
     :bordered="false"
     :tab-list="tabList"
     :active-tab-key="activeTabKey"
-    @tabChange="onTabChange"
+    @tab-change="onTabChange"
   >
     <template #tabBarExtraContent>
       <div class="flex items-center">

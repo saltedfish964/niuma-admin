@@ -10,6 +10,7 @@ import {
 import VIcon from '@src/components/icon/icon.vue';
 import PageViewChart from './page-view-chart.vue';
 import PayChart from './pay-chart.vue';
+import SalesVisitVolumeCard from './sales-visit-volume-card.vue';
 
 defineOptions({
   name: 'Overview',
@@ -19,7 +20,7 @@ defineOptions({
 <template>
   <div class="page-container">
     <a-row :gutter="[16, 16]">
-      <a-col :span="6">
+      <a-col :xl="6" :lg="12" :md="24" :sm="24" :xs="24">
         <a-card title="总销售额" :bordered="false">
           <div class="flex justify-between h-[22px] text-[var(--nm-color-text-secondary)]">
             <div>总销售额</div>
@@ -56,7 +57,7 @@ defineOptions({
           </div>
         </a-card>
       </a-col>
-      <a-col :span="6">
+      <a-col :xl="6" :lg="12" :md="24" :sm="24" :xs="24">
         <a-card title="访问量" :bordered="false">
           <div class="flex justify-between h-[22px] text-[var(--nm-color-text-secondary)]">
             <div>访问量</div>
@@ -76,7 +77,7 @@ defineOptions({
           </div>
         </a-card>
       </a-col>
-      <a-col :span="6">
+      <a-col :xl="6" :lg="12" :md="24" :sm="24" :xs="24">
         <a-card title="支付笔数" :bordered="false">
           <div class="flex justify-between h-[22px] text-[var(--nm-color-text-secondary)]">
             <div>支付笔数</div>
@@ -96,7 +97,7 @@ defineOptions({
           </div>
         </a-card>
       </a-col>
-      <a-col :span="6">
+      <a-col :xl="6" :lg="12" :md="24" :sm="24" :xs="24">
         <a-card title="运营活动效果" :bordered="false">
           <div class="flex justify-between h-[22px] text-[var(--nm-color-text-secondary)]">
             <div>运营活动效果</div>
@@ -139,6 +140,9 @@ defineOptions({
             </div>
           </div>
         </a-card>
+      </a-col>
+      <a-col :span="24">
+        <sales-visit-volume-card></sales-visit-volume-card>
       </a-col>
     </a-row>
   </div>

@@ -61,23 +61,23 @@ const dynamicData = ref([
   <div class="p-4">
     <div class="text-xl font-semibold">工作台</div>
     <div class="py-4">
-      <a-row>
-        <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
+      <a-row :gutter="[16, 16]">
+        <a-col :xl="14" :lg="24">
           <div class="flex items-center h-16">
-            <div class="pr-6">
+            <div class="pr-6 flex-none">
               <a-avatar shape="circle" :size="64" :src="AvatarImg"></a-avatar>
             </div>
-            <div>
+            <div class="flex-grow overflow-auto">
               <div class="text-xl font-medium pb-3">早安，靓仔，祝你开心每一天！</div>
-              <div class="text-sm text-[var(--nm-color-text-secondary)]">
+              <div class="text-sm text-[var(--nm-color-text-secondary)] truncate w-full">
                 交互专家 | 某某某事业群－某某平台部－某某技术部－UED
               </div>
             </div>
           </div>
         </a-col>
-        <a-col :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
-          <div class="flex items-center justify-end">
-            <div class="px-8">
+        <a-col :xl="10" :lg="24">
+          <div class="h-16 flex items-center justify-end overflow-hidden max-xl:justify-start">
+            <div class="px-8 max-xl:pl-0">
               <div class="text-sm pb-1 text-[var(--nm-color-text-tertiary)]">项目数</div>
               <div class="text-right text-2xl">56</div>
             </div>
@@ -96,7 +96,7 @@ const dynamicData = ref([
       </a-row>
     </div>
     <a-row :gutter="16">
-      <a-col :xl="16" :lg="16" :md="12" :sm="24" :xs="24">
+      <a-col :xl="16" :lg="24">
         <div class="pb-4">
           <a-card title="进行中的项目" :bordered="false">
             <template #extra>
@@ -113,7 +113,7 @@ const dynamicData = ref([
                   <div class="pl-3 text-sm font-semibold">项目 A</div>
                 </div>
               </div>
-              <div class="text-sm pb-2 text-[var(--nm-color-text-secondary)]">
+              <div class="h-11 text-sm pb-2 text-[var(--nm-color-text-secondary)] overflow-hidden">
                 那是一种内在的东西，他们到达不了，也无法触及的
               </div>
               <div class="flex justify-between w-full text-sm">
@@ -135,7 +135,7 @@ const dynamicData = ref([
                   <div class="pl-3 text-sm font-semibold">项目 B</div>
                 </div>
               </div>
-              <div class="text-sm pb-2 text-[var(--nm-color-text-secondary)]">
+              <div class="h-11 text-sm pb-2 text-[var(--nm-color-text-secondary)] overflow-hidden">
                 希望是一个好东西，也许是最好的，好东西是不会消亡的
               </div>
               <div class="flex justify-between w-full text-sm">
@@ -157,7 +157,7 @@ const dynamicData = ref([
                   <div class="pl-3 text-sm font-semibold">项目 C</div>
                 </div>
               </div>
-              <div class="text-sm pb-2 text-[var(--nm-color-text-secondary)]">
+              <div class="h-11 text-sm pb-2 text-[var(--nm-color-text-secondary)] overflow-hidden">
                 城镇中有那么多的酒馆，她却偏偏走进了我的酒馆
               </div>
               <div class="flex justify-between w-full text-sm">
@@ -179,7 +179,7 @@ const dynamicData = ref([
                   <div class="pl-3 text-sm font-semibold">项目 D</div>
                 </div>
               </div>
-              <div class="text-sm pb-2 text-[var(--nm-color-text-secondary)]">
+              <div class="h-11 text-sm pb-2 text-[var(--nm-color-text-secondary)] overflow-hidden">
                 那时候我只会想自己想要什么，从不想自己拥有什么
               </div>
               <div class="flex justify-between w-full text-sm">
@@ -201,7 +201,9 @@ const dynamicData = ref([
                   <div class="pl-3 text-sm font-semibold">项目 E</div>
                 </div>
               </div>
-              <div class="text-sm pb-2 text-[var(--nm-color-text-secondary)]">凛冬将至</div>
+              <div class="h-11 text-sm pb-2 text-[var(--nm-color-text-secondary)] overflow-hidden">
+                凛冬将至
+              </div>
               <div class="flex justify-between w-full text-sm">
                 <span
                   class="text-[var(--nm-color-text-tertiary)] cursor-pointer hover:text-[var(--nm-color-primary)]"
@@ -221,7 +223,7 @@ const dynamicData = ref([
                   <div class="pl-3 text-sm font-semibold">项目 F</div>
                 </div>
               </div>
-              <div class="text-sm pb-2 text-[var(--nm-color-text-secondary)]">
+              <div class="h-11 text-sm pb-2 text-[var(--nm-color-text-secondary)] overflow-hidden">
                 生命就像一盒巧克力，结果往往出人意料
               </div>
               <div class="flex justify-between w-full text-sm">
@@ -262,7 +264,7 @@ const dynamicData = ref([
           </a-list>
         </a-card>
       </a-col>
-      <a-col :xl="8" :lg="8" :md="12" :sm="24" :xs="24">
+      <a-col :xl="8" :lg="24">
         <div class="pb-4">
           <a-card title="快速开始 / 便捷导航" :bordered="false">
             <a-button type="primary" :ghost="true" size="small">

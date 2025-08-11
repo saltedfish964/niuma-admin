@@ -3,9 +3,6 @@
 const MENU_KEYS = {
   INDEX: 'index',
   OVERVIEW: 'overview',
-  ICON: 'icon',
-  EXAMPLE: 'example',
-  VUEROUTER_IFRAME: 'vue-router-iframe',
 };
 
 /**
@@ -28,36 +25,6 @@ const menu = [
           icon: 'solar-icon-chart-outline',
           layout: 'main',
           component: 'overview',
-        },
-      },
-    ],
-  },
-  {
-    key: MENU_KEYS.EXAMPLE,
-    title: '示例',
-    meta: {
-      icon: 'custom-icon-example',
-    },
-    children: [
-      {
-        key: MENU_KEYS.ICON,
-        title: '图标',
-        path: '/icon',
-        meta: {
-          icon: 'ic-icon-baseline-insert-emoticon',
-          layout: 'main',
-          component: 'icon',
-        },
-      },
-      {
-        key: MENU_KEYS.VUEROUTER_IFRAME,
-        title: 'Vue Router Iframe',
-        path: '/vue-router-iframe',
-        meta: {
-          icon: 'material-symbols-icon-iframe',
-          layout: 'main',
-          component: 'iframe',
-          iframeSrc: 'https://router.vuejs.org/zh/',
         },
       },
     ],

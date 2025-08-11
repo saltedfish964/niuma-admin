@@ -3,6 +3,7 @@
 const MENU_KEYS = {
   INDEX: 'index',
   OVERVIEW: 'overview',
+  WORKPLACE: 'workplace',
 };
 
 /**
@@ -25,6 +26,16 @@ const menu = [
           icon: 'solar-icon-chart-outline',
           layout: 'main',
           component: 'overview',
+        },
+      },
+      {
+        key: MENU_KEYS.WORKPLACE,
+        title: '工作台',
+        path: '/workplace',
+        meta: {
+          icon: 'ant-design-icon-desktop-outlined',
+          layout: 'main',
+          component: 'workplace',
         },
       },
     ],
@@ -60,6 +71,7 @@ const iconsList = [
   'ant-design:info-circle-outlined',
   'ant-design:caret-down-filled',
   'ant-design:caret-up-filled',
+  'ant-design:desktop-outlined',
 ];
 
 /**

@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router';
+import { Button as AButton } from 'ant-design-vue';
 import projectConfig from '@src/config';
 
 const router = useRouter();

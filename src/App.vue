@@ -1,5 +1,5 @@
 <script setup>
-import { theme } from 'ant-design-vue';
+import { theme, ConfigProvider as AConfigProvider } from 'ant-design-vue';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import { useRouter } from 'vue-router';
 import { useBeforeUnload } from '@src/composables/use-before-unload';

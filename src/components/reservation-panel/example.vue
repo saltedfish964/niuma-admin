@@ -1,5 +1,6 @@
 <script setup>
 import { ref, useTemplateRef } from 'vue';
+import { Button as AButton } from 'ant-design-vue';
 import VReservationPanel from './reservation-panel.vue';
 
 const reservationPanel = useTemplateRef('reservationPanel');

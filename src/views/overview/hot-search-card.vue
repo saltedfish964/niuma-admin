@@ -48,41 +48,41 @@ const columns = ref([
 
 <template>
   <a-card title="线上热门搜索" :bordered="false">
-    <div class="flex gap-[48px] h-[94px]">
+    <div class="flex gap-12 h-23.5">
       <div class="w-1/2 flex-col">
-        <div class="flex h-[22px] text-[var(--nm-color-text-secondary)]">
-          <div class="pr-[8px]">搜索用户数</div>
+        <div class="flex h-5.5 text-[var(--nm-color-text-secondary)]">
+          <div class="pr-2">搜索用户数</div>
           <a-tooltip>
             <v-icon name="ant-design-icon-info-circle-outlined"></v-icon>
             <template #title>指标说明</template>
           </a-tooltip>
         </div>
         <div class="flex items-center">
-          <span class="text-[16px]">17.1</span>
+          <span class="text-base">17.1</span>
           <v-icon name="ant-design-icon-caret-up-filled"></v-icon>
         </div>
-        <div class="h-[45px] w-full">
+        <div class="h-11.25 w-full">
           <hot-search-chart></hot-search-chart>
         </div>
       </div>
       <div class="w-1/2 flex-col">
-        <div class="flex h-[22px] text-[var(--nm-color-text-secondary)]">
-          <div class="pr-[8px]">人均搜索次数</div>
+        <div class="flex h-5.5 text-[var(--nm-color-text-secondary)]">
+          <div class="pr-2">人均搜索次数</div>
           <a-tooltip>
             <v-icon name="ant-design-icon-info-circle-outlined"></v-icon>
             <template #title>指标说明</template>
           </a-tooltip>
         </div>
         <div class="flex items-center">
-          <span class="text-[16px]">26.2</span>
+          <span class="text-base">26.2</span>
           <v-icon name="ant-design-icon-caret-down-filled"></v-icon>
         </div>
-        <div class="h-[45px] w-full">
+        <div class="h-11.25 w-full">
           <hot-search-chart></hot-search-chart>
         </div>
       </div>
     </div>
-    <div class="h-[290px] pt-[16px] overflow-auto">
+    <div class="h-72.5 pt-4 overflow-auto">
       <a-table
         size="small"
         style="height: 100%"

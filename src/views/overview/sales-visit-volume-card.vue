@@ -85,7 +85,7 @@ function onDateButtonClick(key) {
             {{ item.text }}
           </a-button>
         </div>
-        <div class="pl-[24px]">
+        <div class="pl-6">
           <a-range-picker v-model:value="date" />
         </div>
       </div>

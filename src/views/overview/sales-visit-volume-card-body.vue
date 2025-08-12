@@ -119,17 +119,17 @@ onBeforeMount(() => {
   <div>
     <a-row>
       <a-col :xl="16" :lg="12" :md="24" :sm="24" :xs="24">
-        <div ref="chart" class="h-[300px]"></div>
+        <div ref="chart" class="h-75"></div>
       </a-col>
       <a-col :xl="8" :lg="12" :md="24" :sm="24" :xs="24">
-        <div class="h-[300px] pl-[24px]">
-          <div class="pt-[16px] font-semibold text-[16px]">门店{{ props.name }}排名</div>
+        <div class="h-75 pl-6">
+          <div class="pt-4 font-semibold text-base">门店{{ props.name }}排名</div>
           <ul>
-            <li class="flex items-center justify-between pt-[16px]" v-for="i in 7">
+            <li class="flex items-center justify-between pt-4" v-for="i in 7">
               <div class="flex items-center">
                 <span
                   :class="[
-                    'flex items-center justify-center rounded-full w-[20px] h-[20px]  font-semibold  text-center text-[12px]',
+                    'flex items-center justify-center rounded-full w-5 h-5  font-semibold  text-center text-[12px]',
                     i > 3
                       ? 'bg-[var(--nm-color-fill-tertiary)]'
                       : 'bg-[var(--nm-color-bg-spotlight)] text-white',
@@ -137,9 +137,9 @@ onBeforeMount(() => {
                 >
                   {{ i }}
                 </span>
-                <span class="pl-[8px] text-[14px]">工专路 {{ i }} 号店</span>
+                <span class="pl-2 text-sm">工专路 {{ i }} 号店</span>
               </div>
-              <div class="text-[14px]">323,234</div>
+              <div class="text-sm">323,234</div>
             </li>
           </ul>
         </div>

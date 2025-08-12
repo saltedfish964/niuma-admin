@@ -25,7 +25,7 @@ const types = ref([
     <template #extra>
       <a-segmented v-model:value="type" :options="types"></a-segmented>
     </template>
-    <div class="h-[384px]">
+    <div class="h-96">
       <sales-proportion-chart></sales-proportion-chart>
     </div>
   </a-card>

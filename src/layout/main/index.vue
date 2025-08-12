@@ -128,6 +128,13 @@ function onTransitionEnd(event) {
     event.target.style.overflow = 'auto';
   }
 }
+
+window.addEventListener('resize', () => {
+  // 如果窗口宽度小于 1200px, 则收起菜单
+  if (window.innerWidth < 1200) {
+    layoutStore.menuCollapsed = true;
+  }
+});
 </script>
 
 <template>

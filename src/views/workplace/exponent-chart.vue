@@ -5,6 +5,7 @@ import { RadarChart } from 'echarts/charts';
 import { GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useResizeObserver } from '@vueuse/core';
+import { debounce } from 'lodash-es';
 import { useLayoutStore } from '@src/store/modules/layout';
 
 const layoutStore = useLayoutStore();
@@ -90,11 +91,14 @@ onMounted(async () => {
     ],
   };
 
-  const { stop } = useResizeObserver(chartRef.value, () => {
-    chartInstance.resize();
-    chartInstance.setOption(option);
-    updateChartTheme();
-  });
+  const { stop } = useResizeObserver(
+    chartRef.value,
+    debounce(() => {
+      chartInstance.resize();
+      chartInstance.setOption(option);
+      updateChartTheme();
+    }, 100),
+  );
 
   stopResizeObserver = stop;
 });

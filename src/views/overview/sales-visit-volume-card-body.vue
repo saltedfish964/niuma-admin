@@ -5,6 +5,7 @@ import * as echarts from 'echarts/core';
 import { TooltipComponent, GridComponent } from 'echarts/components';
 import { BarChart } from 'echarts/charts';
 import { CanvasRenderer } from 'echarts/renderers';
+import { debounce } from 'lodash-es';
 import { useResizeObserver } from '@vueuse/core';
 
 echarts.use([TooltipComponent, GridComponent, BarChart, CanvasRenderer]);
@@ -91,10 +92,13 @@ onMounted(async () => {
     ],
   };
 
-  const { stop } = useResizeObserver(chartRef.value, () => {
-    chartInstance.resize();
-    chartInstance.setOption(option);
-  });
+  const { stop } = useResizeObserver(
+    chartRef.value,
+    debounce(() => {
+      chartInstance.resize();
+      chartInstance.setOption(option);
+    }, 100),
+  );
 
   stopResizeObserver = stop;
 });

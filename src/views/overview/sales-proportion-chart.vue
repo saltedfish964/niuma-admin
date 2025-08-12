@@ -6,6 +6,7 @@ import { PieChart } from 'echarts/charts';
 import { LabelLayout } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useResizeObserver } from '@vueuse/core';
+import { debounce } from 'lodash-es';
 import { useLayoutStore } from '@src/store/modules/layout';
 
 const layoutStore = useLayoutStore();
@@ -70,10 +71,13 @@ onMounted(async () => {
   option.series[0].itemStyle.borderColor = layoutStore.darkMode ? '#141414' : '#fff';
   option.title.textStyle.color = layoutStore.darkMode ? '#dcdcdc' : '#1f1f1f';
 
-  const { stop } = useResizeObserver(chartRef.value, () => {
-    chartInstance.resize();
-    chartInstance.setOption(option);
-  });
+  const { stop } = useResizeObserver(
+    chartRef.value,
+    debounce(() => {
+      chartInstance.resize();
+      chartInstance.setOption(option);
+    }, 100),
+  );
   stopResizeObserver = stop;
 });
 

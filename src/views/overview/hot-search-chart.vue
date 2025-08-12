@@ -6,6 +6,7 @@ import { LineChart } from 'echarts/charts';
 import { CanvasRenderer } from 'echarts/renderers';
 import dayjs from 'dayjs';
 import { useResizeObserver } from '@vueuse/core';
+import { debounce } from 'lodash-es';
 
 echarts.use([TooltipComponent, GridComponent, LineChart, CanvasRenderer]);
 
@@ -75,10 +76,13 @@ onMounted(async () => {
     ],
   };
 
-  const { stop } = useResizeObserver(chartRef.value, () => {
-    chartInstance.resize();
-    chartInstance.setOption(option);
-  });
+  const { stop } = useResizeObserver(
+    chartRef.value,
+    debounce(() => {
+      chartInstance.resize();
+      chartInstance.setOption(option);
+    }, 100),
+  );
 
   stopResizeObserver = stop;
 });

@@ -54,7 +54,7 @@ function clamp(value, min, max) {
 }
 
 function setHSVA(h = 360, s = 0, v = 0, a = 1, silent = false) {
-  if ([h, s, v, a].some(isNaN)) {
+  if (isNaN(h) || isNaN(s) || isNaN(v) || isNaN(a)) {
     return false;
   }
 
@@ -126,6 +126,7 @@ function applyColor() {
 }
 
 function onColorPaletteChange(x, y) {
+  if (props.disabled) return;
   const color = getColor();
 
   if (isInteractive.value) {
@@ -151,6 +152,7 @@ function onColorPaletteChange(x, y) {
 }
 
 function onHueColorChooserChange(v) {
+  if (props.disabled) return;
   const color = getColor();
   color.h = v * 360;
   huePickerBg.value = `hsl(${color.h}, 100%, 50%)`;
@@ -158,6 +160,7 @@ function onHueColorChooserChange(v) {
 }
 
 function onOpacityColorChooserChange(v) {
+  if (props.disabled) return;
   const color = getColor();
   color.a = Math.round(v * 1e2) / 100;
   opacityPickerBg.value = `rgba(0, 0, 0, ${color.a})`;
@@ -165,6 +168,7 @@ function onOpacityColorChooserChange(v) {
 }
 
 function onInput(event) {
+  if (props.disabled) return;
   const inputValue = event.target.value;
   colorTextIsSilent.value = true;
   const success = setColor(inputValue, true);
@@ -186,6 +190,7 @@ function onBlur() {
 }
 
 function onLastColorClick() {
+  if (props.disabled) return;
   if (lastColor === null) {
     lastColor = color.clone();
   }
@@ -197,10 +202,12 @@ function onChangeIsInteractive(val) {
 }
 
 function onSwatchClick(color) {
+  if (props.disabled) return;
   setColor(color, true);
 }
 
 function onApply() {
+  if (props.disabled) return;
   applyColor();
   const hexa = color.toHEXA().toString();
   emit('update:modelValue', hexa);
@@ -208,6 +215,7 @@ function onApply() {
 }
 
 function onClear() {
+  if (props.disabled) return;
   clearColor();
   emit('update:modelValue', null);
 }
@@ -253,6 +261,7 @@ defineExpose({
       ref="palette"
       :palette-bg="paletteBg"
       :picker-bg="palettePickerBg"
+      :disabled="disabled"
       @change="onColorPaletteChange"
       @change-is-interactive="onChangeIsInteractive"
     ></color-palette>

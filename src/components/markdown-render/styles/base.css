@@ -1,0 +1,239 @@
+@media (prefers-reduced-motion: reduce) {
+  .markdown-render *,
+  .markdown-render ::before,
+  .markdown-render ::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    background-attachment: initial !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+}
+
+.markdown-render *,
+.markdown-render ::before,
+.markdown-render ::after {
+  box-sizing: border-box;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+.markdown-render {
+  line-height: 24px;
+  font-family: var(--vp-font-family-base);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--vp-c-text-1);
+  background-color: var(--vp-c-bg);
+  font-synthesis: style;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.markdown-render main {
+  display: block;
+}
+
+.markdown-render h1,
+.markdown-render h2,
+.markdown-render h3,
+.markdown-render h4,
+.markdown-render h5,
+.markdown-render h6 {
+  margin: 0;
+  line-height: 24px;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.markdown-render p {
+  margin: 0;
+}
+
+.markdown-render strong,
+.markdown-render b {
+  font-weight: 600;
+}
+
+/**
+ * Avoid 300ms click delay on touch devices that support the `touch-action`
+ * CSS property.
+ *
+ * In particular, unlike most other browsers, IE11+Edge on Windows 10 on
+ * touch devices and IE Mobile 10-11 DON'T remove the click delay when
+ * `<meta name="viewport" content="width=device-width">` is present.
+ * However, they DO support removing the click delay via
+ * `touch-action: manipulation`.
+ *
+ * See:
+ * - http://v4-alpha.getbootstrap.com/content/reboot/#click-delay-optimization-for-touch
+ * - http://caniuse.com/#feat=css-touch-action
+ * - http://patrickhlauke.github.io/touch/tests/results/#suppressing-300ms-delay
+ */
+.markdown-render a,
+.markdown-render area,
+.markdown-render button,
+.markdown-render [role='button'],
+.markdown-render input,
+.markdown-render label,
+.markdown-render select,
+.markdown-render summary,
+.markdown-render textarea {
+  touch-action: manipulation;
+}
+
+.markdown-render a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+.markdown-render ol,
+.markdown-render ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.markdown-render blockquote {
+  margin: 0;
+}
+
+.markdown-render pre,
+.markdown-render code,
+.markdown-render kbd,
+.markdown-render samp {
+  font-family: var(--vp-font-family-mono);
+}
+
+.markdown-render img,
+.markdown-render svg,
+.markdown-render video,
+.markdown-render canvas,
+.markdown-render audio,
+.markdown-render iframe,
+.markdown-render embed,
+.markdown-render object {
+  display: block;
+}
+
+.markdown-render figure {
+  margin: 0;
+}
+
+.markdown-render img,
+.markdown-render video {
+  max-width: 100%;
+  height: auto;
+}
+
+.markdown-render button,
+.markdown-render input,
+.markdown-render optgroup,
+.markdown-render select,
+.markdown-render textarea {
+  border: 0;
+  padding: 0;
+  line-height: inherit;
+  color: inherit;
+}
+
+.markdown-render button {
+  padding: 0;
+  font-family: inherit;
+  background-color: transparent;
+  background-image: none;
+}
+
+.markdown-render button:enabled,
+.markdown-render [role='button']:enabled {
+  cursor: pointer;
+}
+
+.markdown-render button:focus,
+.markdown-render button:focus-visible {
+  outline: 1px dotted;
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.markdown-render button:focus:not(:focus-visible) {
+  outline: none !important;
+}
+
+.markdown-render input:focus,
+.markdown-render textarea:focus,
+.markdown-render select:focus {
+  outline: none;
+}
+
+.markdown-render table {
+  border-collapse: collapse;
+}
+
+.markdown-render input {
+  background-color: transparent;
+}
+
+.markdown-render input:-ms-input-placeholder,
+.markdown-render textarea:-ms-input-placeholder {
+  color: var(--vp-c-text-3);
+}
+
+.markdown-render input::-ms-input-placeholder,
+.markdown-render textarea::-ms-input-placeholder {
+  color: var(--vp-c-text-3);
+}
+
+.markdown-render input::placeholder,
+.markdown-render textarea::placeholder {
+  color: var(--vp-c-text-3);
+}
+
+.markdown-render input::-webkit-outer-spin-button,
+.markdown-render input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.markdown-render input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.markdown-render textarea {
+  resize: vertical;
+}
+
+.markdown-render select {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.markdown-render fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+.markdown-render h1,
+.markdown-render h2,
+.markdown-render h3,
+.markdown-render h4,
+.markdown-render h5,
+.markdown-render h6,
+.markdown-render li,
+.markdown-render p {
+  overflow-wrap: break-word;
+}
+
+.markdown-render mjx-container {
+  overflow-x: auto;
+}
+
+.markdown-render mjx-container > svg {
+  display: inline-block;
+  margin: auto;
+}

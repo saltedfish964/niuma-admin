@@ -4,6 +4,8 @@ const MENU_KEYS = {
   INDEX: 'index',
   OVERVIEW: 'overview',
   WORKPLACE: 'workplace',
+  COMPONENT: 'component',
+  MARKDOWN_RENDER: 'markdown-render',
 };
 
 /**
@@ -36,6 +38,25 @@ const menu = [
           icon: 'ant-design-icon-desktop-outlined',
           layout: 'main',
           component: 'workplace',
+        },
+      },
+    ],
+  },
+  {
+    key: MENU_KEYS.COMPONENT,
+    title: '组件',
+    meta: {
+      icon: 'ant-design-icon-home-filled',
+    },
+    children: [
+      {
+        key: MENU_KEYS.MARKDOWN_RENDER,
+        title: 'Markdown 渲染器',
+        path: '/markdown-render',
+        meta: {
+          icon: 'solar-icon-chart-outline',
+          layout: 'main',
+          component: 'markdown-render',
         },
       },
     ],

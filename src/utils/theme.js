@@ -79,32 +79,35 @@ export function initTheme() {
  */
 export function toggleDarkMode(e) {
   const layoutStore = useLayoutStore();
-  const transition = document.startViewTransition(() => {
-    layoutStore.setDarkMode(!layoutStore.darkMode);
-    applyTheme(layoutStore.themeColor, layoutStore.darkMode);
-  });
-  transition.ready.then(() => {
-    const { clientX, clientY } = e;
-    const radius = Math.hypot(
-      Math.max(clientX, innerWidth - clientX),
-      Math.max(clientY, innerHeight - clientY),
-    );
-    const clipPath = [
-      `circle(0% at ${clientX}px ${clientY}px)`,
-      `circle(${radius}px at ${clientX}px ${clientY}px)`,
-    ];
-    const isDark = layoutStore.darkMode;
-    // 自定义动画
-    document.documentElement.animate(
-      {
-        // 如果要切换到暗色主题，我们在过渡的时候从半径 100% 的圆开始，到 0% 的圆结束
-        clipPath: isDark ? clipPath.reverse() : clipPath,
-      },
-      {
-        duration: 300,
-        // 如果要切换到暗色主题，我们应该裁剪 view-transition-old(root) 的内容
-        pseudoElement: isDark ? '::view-transition-old(root)' : '::view-transition-new(root)',
-      },
-    );
-  });
+  layoutStore.setDarkMode(!layoutStore.darkMode);
+  applyTheme(layoutStore.themeColor, layoutStore.darkMode);
+  // TODO: 原本的动画，元素多了之后会有卡顿(需要优化)
+  // const transition = document.startViewTransition(() => {
+  //   layoutStore.setDarkMode(!layoutStore.darkMode);
+  //   applyTheme(layoutStore.themeColor, layoutStore.darkMode);
+  // });
+  // transition.ready.then(() => {
+  //   const { clientX, clientY } = e;
+  //   const radius = Math.hypot(
+  //     Math.max(clientX, innerWidth - clientX),
+  //     Math.max(clientY, innerHeight - clientY),
+  //   );
+  //   const clipPath = [
+  //     `circle(0% at ${clientX}px ${clientY}px)`,
+  //     `circle(${radius}px at ${clientX}px ${clientY}px)`,
+  //   ];
+  //   const isDark = layoutStore.darkMode;
+  //   // 自定义动画
+  //   document.documentElement.animate(
+  //     {
+  //       // 如果要切换到暗色主题，我们在过渡的时候从半径 100% 的圆开始，到 0% 的圆结束
+  //       clipPath: isDark ? clipPath.reverse() : clipPath,
+  //     },
+  //     {
+  //       duration: 300,
+  //       // 如果要切换到暗色主题，我们应该裁剪 view-transition-old(root) 的内容
+  //       pseudoElement: isDark ? '::view-transition-old(root)' : '::view-transition-new(root)',
+  //     },
+  //   );
+  // });
 }

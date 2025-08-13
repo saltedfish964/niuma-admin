@@ -49,7 +49,20 @@ const lastColorStyle = ref({
   backgroundColor: props.modelValue,
 });
 
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
 function setHSVA(h = 360, s = 0, v = 0, a = 1, silent = false) {
+  if ([h, s, v, a].some(isNaN)) {
+    return false;
+  }
+
+  h = clamp(h, 0, 360);
+  s = clamp(s, 0, 100);
+  v = clamp(v, 0, 100);
+  a = clamp(a, 0, 1);
+
   isInteractive.value = false;
   if (h < 0 || h > 360 || s < 0 || s > 100 || v < 0 || v > 100 || a < 0 || a > 1) {
     return false;
@@ -73,11 +86,14 @@ function setColor(str, silent = false) {
     clearColor();
     return true;
   }
+
   const { values } = parseLocalColor(str);
 
   if (values) {
-    setHSVA(...values, silent);
+    return setHSVA(...values, silent);
   }
+
+  return false;
 }
 
 function getColor() {
@@ -149,8 +165,13 @@ function onOpacityColorChooserChange(v) {
 }
 
 function onInput(event) {
+  const inputValue = event.target.value;
   colorTextIsSilent.value = true;
-  setColor(event.target.value, true);
+  const success = setColor(inputValue, true);
+  if (!success) {
+    colorText.value = originalColor;
+  }
+  // setColor(event.target.value, true);
 }
 
 function onInputKeyup() {

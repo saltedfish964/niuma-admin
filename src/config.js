@@ -51,16 +51,6 @@ const menu = [
     },
     children: [
       {
-        key: MENU_KEYS.MARKDOWN_RENDER,
-        title: 'Markdown 渲染器',
-        path: '/markdown-render',
-        meta: {
-          icon: 'material-symbols-icon-markdown-outline',
-          layout: 'main',
-          component: 'markdown-render',
-        },
-      },
-      {
         key: MENU_KEYS.ICON,
         title: 'Icon 图标',
         path: '/icon',
@@ -68,6 +58,16 @@ const menu = [
           icon: 'ic-icon-baseline-insert-emoticon',
           layout: 'main',
           component: 'icon',
+        },
+      },
+      {
+        key: MENU_KEYS.MARKDOWN_RENDER,
+        title: 'Markdown 渲染器',
+        path: '/markdown-render',
+        meta: {
+          icon: 'material-symbols-icon-markdown-outline',
+          layout: 'main',
+          component: 'markdown-render',
         },
       },
     ],

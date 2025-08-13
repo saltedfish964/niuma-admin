@@ -18,13 +18,13 @@ html {
 }
 
 /* dark mode 过渡动画 */
-::view-transition-new(root),
+/* ::view-transition-new(root),
 ::view-transition-old(root) {
   animation: none;
 }
 [data-theme='dark']::view-transition-old(root) {
   z-index: 100;
-}
+} */
 
 .ant-menu-dark {
   background: var(--nm-color-bg-container);

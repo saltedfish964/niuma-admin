@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { Popover as APopover } from 'ant-design-vue';
 import ColorPickerPanel from './color-picker-panel.vue';
 
@@ -30,6 +30,15 @@ function onPopoverOpenChange(open) {
   if (props.disabled) return;
   isPopoverOpen.value = open;
 }
+
+watch(
+  () => props.disabled,
+  (disabled) => {
+    if (disabled && isPopoverOpen.value) {
+      isPopoverOpen.value = false;
+    }
+  },
+);
 </script>
 
 <template>

@@ -25,6 +25,9 @@ const props = defineProps({
 });
 
 const htmlText = ref('');
+const showLoading = ref(false);
+let firstRender = true;
+const minLoadingMs = 200;
 
 function onCodeGroupTabsClick(e) {
   const el = e.target;
@@ -156,7 +159,26 @@ async function getMd() {
 
 async function updateHtmlText() {
   const md = await getMd();
-  htmlText.value = await md.renderAsync(props.mdText);
+
+  // 第一次渲染时，强制空转 minLoadingMs
+  if (firstRender) {
+    showLoading.value = true; // 先把 Loading 立起来
+    const start = Date.now();
+    const html = await md.renderAsync(props.mdText);
+    const cost = Date.now() - start;
+
+    // 如果渲染耗时 < minLoadingMs，再等等；否则直接过去
+    const rest = Math.max(0, minLoadingMs - cost);
+    setTimeout(() => {
+      htmlText.value = html;
+      showLoading.value = false;
+      firstRender = false;
+    }, rest);
+  } else {
+    // 非首次渲染，直接更新，不再等待
+    htmlText.value = await md.renderAsync(props.mdText);
+  }
+
   await nextTick();
   document.removeEventListener('click', onCodeGroupTabsClick);
   document.removeEventListener('click', onCodeCopy);
@@ -178,9 +200,9 @@ onBeforeMount(() => {
 
 <template>
   <div>
-    <div v-if="htmlText" class="markdown-render" dir="ltr" lang="zh">
+    <div v-show="htmlText" class="markdown-render" dir="ltr" lang="zh">
       <div class="vp-doc" v-html="htmlText"></div>
     </div>
-    <loading-placeholder v-else></loading-placeholder>
+    <loading-placeholder v-show="showLoading"></loading-placeholder>
   </div>
 </template>

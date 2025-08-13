@@ -4,6 +4,7 @@ import { useLayoutStore } from '@src/store/modules/layout';
 import MarkdownRender from '@src/components/markdown-render/index.vue';
 import basicText from './basic.md?raw';
 import exampleData from './markdown-example.md?raw';
+import attributesText from './attributes.md?raw';
 
 const layoutStore = useLayoutStore();
 </script>
@@ -19,6 +20,11 @@ const layoutStore = useLayoutStore();
       <a-col :span="24">
         <a-card>
           <markdown-render :md-text="exampleData" :dark="layoutStore.darkMode"></markdown-render>
+        </a-card>
+      </a-col>
+      <a-col :span="24">
+        <a-card>
+          <markdown-render :md-text="attributesText" :dark="layoutStore.darkMode"></markdown-render>
         </a-card>
       </a-col>
     </a-row>

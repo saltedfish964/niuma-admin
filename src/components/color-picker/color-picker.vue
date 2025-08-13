@@ -27,6 +27,7 @@ function onModelValueUpdate(value) {
 }
 
 function onPopoverOpenChange(open) {
+  if (props.disabled) return;
   isPopoverOpen.value = open;
 }
 </script>
@@ -37,9 +38,16 @@ function onPopoverOpenChange(open) {
       trigger="click"
       overlay-class-name="v-color-picker-popover"
       :arrow="false"
+      :open="isPopoverOpen"
       @open-change="onPopoverOpenChange"
     >
-      <div :class="['v-color-trigger', isPopoverOpen ? 'v-color-trigger-active' : '']">
+      <div
+        :class="[
+          'v-color-trigger',
+          isPopoverOpen ? 'v-color-trigger-active' : '',
+          props.disabled ? 'v-color-trigger-disabled' : '',
+        ]"
+      >
         <div class="v-color-trigger-inner" :style="{ '--inner-bg-color': props.modelValue }"></div>
       </div>
       <template #content>
@@ -71,6 +79,12 @@ function onPopoverOpenChange(open) {
 .v-color-trigger-active,
 .v-color-trigger:hover {
   border-color: var(--nm-color-primary-hover, #3e74fd);
+}
+.v-color-trigger-disabled,
+.v-color-trigger-disabled:hover {
+  cursor: not-allowed;
+  border-color: var(--nm-border-color, #dfe1e5);
+  background-color: var(--nm-color-fill-tertiary);
 }
 .v-color-trigger-inner {
   position: relative;

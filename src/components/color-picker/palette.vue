@@ -3,6 +3,10 @@ import { computed, nextTick, ref, useTemplateRef } from 'vue';
 import { clamp } from './utils/utils';
 
 const props = defineProps({
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
   pickerBg: {
     type: String,
     default: '#2ecc71',
@@ -28,7 +32,7 @@ const testBg = computed(() => {
 });
 
 function onMousemove(event) {
-  if (!paletteRef.value || !pickerRef.value) return;
+  if (!paletteRef.value || !pickerRef.value || props.disabled) return;
 
   const rect = paletteRef.value.getBoundingClientRect();
 
@@ -71,6 +75,7 @@ function onMousemove(event) {
 }
 
 function onMousedown(event) {
+  if (props.disabled) return;
   emit('changeIsInteractive', true);
   pickerStyle.value.cursor = 'grabbing';
   document.addEventListener('mouseup', onMouseup);

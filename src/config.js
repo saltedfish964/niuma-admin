@@ -7,6 +7,7 @@ const MENU_KEYS = {
   COMPONENT: 'component',
   MARKDOWN_RENDER: 'markdown-render',
   ICON: 'icon',
+  COLOR_PICKER: 'color-picker',
 };
 
 /**
@@ -52,12 +53,22 @@ const menu = [
     children: [
       {
         key: MENU_KEYS.ICON,
-        title: 'Icon 图标',
+        title: '图标',
         path: '/icon',
         meta: {
           icon: 'ic-icon-baseline-insert-emoticon',
           layout: 'main',
           component: 'icon',
+        },
+      },
+      {
+        key: MENU_KEYS.COLOR_PICKER,
+        title: '颜色选择器',
+        path: '/color-picker',
+        meta: {
+          icon: 'mdi-icon-color',
+          layout: 'main',
+          component: 'color-picker',
         },
       },
       {
@@ -105,6 +116,7 @@ const iconsList = [
   'ant-design:plus-outlined',
   'mingcute:components-line',
   'material-symbols:markdown-outline',
+  'mdi:color',
 ];
 
 /**

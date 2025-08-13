@@ -2,8 +2,8 @@ function getContent(token) {
   return token.info === 'entity'
     ? token.markup
     : token.info === 'escape' && token.content === '&'
-    ? '&amp;'
-    : token.content;
+      ? '&amp;'
+      : token.content;
 }
 
 function text_join(state) {
@@ -21,13 +21,8 @@ function text_join(state) {
       if (tokens[curr].type === 'text_special') tokens[curr].type = 'text';
 
     for (curr = last = 0; curr < max; ++curr)
-      if (
-        tokens[curr].type === 'text' &&
-        curr + 1 < max &&
-        tokens[curr + 1].type === 'text'
-      ) {
-        tokens[curr + 1].content =
-          getContent(tokens[curr]) + getContent(tokens[curr + 1]);
+      if (tokens[curr].type === 'text' && curr + 1 < max && tokens[curr + 1].type === 'text') {
+        tokens[curr + 1].content = getContent(tokens[curr]) + getContent(tokens[curr + 1]);
         tokens[curr + 1].info = '';
         tokens[curr + 1].markup = '';
       } else {

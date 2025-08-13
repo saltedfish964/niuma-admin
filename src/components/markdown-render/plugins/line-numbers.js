@@ -22,18 +22,12 @@ export const lineNumberPlugin = (md, enable = false) => {
       startLineNumber = parseInt(matchStartLineNumber[1]);
     }
 
-    const code = rawCode.slice(
-      rawCode.indexOf('<code>'),
-      rawCode.indexOf('</code>')
-    );
+    const code = rawCode.slice(rawCode.indexOf('<code>'), rawCode.indexOf('</code>'));
 
     const lines = code.split('\n');
 
     const lineNumbersCode = [...Array(lines.length)]
-      .map(
-        (_, index) =>
-          `<span class="line-number">${index + startLineNumber}</span><br>`
-      )
+      .map((_, index) => `<span class="line-number">${index + startLineNumber}</span><br>`)
       .join('');
 
     const lineNumbersWrapperCode = `<div class="line-numbers-wrapper" aria-hidden="true">${lineNumbersCode}</div>`;

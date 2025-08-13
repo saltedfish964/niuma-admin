@@ -1,13 +1,13 @@
 <script setup lang="js">
 import { ref } from 'vue';
-import MarkdownRender from './index.vue'
-import textData from './markdown.md?raw'
+import MarkdownRender from './index.vue';
+import textData from './markdown.md?raw';
 
-const isDark = ref(false)
+const isDark = ref(false);
 </script>
 
 <template>
-  <div>
+  <div class="p-4">
     <div>
       <button @click="isDark = !isDark">切换</button>
     </div>

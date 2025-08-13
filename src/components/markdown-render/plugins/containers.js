@@ -9,12 +9,10 @@ export const containerPlugin = (md, options) => {
     .use(...createContainer('details', options?.detailsLabel || 'Details', md))
     // explicitly escape Vue syntax
     .use(container, 'v-pre', {
-      render: (tokens, idx) =>
-        tokens[idx].nesting === 1 ? `<div v-pre>\n` : `</div>\n`,
+      render: (tokens, idx) => (tokens[idx].nesting === 1 ? `<div v-pre>\n` : `</div>\n`),
     })
     .use(container, 'raw', {
-      render: (tokens, idx) =>
-        tokens[idx].nesting === 1 ? `<div class="vp-raw">\n` : `</div>\n`,
+      render: (tokens, idx) => (tokens[idx].nesting === 1 ? `<div class="vp-raw">\n` : `</div>\n`),
     })
     .use(...createCodeGroup(md));
 };
@@ -33,10 +31,8 @@ function createContainer(klass, defaultTitle, md) {
           const title = md.renderInline(info || defaultTitle, {
             references: env.references,
           });
-          const titleClass =
-            'custom-block-title' + (info ? '' : ' custom-block-title-default');
-          if (klass === 'details')
-            return `<details ${attrs}><summary>${title}</summary>\n`;
+          const titleClass = 'custom-block-title' + (info ? '' : ' custom-block-title-default');
+          if (klass === 'details') return `<details ${attrs}><summary>${title}</summary>\n`;
           return `<div ${attrs}><p class="${titleClass}">${title}</p>\n`;
         } else return klass === 'details' ? `</details>\n` : `</div>\n`;
       },
@@ -56,26 +52,17 @@ function createCodeGroup(md) {
 
           for (
             let i = idx + 1;
-            !(
-              tokens[i].nesting === -1 &&
-              tokens[i].type === 'container_code-group_close'
-            );
+            !(tokens[i].nesting === -1 && tokens[i].type === 'container_code-group_close');
             ++i
           ) {
             const isHtml = tokens[i].type === 'html_block';
 
-            if (
-              (tokens[i].type === 'fence' && tokens[i].tag === 'code') ||
-              isHtml
-            ) {
-              const title = extractTitle(
-                isHtml ? tokens[i].content : tokens[i].info,
-                isHtml
-              );
+            if ((tokens[i].type === 'fence' && tokens[i].tag === 'code') || isHtml) {
+              const title = extractTitle(isHtml ? tokens[i].content : tokens[i].info, isHtml);
 
               if (title) {
                 tabs += `<input type="radio" name="group-${idx}" id="tab-${i}" ${checked}><label data-title="${md.utils.escapeHtml(
-                  title
+                  title,
                 )}" for="tab-${i}">${title}</label>`;
 
                 if (checked && !isHtml) tokens[i].info += ' active';

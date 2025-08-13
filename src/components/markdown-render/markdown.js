@@ -182,9 +182,7 @@ export async function createMarkdownRenderer(options = {}, logger = console) {
           .replace(/^<mjx-container /, '<mjx-container v-pre tabindex="0" ');
       };
     } catch (error) {
-      throw new Error(
-        'You need to install `markdown-it-mathjax3` to use math support.'
-      );
+      throw new Error('You need to install `markdown-it-mathjax3` to use math support.');
     }
   }
 

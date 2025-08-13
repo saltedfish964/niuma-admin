@@ -24,9 +24,7 @@ export function preWrapperPlugin(md, options) {
 
 export function extractTitle(info, html = false) {
   if (html) {
-    return (
-      info.replace(/<!--[^]*?-->/g, '').match(/data-title="(.*?)"/)?.[1] || ''
-    );
+    return info.replace(/<!--[^]*?-->/g, '').match(/data-title="(.*?)"/)?.[1] || '';
   }
   return info.match(/\[(.*)\]/)?.[1] || extractLang(info) || 'txt';
 }

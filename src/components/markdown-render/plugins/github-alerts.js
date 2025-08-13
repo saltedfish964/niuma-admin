@@ -1,5 +1,4 @@
-const markerRE =
-  /^\[!(TIP|NOTE|INFO|IMPORTANT|WARNING|CAUTION|DANGER)\]([^\n\r]*)/i;
+const markerRE = /^\[!(TIP|NOTE|INFO|IMPORTANT|WARNING|CAUTION|DANGER)\]([^\n\r]*)/i;
 
 export const gitHubAlertsPlugin = (md, options) => {
   const titleMark = {
@@ -21,8 +20,7 @@ export const gitHubAlertsPlugin = (md, options) => {
         let endIndex = i + 1;
         while (
           endIndex < tokens.length &&
-          (tokens[endIndex].type !== 'blockquote_close' ||
-            tokens[endIndex].level !== open.level)
+          (tokens[endIndex].type !== 'blockquote_close' || tokens[endIndex].level !== open.level)
         )
           endIndex++;
         if (endIndex === tokens.length) continue;
@@ -35,9 +33,7 @@ export const gitHubAlertsPlugin = (md, options) => {
         if (!match) continue;
         const type = match[1].toLowerCase();
         const title = match[2].trim() || titleMark[type] || capitalize(type);
-        firstContent.content = firstContent.content
-          .slice(match[0].length)
-          .trimStart();
+        firstContent.content = firstContent.content.slice(match[0].length).trimStart();
         open.type = 'github_alert_open';
         open.tag = 'div';
         open.meta = {

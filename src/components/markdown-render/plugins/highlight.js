@@ -6,11 +6,7 @@ import {
   transformerNotationHighlight,
 } from '@shikijs/transformers';
 import { customAlphabet } from 'nanoid';
-import {
-  createHighlighter,
-  guessEmbeddedLanguages,
-  isSpecialLang,
-} from 'shiki';
+import { createHighlighter, guessEmbeddedLanguages, isSpecialLang } from 'shiki';
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz', 10);
 
@@ -33,9 +29,7 @@ function attrsToLines(attrs) {
     .map((v) => v.split('-').map((v) => parseInt(v, 10)))
     .forEach(([start, end]) => {
       if (start && end) {
-        result.push(
-          ...Array.from({ length: end - start + 1 }, (_, i) => start + i)
-        );
+        result.push(...Array.from({ length: end - start + 1 }, (_, i) => start + i));
       } else {
         result.push(start);
       }
@@ -47,20 +41,15 @@ function attrsToLines(attrs) {
 }
 
 export async function highlight(theme, options, logger = console) {
-  const {
-    defaultHighlightLang: defaultLang = 'txt',
-    codeTransformers: userTransformers = [],
-  } = options;
+  const { defaultHighlightLang: defaultLang = 'txt', codeTransformers: userTransformers = [] } =
+    options;
 
   const highlighter = await createHighlighter({
     themes:
       typeof theme === 'object' && 'light' in theme && 'dark' in theme
         ? [theme.light, theme.dark]
         : [theme],
-    langs: [
-      ...(options.languages || []),
-      ...Object.values(options.languageAlias || {}),
-    ],
+    langs: [...(options.languages || []), ...Object.values(options.languageAlias || {})],
     langAlias: options.languageAlias,
   });
 
@@ -91,23 +80,17 @@ export async function highlight(theme, options, logger = console) {
     async (str, lang, attrs) => {
       const vPre = vueRE.test(lang) ? '' : 'v-pre';
       lang =
-        lang
-          .replace(lineNoStartRE, '')
-          .replace(lineNoRE, '')
-          .replace(vueRE, '')
-          .toLowerCase() || defaultLang;
+        lang.replace(lineNoStartRE, '').replace(lineNoRE, '').replace(vueRE, '').toLowerCase() ||
+        defaultLang;
 
       try {
         // https://github.com/shikijs/shiki/issues/952
-        if (
-          !isSpecialLang(lang) &&
-          !highlighter.getLoadedLanguages().includes(lang)
-        ) {
+        if (!isSpecialLang(lang) && !highlighter.getLoadedLanguages().includes(lang)) {
           await highlighter.loadLanguage(lang);
         }
       } catch {
         logger.warn(
-          `\nThe language '${lang}' is not loaded, falling back to '${defaultLang}' for syntax highlighting.`
+          `\nThe language '${lang}' is not loaded, falling back to '${defaultLang}' for syntax highlighting.`,
         );
         lang = defaultLang;
       }

@@ -46,7 +46,7 @@ const menu = [
     key: MENU_KEYS.COMPONENT,
     title: '组件',
     meta: {
-      icon: 'ant-design-icon-home-filled',
+      icon: 'mingcute-icon-components-line',
     },
     children: [
       {
@@ -54,7 +54,7 @@ const menu = [
         title: 'Markdown 渲染器',
         path: '/markdown-render',
         meta: {
-          icon: 'solar-icon-chart-outline',
+          icon: 'material-symbols-icon-markdown-outline',
           layout: 'main',
           component: 'markdown-render',
         },
@@ -94,6 +94,8 @@ const iconsList = [
   'ant-design:caret-up-filled',
   'ant-design:desktop-outlined',
   'ant-design:plus-outlined',
+  'mingcute:components-line',
+  'material-symbols:markdown-outline',
 ];
 
 /**

@@ -12,19 +12,13 @@ Niuma Admin 是一个免费开源的中后台模板，它采用了 Vue3、Vite�
 
 直接点击登录即可。
 
+![](./doc/img/login.png)
+
+![](./doc/img/layout.png)
+
 ## 文档
 
 [文档地址](https://niuma-admin-doc.salted-fish.top/)
-
-## 图片展示
-
-登录
-
-![](./doc/img/login.png)
-
-基础布局
-
-![](./doc/img/layout.png)
 
 ## 使用
 

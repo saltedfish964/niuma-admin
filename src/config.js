@@ -6,6 +6,7 @@ const MENU_KEYS = {
   WORKPLACE: 'workplace',
   COMPONENT: 'component',
   MARKDOWN_RENDER: 'markdown-render',
+  ICON: 'icon',
 };
 
 /**
@@ -59,6 +60,16 @@ const menu = [
           component: 'markdown-render',
         },
       },
+      {
+        key: MENU_KEYS.ICON,
+        title: 'Icon 图标',
+        path: '/icon',
+        meta: {
+          icon: 'ic-icon-baseline-insert-emoticon',
+          layout: 'main',
+          component: 'icon',
+        },
+      },
     ],
   },
 ];
@@ -71,14 +82,12 @@ const iconsList = [
   'ant-design:menu-unfold-outlined',
   'ant-design:menu-fold-outlined',
   'ant-design:home-filled',
-  'flat-color-icons:home',
   'material-symbols:iframe',
   'ic:baseline-insert-emoticon',
   'line-md:link',
   'solar:chart-outline',
   'icon-park-outline:workbench',
   'ant-design:table-outlined',
-  'carbon:screen',
   'material-symbols:logout-rounded',
   'ant-design:setting-outlined',
   'proicons:full-screen-maximize',

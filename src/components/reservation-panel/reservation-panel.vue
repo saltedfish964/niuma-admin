@@ -1,6 +1,6 @@
 <script setup>
 import { ref, useTemplateRef, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
-import { debounce } from 'lodash-es';
+import { cloneDeep, debounce } from 'lodash-es';
 import { useEventBus } from '@src/composables/use-event-bus';
 import VirtualGrid from './virtual-grid.vue';
 import { generateTimeSlots } from './time';
@@ -123,6 +123,8 @@ const props = defineProps({
     default: () => Promise.resolve(true),
   },
 });
+
+const emit = defineEmits(['event-change', 'update:events']);
 
 let observer;
 
@@ -254,6 +256,22 @@ function onEventChange({ type, event }) {
     bus.emit('calc-all-sizes');
     bus.emit('update-current-events', currentEvents.value);
   });
+  emit(
+    'update:events',
+    currentEvents.value.map((item) => {
+      const newItem = {
+        id: item.id,
+        resourceId: item.resourceId,
+        name: item.name,
+        startTime: item.startTime,
+        endTime: item.endTime,
+      };
+      if (item.meta) {
+        newItem.meta = item.meta;
+      }
+      return newItem;
+    }),
+  );
 }
 
 function filterEvents(events = []) {
@@ -293,6 +311,13 @@ function removeEventById(id) {
   bus.emit('remove-event-by-id', id);
 }
 
+function updateCurrentEvents() {
+  currentEvents.value = filterEvents(cloneDeep(props.events));
+  currentEvents.value = calculateOffsets(currentEvents.value);
+  calculateCustomWidth(calculateMaxOffsets(currentEvents.value));
+  bus.emit('update-current-events', currentEvents.value);
+}
+
 watch(
   [() => props.startTime, () => props.endTime, () => props.timeInterval],
   () => {
@@ -310,11 +335,16 @@ watch(
   },
 );
 
+watch(
+  () => props.events,
+  () => {
+    updateCurrentEvents();
+  },
+  { deep: true },
+);
+
 onMounted(() => {
-  currentEvents.value = filterEvents(props.events);
-  currentEvents.value = calculateOffsets(currentEvents.value);
-  calculateCustomWidth(calculateMaxOffsets(currentEvents.value));
-  bus.emit('update-current-events', currentEvents.value);
+  updateCurrentEvents();
   observer = new ResizeObserver(debounce(onContainerResize, 16));
   if (containerRef.value) {
     observer.observe(containerRef.value);

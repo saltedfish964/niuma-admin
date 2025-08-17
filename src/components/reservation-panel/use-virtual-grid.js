@@ -195,6 +195,7 @@ export function useVirtualGrid(props, socrollYBarWidth, socrollXBarHeight) {
       () => props.events,
       () => props.resources,
       () => props.cellHeight,
+      () => props.timeSlots,
     ],
     ([w, h]) => {
       debounceCalcAllSizes(w, h);

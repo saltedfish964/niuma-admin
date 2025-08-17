@@ -1,5 +1,5 @@
 <script setup>
-import { ref, useTemplateRef, onMounted, onBeforeUnmount, nextTick } from 'vue';
+import { ref, useTemplateRef, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
 import { debounce } from 'lodash-es';
 import { useEventBus } from '@src/composables/use-event-bus';
 import VirtualGrid from './virtual-grid.vue';
@@ -139,7 +139,7 @@ const currentEvents = ref([]);
 const customWidth = ref({});
 const gridHeight = ref(0);
 const gridWidth = ref(0);
-const timeSlots = generateTimeSlots(props.startTime, props.endTime, props.timeInterval);
+const timeSlots = ref([]);
 
 const getCellData = (row, col) => {
   return `行${row}, 列${col}`;
@@ -321,6 +321,16 @@ function addEvent(event) {
 function removeEventById(id) {
   bus.emit('remove-event-by-id', id);
 }
+
+watch(
+  [() => props.startTime, () => props.endTime, () => props.timeInterval],
+  () => {
+    timeSlots.value = generateTimeSlots(props.startTime, props.endTime, props.timeInterval);
+  },
+  {
+    immediate: true,
+  },
+);
 
 onMounted(() => {
   currentEvents.value = filterEvents(props.events);

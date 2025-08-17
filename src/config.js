@@ -7,6 +7,7 @@ const MENU_KEYS = {
   COMPONENT: 'component',
   MARKDOWN_RENDER: 'markdown-render',
   ICON: 'icon',
+  RESERVATION_PANEL: 'reservation-panel',
   COLOR_PICKER: 'color-picker',
 };
 
@@ -72,6 +73,16 @@ const menu = [
         },
       },
       {
+        key: MENU_KEYS.RESERVATION_PANEL,
+        title: '预约面板',
+        path: '/reservation-panel',
+        meta: {
+          icon: 'ant-design-icon-calendar-twotone',
+          layout: 'main',
+          component: 'reservation-panel',
+        },
+      },
+      {
         key: MENU_KEYS.MARKDOWN_RENDER,
         title: 'Markdown 渲染器',
         path: '/markdown-render',
@@ -117,6 +128,7 @@ const iconsList = [
   'mingcute:components-line',
   'material-symbols:markdown-outline',
   'mdi:color',
+  'ant-design:calendar-twotone',
 ];
 
 /**

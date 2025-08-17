@@ -1,3 +1,167 @@
+<script setup lang="js">
+import { computed, ref, useTemplateRef } from 'vue';
+import {
+  Row as ARow,
+  Col as ACol,
+  Card as ACard,
+  CheckboxGroup as ACheckboxGroup,
+  TimeRangePicker as ATimeRangePicker,
+  Slider as ASlider,
+  Button as AButton,
+} from 'ant-design-vue';
+import VReservationPanel from '@src/components/reservation-panel/reservation-panel.vue';
+import dayjs from 'dayjs';
+
+const reservationPanel = useTemplateRef('reservationPanel');
+
+// 工作时间
+const workTime = ref([dayjs('09:00', 'HH:mm'), dayjs('17:00', 'HH:mm')]);
+const wordStartTime = computed(() => workTime.value[0].format('HH:mm'));
+const wordEndTime = computed(() => workTime.value[1].format('HH:mm'));
+
+// 时间间隔
+const timeInterval = ref(30);
+
+// 资源
+const resourcesList = ref([
+  {
+    value: 1,
+    label: '场地1',
+  },
+  {
+    value: 2,
+    label: '场地2',
+  },
+  {
+    value: 3,
+    label: '场地3',
+  },
+]);
+const resourcesChecked = ref([1, 2, 3]);
+const resources = computed(() => {
+  return resourcesList.value
+    .filter((item) => resourcesChecked.value.includes(item.value))
+    .map((item) => {
+      return {
+        id: item.value,
+        name: item.label,
+      };
+    });
+});
+
+// 事件
+const events = ref([
+  {
+    id: 1,
+    resourceId: 2,
+    name: '预约 1',
+    startTime: '10:00',
+    endTime: '12:00',
+  },
+]);
+/**
+ * 返回一个落在 [start, end] 区间内的随机时间
+ * @param {string} start 'HH:mm'
+ * @param {string} end   'HH:mm'
+ * @returns {[string, string]} [随机时间, 随机时间]（保证后者 ≥ 前者）
+ */
+function randomTimePair(start, end) {
+  const toMin = (t) => {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  };
+  const toHHmm = (m) => {
+    const h = String(Math.floor(m / 60)).padStart(2, '0');
+    const min = String(m % 60).padStart(2, '0');
+    return `${h}:${min}`;
+  };
+
+  const s = toMin(start);
+  const e = toMin(end);
+
+  // 生成两个随机分钟数，确保 t1 ≤ t2
+  const t1 = Math.floor(Math.random() * (e - s + 1)) + s;
+  const t2 = Math.floor(Math.random() * (e - t1 + 1)) + t1;
+
+  return [toHHmm(t1), toHHmm(t2)];
+}
+function addRandomEvent() {
+  // 随机 resourceId
+  const resourceIds = resourcesList.value.map((item) => item.value);
+  const resourceIdIndex = Math.floor(Math.random() * resourceIds.length);
+  const [start, end] = randomTimePair(wordStartTime.value, wordEndTime.value, timeInterval.value);
+  reservationPanel.value.addEvent({
+    id: Date.now(),
+    resourceId: resourceIds[resourceIdIndex],
+    name: `预约 ${events.value.length + 1}`,
+    startTime: start,
+    endTime: end,
+    meta: {
+      color: '#FF0000',
+      randomText: `随机文本 ${events.value.length + 1}`,
+    },
+  });
+}
+</script>
+
 <template>
-  <div>reservation-panel</div>
+  <div class="p-4">
+    <a-row :gutter="[16, 16]">
+      <a-col :span="24">
+        <a-card title="演示" :bordered="false">
+          <div class="pb-6">
+            <a-row :gutter="[16, 16]">
+              <a-col :xxl="5">
+                <div class="h-full flex items-center justify-center">
+                  <div class="flex-none">工作时间：</div>
+                  <div class="flex-grow">
+                    <a-time-range-picker
+                      v-model:value="workTime"
+                      format="HH:mm"
+                      :allow-clear="false"
+                      style="width: 100%"
+                    ></a-time-range-picker>
+                  </div>
+                </div>
+              </a-col>
+              <a-col :xxl="5">
+                <div class="h-full flex items-center justify-center">
+                  <div class="flex-none">时间间隔：</div>
+                  <div class="flex-grow">
+                    <a-slider v-model:value="timeInterval" :step="5" :min="5" :max="60" />
+                  </div>
+                </div>
+              </a-col>
+              <a-col :xxl="6">
+                <div class="h-full flex items-center justify-center">
+                  <div class="flex-none">场地：</div>
+                  <div class="flex-grow">
+                    <a-checkbox-group v-model:value="resourcesChecked" :options="resourcesList" />
+                  </div>
+                </div>
+              </a-col>
+              <a-col :xxl="8">
+                <a-button type="primary" @click="addRandomEvent">随机增加预约</a-button>
+              </a-col>
+            </a-row>
+          </div>
+          <div class="h-140 w-full overflow-auto">
+            <v-reservation-panel
+              ref="reservationPanel"
+              :start-time="wordStartTime"
+              :end-time="wordEndTime"
+              :time-interval="timeInterval"
+              :resources="resources"
+              v-model:events="events"
+            ></v-reservation-panel>
+          </div>
+        </a-card>
+      </a-col>
+      <a-col :span="24">
+        <a-card title="事件" :bordered="false">
+          <pre>{{ events }}</pre>
+        </a-card>
+      </a-col>
+    </a-row>
+  </div>
 </template>

@@ -125,8 +125,6 @@ const props = defineProps({
 });
 
 let observer;
-let resizeTimer = null;
-const resizeCount = ref(0);
 
 const bus = useEventBus();
 
@@ -146,33 +144,6 @@ const getCellData = (row, col) => {
 };
 
 function onContainerResize(entries) {
-  // 增加执行次数计数
-  resizeCount.value += 1;
-
-  // 检查是否超过频率限制
-  if (resizeCount.value > 30) {
-    // 停止观察并清理
-    if (observer) {
-      observer.disconnect();
-      observer = null;
-    }
-    // 清除定时器
-    if (resizeTimer) {
-      clearTimeout(resizeTimer);
-      resizeTimer = null;
-    }
-    // 抛出错误
-    throw new Error('包含此组件的元素未设置宽高');
-  }
-
-  // 重置计数器的定时器逻辑
-  if (resizeTimer) {
-    clearTimeout(resizeTimer);
-  }
-  resizeTimer = setTimeout(() => {
-    resizeCount.value = 0;
-  }, 1000);
-
   // 原有的尺寸处理逻辑
   for (let entry of entries) {
     const { width, height } = entry.contentRect;
@@ -353,9 +324,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   if (observer) {
     observer.disconnect();
-  }
-  if (resizeTimer) {
-    clearTimeout(resizeTimer);
   }
 });
 

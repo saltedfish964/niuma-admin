@@ -12,6 +12,19 @@ export function useDomScroll(
   function handleContainerWheel(event) {
     if (!containerRef.value || !scrollYBarRef.value || !scrollXBarRef.value || lockScroll.value)
       return;
+
+    // 滚动到边缘不禁用默认滚动
+    const { deltaY } = event;
+    const isUp = deltaY < 0;
+    const isDown = deltaY > 0;
+    if (isUp && scrollYBarRef.value.scrollTop <= 0) return;
+    if (
+      isDown &&
+      scrollYBarRef.value.scrollHeight <=
+        scrollYBarRef.value.clientHeight + scrollYBarRef.value.scrollTop + 1
+    )
+      return;
+
     event.preventDefault();
 
     // 垂直滚动

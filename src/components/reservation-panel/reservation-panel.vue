@@ -332,6 +332,13 @@ watch(
   },
 );
 
+watch(
+  () => props.resources,
+  () => {
+    currentResources.value = props.resources;
+  },
+);
+
 onMounted(() => {
   currentEvents.value = filterEvents(props.events);
   currentEvents.value = calculateOffsets(currentEvents.value);

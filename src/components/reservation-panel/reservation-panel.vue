@@ -281,7 +281,7 @@ function filterEvents(events = []) {
   const eHoursNum = Number(eHours);
   const sMinutesNum = Number(sMinutes);
   const eMinutesNum = Number(eMinutes);
-  const result = events.filter((event) => {
+  let result = events.filter((event) => {
     const newEvent = { ...event };
     const [ssHours, ssMinutes] = newEvent.startTime.split(':');
     const [eeHours, eeMinutes] = newEvent.endTime.split(':');
@@ -297,6 +297,14 @@ function filterEvents(events = []) {
       console.warn(`id 为 ${event.id} 的事件不在预定的时间范围内，已被过滤`);
     }
 
+    return isVisible;
+  });
+
+  result = result.filter((event) => {
+    const isVisible = currentResources.value.some((resource) => resource.id === event.resourceId);
+    if (!isVisible) {
+      console.warn(`id 为 ${event.id} 的事件不在预定的资源范围内，已被过滤`);
+    }
     return isVisible;
   });
 
@@ -336,7 +344,7 @@ watch(
 );
 
 watch(
-  () => props.events,
+  [() => props.events, () => props.resources, () => props.startTime, () => props.endTime],
   () => {
     updateCurrentEvents();
   },

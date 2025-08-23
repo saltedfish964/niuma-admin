@@ -9,6 +9,7 @@ import {
   Slider as ASlider,
   Button as AButton,
   Space as ASpace,
+  Switch as ASwitch,
 } from 'ant-design-vue';
 import VReservationPanel from '@src/components/reservation-panel/reservation-panel.vue';
 import dayjs from 'dayjs';
@@ -124,6 +125,8 @@ function addResource() {
 const cellWidth = ref(150);
 
 const cellHeight = ref(32);
+
+const showTimeLine = ref(true);
 </script>
 
 <template>
@@ -178,7 +181,15 @@ const cellHeight = ref(32);
                   </div>
                 </div>
               </a-col>
-              <a-col :xxl="8">
+              <a-col :xxl="4">
+                <div class="h-full flex items-center justify-center">
+                  <div class="flex-none">是否显示时间轴：</div>
+                  <div class="flex-grow">
+                    <a-switch v-model:checked="showTimeLine"></a-switch>
+                  </div>
+                </div>
+              </a-col>
+              <a-col :xxl="24">
                 <a-space>
                   <a-button type="primary" @click="addRandomEvent">随机增加 event</a-button>
                   <a-button type="primary" @click="addResource">增加 resource</a-button>
@@ -195,6 +206,7 @@ const cellHeight = ref(32);
               :resources="resources"
               :cell-width="cellWidth"
               :cell-height="cellHeight"
+              :show-time-line="showTimeLine"
               v-model:events="events"
             ></v-reservation-panel>
           </div>

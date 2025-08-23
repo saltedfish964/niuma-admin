@@ -61,11 +61,14 @@ const events = ref([
 ]);
 /**
  * 返回一个落在 [start, end] 区间内的随机时间
- * @param {string} start 'HH:mm'
- * @param {string} end   'HH:mm'
- * @returns {[string, string]} [随机时间, 随机时间]（保证后者 ≥ 前者）
+ * @param {string} start   'HH:mm'
+ * @param {string} end     'HH:mm'
+ * @param {number} minDiff 两个时间的最小间隔（分钟），必须 ≥ 0
+ * @returns {[string, string]} [随机时间, 随机时间]（保证后者 ≥ 前者 + minDiff）
  */
-function randomTimePair(start, end) {
+function randomTimePair(start, end, minDiff = 0) {
+  minDiff = Math.max(0, minDiff | 0); // 确保为整数且 ≥ 0
+
   const toMin = (t) => {
     const [h, m] = t.split(':').map(Number);
     return h * 60 + m;
@@ -79,11 +82,16 @@ function randomTimePair(start, end) {
   const s = toMin(start);
   const e = toMin(end);
 
-  // 生成两个随机分钟数，确保 t1 ≤ t2
-  const t1 = Math.floor(Math.random() * (e - s + 1)) + s;
-  const t2 = Math.floor(Math.random() * (e - t1 + 1)) + t1;
+  // 只要区间长度不足 minDiff，就不断重试
+  while (true) {
+    const maxT1 = e - minDiff;
+    if (maxT1 < s) continue; // 极端情况，再抽一次
 
-  return [toHHmm(t1), toHHmm(t2)];
+    const t1 = Math.floor(Math.random() * (maxT1 - s + 1)) + s;
+    const t2 = Math.floor(Math.random() * (e - (t1 + minDiff) + 1)) + (t1 + minDiff);
+
+    return [toHHmm(t1), toHHmm(t2)];
+  }
 }
 function addRandomEvent() {
   // 随机 resourceId

@@ -122,6 +122,8 @@ function addResource() {
 }
 
 const cellWidth = ref(150);
+
+const cellHeight = ref(32);
 </script>
 
 <template>
@@ -160,6 +162,14 @@ const cellWidth = ref(150);
                   </div>
                 </div>
               </a-col>
+              <a-col :xxl="5">
+                <div class="h-full flex items-center justify-center">
+                  <div class="flex-none">单元格高度：</div>
+                  <div class="flex-grow">
+                    <a-slider v-model:value="cellHeight" :step="1" :min="30" :max="50" />
+                  </div>
+                </div>
+              </a-col>
               <a-col :xxl="6">
                 <div class="h-full flex items-center justify-center">
                   <div class="flex-none">场地：</div>
@@ -184,6 +194,7 @@ const cellWidth = ref(150);
               :time-interval="timeInterval"
               :resources="resources"
               :cell-width="cellWidth"
+              :cell-height="cellHeight"
               v-model:events="events"
             ></v-reservation-panel>
           </div>

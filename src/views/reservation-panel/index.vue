@@ -138,7 +138,7 @@ const headerHeight = ref(32);
         <a-card title="演示" :bordered="false">
           <div class="pb-6">
             <a-row :gutter="[16, 16]">
-              <a-col :xxl="5">
+              <a-col :xs="24" :md="12" :xxl="6">
                 <div class="h-full flex items-center justify-center">
                   <div class="flex-none">工作时间：</div>
                   <div class="flex-grow">
@@ -151,39 +151,13 @@ const headerHeight = ref(32);
                   </div>
                 </div>
               </a-col>
-              <a-col :xxl="5">
-                <div class="h-full flex items-center justify-center">
-                  <div class="flex-none">时间间隔：</div>
-                  <div class="flex-grow">
-                    <a-slider v-model:value="timeInterval" :step="5" :min="5" :max="60" />
-                  </div>
-                </div>
+              <a-col :xs="24" :md="12" :xxl="6">
+                <a-space>
+                  <a-button type="primary" @click="addRandomEvent">随机增加 event</a-button>
+                  <a-button type="primary" @click="addResource">增加 resource</a-button>
+                </a-space>
               </a-col>
-              <a-col :xxl="5">
-                <div class="h-full flex items-center justify-center">
-                  <div class="flex-none">单元格宽度：</div>
-                  <div class="flex-grow">
-                    <a-slider v-model:value="cellWidth" :step="50" :min="100" :max="300" />
-                  </div>
-                </div>
-              </a-col>
-              <a-col :xxl="5">
-                <div class="h-full flex items-center justify-center">
-                  <div class="flex-none">单元格高度：</div>
-                  <div class="flex-grow">
-                    <a-slider v-model:value="cellHeight" :step="1" :min="30" :max="50" />
-                  </div>
-                </div>
-              </a-col>
-              <a-col :xxl="5">
-                <div class="h-full flex items-center justify-center">
-                  <div class="flex-none">表头高度：</div>
-                  <div class="flex-grow">
-                    <a-slider v-model:value="headerHeight" :step="1" :min="30" :max="50" />
-                  </div>
-                </div>
-              </a-col>
-              <a-col :xxl="6">
+              <a-col :xs="24" :md="12" :xxl="6">
                 <div class="h-full flex items-center justify-center">
                   <div class="flex-none">场地：</div>
                   <div class="flex-grow">
@@ -191,7 +165,7 @@ const headerHeight = ref(32);
                   </div>
                 </div>
               </a-col>
-              <a-col :xxl="4">
+              <a-col :xs="24" :md="12" :xxl="6">
                 <div class="h-full flex items-center justify-center">
                   <div class="flex-none">是否显示时间轴：</div>
                   <div class="flex-grow">
@@ -199,11 +173,37 @@ const headerHeight = ref(32);
                   </div>
                 </div>
               </a-col>
-              <a-col :xxl="24">
-                <a-space>
-                  <a-button type="primary" @click="addRandomEvent">随机增加 event</a-button>
-                  <a-button type="primary" @click="addResource">增加 resource</a-button>
-                </a-space>
+              <a-col :xs="24" :md="12" :xxl="6">
+                <div class="h-full flex items-center justify-center">
+                  <div class="flex-none">时间间隔：</div>
+                  <div class="flex-grow">
+                    <a-slider v-model:value="timeInterval" :step="5" :min="5" :max="60" />
+                  </div>
+                </div>
+              </a-col>
+              <a-col :xs="24" :md="12" :xxl="6">
+                <div class="h-full flex items-center justify-center">
+                  <div class="flex-none">单元格宽度：</div>
+                  <div class="flex-grow">
+                    <a-slider v-model:value="cellWidth" :step="50" :min="100" :max="300" />
+                  </div>
+                </div>
+              </a-col>
+              <a-col :xs="24" :md="12" :xxl="6">
+                <div class="h-full flex items-center justify-center">
+                  <div class="flex-none">单元格高度：</div>
+                  <div class="flex-grow">
+                    <a-slider v-model:value="cellHeight" :step="1" :min="30" :max="50" />
+                  </div>
+                </div>
+              </a-col>
+              <a-col :xs="24" :md="12" :xxl="6">
+                <div class="h-full flex items-center justify-center">
+                  <div class="flex-none">表头高度：</div>
+                  <div class="flex-grow">
+                    <a-slider v-model:value="headerHeight" :step="1" :min="30" :max="50" />
+                  </div>
+                </div>
               </a-col>
             </a-row>
           </div>
@@ -221,11 +221,6 @@ const headerHeight = ref(32);
               v-model:events="events"
             ></v-reservation-panel>
           </div>
-        </a-card>
-      </a-col>
-      <a-col :span="24">
-        <a-card title="事件" :bordered="false">
-          <pre>{{ events }}</pre>
         </a-card>
       </a-col>
     </a-row>

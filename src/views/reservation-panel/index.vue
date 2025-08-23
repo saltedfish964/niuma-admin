@@ -8,6 +8,7 @@ import {
   TimeRangePicker as ATimeRangePicker,
   Slider as ASlider,
   Button as AButton,
+  Space as ASpace,
 } from 'ant-design-vue';
 import VReservationPanel from '@src/components/reservation-panel/reservation-panel.vue';
 import dayjs from 'dayjs';
@@ -110,6 +111,17 @@ function addRandomEvent() {
     },
   });
 }
+
+function addResource() {
+  const resourceId = resourcesList.value.length + 1;
+  resourcesList.value.push({
+    value: resourceId,
+    label: `场地 ${resourceId}`,
+  });
+  resourcesChecked.value.push(resourceId);
+}
+
+const cellWidth = ref(150);
 </script>
 
 <template>
@@ -140,6 +152,14 @@ function addRandomEvent() {
                   </div>
                 </div>
               </a-col>
+              <a-col :xxl="5">
+                <div class="h-full flex items-center justify-center">
+                  <div class="flex-none">单元格宽度：</div>
+                  <div class="flex-grow">
+                    <a-slider v-model:value="cellWidth" :step="50" :min="100" :max="300" />
+                  </div>
+                </div>
+              </a-col>
               <a-col :xxl="6">
                 <div class="h-full flex items-center justify-center">
                   <div class="flex-none">场地：</div>
@@ -149,17 +169,21 @@ function addRandomEvent() {
                 </div>
               </a-col>
               <a-col :xxl="8">
-                <a-button type="primary" @click="addRandomEvent">随机增加预约</a-button>
+                <a-space>
+                  <a-button type="primary" @click="addRandomEvent">随机增加 event</a-button>
+                  <a-button type="primary" @click="addResource">增加 resource</a-button>
+                </a-space>
               </a-col>
             </a-row>
           </div>
-          <div class="h-140 w-full overflow-auto">
+          <div class="h-180 w-full overflow-auto">
             <v-reservation-panel
               ref="reservationPanel"
               :start-time="wordStartTime"
               :end-time="wordEndTime"
               :time-interval="timeInterval"
               :resources="resources"
+              :cell-width="cellWidth"
               v-model:events="events"
             ></v-reservation-panel>
           </div>

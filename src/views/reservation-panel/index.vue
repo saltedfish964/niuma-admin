@@ -127,6 +127,8 @@ const cellWidth = ref(150);
 const cellHeight = ref(32);
 
 const showTimeLine = ref(true);
+
+const headerHeight = ref(32);
 </script>
 
 <template>
@@ -173,6 +175,14 @@ const showTimeLine = ref(true);
                   </div>
                 </div>
               </a-col>
+              <a-col :xxl="5">
+                <div class="h-full flex items-center justify-center">
+                  <div class="flex-none">表头高度：</div>
+                  <div class="flex-grow">
+                    <a-slider v-model:value="headerHeight" :step="1" :min="30" :max="50" />
+                  </div>
+                </div>
+              </a-col>
               <a-col :xxl="6">
                 <div class="h-full flex items-center justify-center">
                   <div class="flex-none">场地：</div>
@@ -207,6 +217,7 @@ const showTimeLine = ref(true);
               :cell-width="cellWidth"
               :cell-height="cellHeight"
               :show-time-line="showTimeLine"
+              :header-height="headerHeight"
               v-model:events="events"
             ></v-reservation-panel>
           </div>

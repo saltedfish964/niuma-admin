@@ -350,6 +350,7 @@ watch(
     () => props.startTime,
     () => props.endTime,
     () => props.cellWidth,
+    () => props.headerHeight,
   ],
   () => {
     updateCurrentEvents();

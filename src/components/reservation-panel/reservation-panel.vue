@@ -344,7 +344,13 @@ watch(
 );
 
 watch(
-  [() => props.events, () => props.resources, () => props.startTime, () => props.endTime],
+  [
+    () => props.events,
+    () => props.resources,
+    () => props.startTime,
+    () => props.endTime,
+    () => props.cellWidth,
+  ],
   () => {
     updateCurrentEvents();
   },

@@ -81,9 +81,7 @@ randomSwatches();
       <a-col :span="24">
         <a-card :bordered="false">
           <markdown-render :md-text="basicUse" :dark="layoutStore.darkMode"></markdown-render>
-          <div
-            class="border border-solid border-[var(--nm-border-color)] p-4 rounded-lg flex items-center"
-          >
+          <div class="border border-solid border-border-primary p-4 rounded-lg flex items-center">
             <v-color-picker v-model="selectedColor"></v-color-picker>
           </div>
         </a-card>
@@ -91,9 +89,7 @@ randomSwatches();
       <a-col :span="24">
         <a-card :bordered="false">
           <markdown-render :md-text="disabledText" :dark="layoutStore.darkMode"></markdown-render>
-          <div
-            class="border border-solid border-[var(--nm-border-color)] p-4 rounded-lg flex items-center"
-          >
+          <div class="border border-solid border-border-primary p-4 rounded-lg flex items-center">
             <v-color-picker v-model="selectedColor"></v-color-picker>
           </div>
         </a-card>
@@ -101,9 +97,7 @@ randomSwatches();
       <a-col :span="24">
         <a-card :bordered="false">
           <markdown-render :md-text="swatchesText" :dark="layoutStore.darkMode"></markdown-render>
-          <div
-            class="border border-solid border-[var(--nm-border-color)] p-4 rounded-lg flex items-center"
-          >
+          <div class="border border-solid border-border-primary p-4 rounded-lg flex items-center">
             <v-color-picker v-model="selectedColor" :swatches="swatchesExample"></v-color-picker>
           </div>
         </a-card>

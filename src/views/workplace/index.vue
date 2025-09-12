@@ -69,7 +69,7 @@ const dynamicData = ref([
             </div>
             <div class="flex-grow overflow-auto">
               <div class="text-xl font-medium pb-3">早安，靓仔，祝你开心每一天！</div>
-              <div class="text-sm text-[var(--nm-color-text-secondary)] truncate w-full">
+              <div class="text-sm text-text-secondary truncate w-full">
                 交互专家 | 某某某事业群－某某平台部－某某技术部－UED
               </div>
             </div>
@@ -78,17 +78,17 @@ const dynamicData = ref([
         <a-col :xl="10" :lg="24">
           <div class="h-16 flex items-center justify-end overflow-hidden max-xl:justify-start">
             <div class="px-8 max-xl:pl-0">
-              <div class="text-sm pb-1 text-[var(--nm-color-text-tertiary)]">项目数</div>
+              <div class="text-sm pb-1 text-text-tertiary">项目数</div>
               <div class="text-right text-2xl">56</div>
             </div>
             <a-divider type="vertical" style="height: 40px" />
             <div class="px-8">
-              <div class="text-sm pb-1 text-[var(--nm-color-text-tertiary)]">团队内排名</div>
+              <div class="text-sm pb-1 text-text-tertiary">团队内排名</div>
               <div class="text-right text-2xl">8 / 24</div>
             </div>
             <a-divider type="vertical" style="height: 40px" />
             <div class="pl-8">
-              <div class="text-sm pb-1 text-[var(--nm-color-text-tertiary)]">项目访问</div>
+              <div class="text-sm pb-1 text-text-tertiary">项目访问</div>
               <div class="text-right text-2xl">2,223</div>
             </div>
           </div>
@@ -113,15 +113,12 @@ const dynamicData = ref([
                   <div class="pl-3 text-sm font-semibold">项目 A</div>
                 </div>
               </div>
-              <div class="h-11 text-sm pb-2 text-[var(--nm-color-text-secondary)] overflow-hidden">
+              <div class="h-11 text-sm pb-2 text-text-secondary overflow-hidden">
                 那是一种内在的东西，他们到达不了，也无法触及的
               </div>
               <div class="flex justify-between w-full text-sm">
-                <span
-                  class="text-[var(--nm-color-text-tertiary)] cursor-pointer hover:text-[var(--nm-color-primary)]"
-                  >科学搬砖组</span
-                >
-                <span class="text-[var(--nm-color-text-quaternary)]">几秒前</span>
+                <span class="text-text-tertiary cursor-pointer hover:text-primary">科学搬砖组</span>
+                <span class="text-text-quaternary">几秒前</span>
               </div>
             </a-card-grid>
             <a-card-grid style="width: calc(100% / 3)">
@@ -135,15 +132,14 @@ const dynamicData = ref([
                   <div class="pl-3 text-sm font-semibold">项目 B</div>
                 </div>
               </div>
-              <div class="h-11 text-sm pb-2 text-[var(--nm-color-text-secondary)] overflow-hidden">
+              <div class="h-11 text-sm pb-2 text-text-secondary overflow-hidden">
                 希望是一个好东西，也许是最好的，好东西是不会消亡的
               </div>
               <div class="flex justify-between w-full text-sm">
-                <span
-                  class="text-[var(--nm-color-text-tertiary)] cursor-pointer hover:text-[var(--nm-color-primary)]"
+                <span class="text-text-tertiary cursor-pointer hover:text-text-primary"
                   >全组都是吴彦祖</span
                 >
-                <span class="text-[var(--nm-color-text-quaternary)]">8 年前</span>
+                <span class="text-text-text-quaternary">8 年前</span>
               </div>
             </a-card-grid>
             <a-card-grid style="width: calc(100% / 3)">
@@ -157,15 +153,14 @@ const dynamicData = ref([
                   <div class="pl-3 text-sm font-semibold">项目 C</div>
                 </div>
               </div>
-              <div class="h-11 text-sm pb-2 text-[var(--nm-color-text-secondary)] overflow-hidden">
+              <div class="h-11 text-sm pb-2 text-text-secondary overflow-hidden">
                 城镇中有那么多的酒馆，她却偏偏走进了我的酒馆
               </div>
               <div class="flex justify-between w-full text-sm">
-                <span
-                  class="text-[var(--nm-color-text-tertiary)] cursor-pointer hover:text-[var(--nm-color-primary)]"
+                <span class="text-text-tertiary cursor-pointer hover:text-text-primary"
                   >中二少女团</span
                 >
-                <span class="text-[var(--nm-color-text-quaternary)]">几秒前</span>
+                <span class="text-text-text-quaternary">几秒前</span>
               </div>
             </a-card-grid>
             <a-card-grid style="width: calc(100% / 3)">
@@ -179,15 +174,14 @@ const dynamicData = ref([
                   <div class="pl-3 text-sm font-semibold">项目 D</div>
                 </div>
               </div>
-              <div class="h-11 text-sm pb-2 text-[var(--nm-color-text-secondary)] overflow-hidden">
+              <div class="h-11 text-sm pb-2 text-text-secondary overflow-hidden">
                 那时候我只会想自己想要什么，从不想自己拥有什么
               </div>
               <div class="flex justify-between w-full text-sm">
-                <span
-                  class="text-[var(--nm-color-text-tertiary)] cursor-pointer hover:text-[var(--nm-color-primary)]"
+                <span class="text-text-tertiary cursor-pointer hover:text-text-primary"
                   >程序员日常</span
                 >
-                <span class="text-[var(--nm-color-text-quaternary)]">8 年前</span>
+                <span class="text-text-text-quaternary">8 年前</span>
               </div>
             </a-card-grid>
             <a-card-grid style="width: calc(100% / 3)">
@@ -201,15 +195,12 @@ const dynamicData = ref([
                   <div class="pl-3 text-sm font-semibold">项目 E</div>
                 </div>
               </div>
-              <div class="h-11 text-sm pb-2 text-[var(--nm-color-text-secondary)] overflow-hidden">
-                凛冬将至
-              </div>
+              <div class="h-11 text-sm pb-2 text-text-secondary overflow-hidden">凛冬将至</div>
               <div class="flex justify-between w-full text-sm">
-                <span
-                  class="text-[var(--nm-color-text-tertiary)] cursor-pointer hover:text-[var(--nm-color-primary)]"
+                <span class="text-text-tertiary cursor-pointer hover:text-text-primary"
                   >高逼格设计天团</span
                 >
-                <span class="text-[var(--nm-color-text-quaternary)]">8 年前</span>
+                <span class="text-text-text-quaternary">8 年前</span>
               </div>
             </a-card-grid>
             <a-card-grid style="width: calc(100% / 3)">
@@ -223,15 +214,14 @@ const dynamicData = ref([
                   <div class="pl-3 text-sm font-semibold">项目 F</div>
                 </div>
               </div>
-              <div class="h-11 text-sm pb-2 text-[var(--nm-color-text-secondary)] overflow-hidden">
+              <div class="h-11 text-sm pb-2 text-text-secondary overflow-hidden">
                 生命就像一盒巧克力，结果往往出人意料
               </div>
               <div class="flex justify-between w-full text-sm">
-                <span
-                  class="text-[var(--nm-color-text-tertiary)] cursor-pointer hover:text-[var(--nm-color-primary)]"
+                <span class="text-text-tertiary cursor-pointer hover:text-text-primary"
                   >骗你来学计算机</span
                 >
-                <span class="text-[var(--nm-color-text-quaternary)]">8 年前</span>
+                <span class="text-text-text-quaternary">8 年前</span>
               </div>
             </a-card-grid>
           </a-card>
@@ -245,15 +235,13 @@ const dynamicData = ref([
                     <a>{{ item.userName }}</a>
                     <span class="px-1 font-normal">在</span>
                     <span>{{ item.projectName }}</span>
-                    <span
-                      class="text-[var(--nm-primary-color)] hover:text-[var(--nm-color-info-hover)] cursor-pointer"
-                      >{{ item.group }}</span
-                    >
+                    <span class="text-primary-color hover:text-info-hover cursor-pointer">{{
+                      item.group
+                    }}</span>
                     <span class="px-1 font-normal">{{ item.action }}</span>
-                    <span
-                      class="text-[var(--nm-primary-color)] hover:text-[var(--nm-color-info-hover)] cursor-pointer"
-                      >{{ item.task }}</span
-                    >
+                    <span class="text-primary-color hover:text-info-hover cursor-pointer">{{
+                      item.task
+                    }}</span>
                   </template>
                   <template #avatar>
                     <a-avatar>图</a-avatar>
@@ -288,49 +276,37 @@ const dynamicData = ref([
               <a-col :span="12">
                 <div class="flex items-center">
                   <a-avatar>图</a-avatar>
-                  <span class="pl-4 cursor-pointer hover:text-[var(--nm-color-primary)]"
-                    >科学搬砖组</span
-                  >
+                  <span class="pl-4 cursor-pointer hover:text-text-primary">科学搬砖组</span>
                 </div>
               </a-col>
               <a-col :span="12">
                 <div class="flex items-center">
                   <a-avatar>图</a-avatar>
-                  <span class="pl-4 cursor-pointer hover:text-[var(--nm-color-primary)]"
-                    >全组都是吴彦祖</span
-                  >
+                  <span class="pl-4 cursor-pointer hover:text-text-primary">全组都是吴彦祖</span>
                 </div>
               </a-col>
               <a-col :span="12">
                 <div class="flex items-center">
                   <a-avatar>图</a-avatar>
-                  <span class="pl-4 cursor-pointer hover:text-[var(--nm-color-primary)]"
-                    >中二少女团</span
-                  >
+                  <span class="pl-4 cursor-pointer hover:text-text-primary">中二少女团</span>
                 </div>
               </a-col>
               <a-col :span="12">
                 <div class="flex items-center">
                   <a-avatar>图</a-avatar>
-                  <span class="pl-4 cursor-pointer hover:text-[var(--nm-color-primary)]"
-                    >程序员日常</span
-                  >
+                  <span class="pl-4 cursor-pointer hover:text-text-primary">程序员日常</span>
                 </div>
               </a-col>
               <a-col :span="12">
                 <div class="flex items-center">
                   <a-avatar>图</a-avatar>
-                  <span class="pl-4 cursor-pointer hover:text-[var(--nm-color-primary)]"
-                    >高逼格设计天团</span
-                  >
+                  <span class="pl-4 cursor-pointer hover:text-text-primary">高逼格设计天团</span>
                 </div>
               </a-col>
               <a-col :span="12">
                 <div class="flex items-center">
                   <a-avatar>图</a-avatar>
-                  <span class="pl-4 cursor-pointer hover:text-[var(--nm-color-primary)]"
-                    >骗你来学计算机</span
-                  >
+                  <span class="pl-4 cursor-pointer hover:text-text-primary">骗你来学计算机</span>
                 </div>
               </a-col>
             </a-row>

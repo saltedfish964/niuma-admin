@@ -88,9 +88,7 @@ async function copyHandler(item) {
             :md-text="basicUseIconifyText"
             :dark="layoutStore.darkMode"
           ></markdown-render>
-          <div
-            class="border border-solid border-[var(--nm-border-color)] p-4 rounded-lg flex items-center"
-          >
+          <div class="border border-solid border-border-primary p-4 rounded-lg flex items-center">
             <v-icon name="ic-icon-baseline-insert-emoticon"></v-icon>
             <v-icon name="icon-park-outline-icon-workbench"></v-icon>
             <v-icon name="ant-design-icon-file-text-outlined"></v-icon>
@@ -100,9 +98,7 @@ async function copyHandler(item) {
             :md-text="basicUseCustomText"
             :dark="layoutStore.darkMode"
           ></markdown-render>
-          <div
-            class="border border-solid border-[var(--nm-border-color)] p-4 rounded-lg flex items-center"
-          >
+          <div class="border border-solid border-border-primary p-4 rounded-lg flex items-center">
             <v-icon name="custom-icon-vue"></v-icon>
             <v-icon name="custom-icon-vite"></v-icon>
           </div>

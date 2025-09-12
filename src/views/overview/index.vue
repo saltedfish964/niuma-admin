@@ -26,7 +26,7 @@ defineOptions({
     <a-row :gutter="[16, 16]">
       <a-col :xl="6" :lg="12" :md="24" :sm="24" :xs="24">
         <a-card title="总销售额" :bordered="false">
-          <div class="flex justify-between h-5.5 text-[var(--nm-color-text-secondary)]">
+          <div class="flex justify-between h-5.5 text-text-secondary">
             <div>总销售额</div>
             <a-tooltip>
               <v-icon name="ant-design-icon-info-circle-outlined"></v-icon>
@@ -41,18 +41,12 @@ defineOptions({
               <div class="pr-4 flex items-center">
                 <span>周同比</span>
                 <span class="pl-2">12%</span>
-                <v-icon
-                  name="ant-design-icon-caret-up-filled"
-                  class="text-[var(--nm-red-6)]"
-                ></v-icon>
+                <v-icon name="ant-design-icon-caret-up-filled" class="text-red-6"></v-icon>
               </div>
               <div class="flex items-center">
                 <span>日同比</span>
                 <span class="pl-2">11%</span>
-                <v-icon
-                  name="ant-design-icon-caret-down-filled"
-                  class="text-[var(--nm-green-6)]"
-                ></v-icon>
+                <v-icon name="ant-design-icon-caret-down-filled" class="text-green-6"></v-icon>
               </div>
             </div>
           </div>
@@ -65,7 +59,7 @@ defineOptions({
       </a-col>
       <a-col :xl="6" :lg="12" :md="24" :sm="24" :xs="24">
         <a-card title="访问量" :bordered="false">
-          <div class="flex justify-between h-5.5 text-[var(--nm-color-text-secondary)]">
+          <div class="flex justify-between h-5.5 text-text-secondary">
             <div>访问量</div>
             <a-tooltip>
               <v-icon name="ant-design-icon-info-circle-outlined"></v-icon>
@@ -87,7 +81,7 @@ defineOptions({
       </a-col>
       <a-col :xl="6" :lg="12" :md="24" :sm="24" :xs="24">
         <a-card title="支付笔数" :bordered="false">
-          <div class="flex justify-between h-5.5 text-[var(--nm-color-text-secondary)]">
+          <div class="flex justify-between h-5.5 text-text-secondary">
             <div>支付笔数</div>
             <a-tooltip>
               <v-icon name="ant-design-icon-info-circle-outlined"></v-icon>
@@ -109,7 +103,7 @@ defineOptions({
       </a-col>
       <a-col :xl="6" :lg="12" :md="24" :sm="24" :xs="24">
         <a-card title="运营活动效果" :bordered="false">
-          <div class="flex justify-between h-5.5 text-[var(--nm-color-text-secondary)]">
+          <div class="flex justify-between h-5.5 text-text-secondary">
             <div>运营活动效果</div>
             <a-tooltip>
               <v-icon name="ant-design-icon-info-circle-outlined"></v-icon>
@@ -136,18 +130,12 @@ defineOptions({
               <div class="pr-4 flex items-center">
                 <span>周同比</span>
                 <span class="pl-2">12%</span>
-                <v-icon
-                  name="ant-design-icon-caret-up-filled"
-                  class="text-[var(--nm-red-6)]"
-                ></v-icon>
+                <v-icon name="ant-design-icon-caret-up-filled" class="text-red-6"></v-icon>
               </div>
               <div class="flex items-center">
                 <span>日同比</span>
                 <span class="pl-2">11%</span>
-                <v-icon
-                  name="ant-design-icon-caret-down-filled"
-                  class="text-[var(--nm-green-6)]"
-                ></v-icon>
+                <v-icon name="ant-design-icon-caret-down-filled" class="text-green-6"></v-icon>
               </div>
             </div>
           </div>

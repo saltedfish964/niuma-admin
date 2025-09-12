@@ -129,10 +129,8 @@ onBeforeMount(() => {
               <div class="flex items-center">
                 <span
                   :class="[
-                    'flex items-center justify-center rounded-full w-5 h-5  font-semibold  text-center text-[12px]',
-                    i > 3
-                      ? 'bg-[var(--nm-color-fill-tertiary)]'
-                      : 'bg-[var(--nm-color-bg-spotlight)] text-white',
+                    'flex items-center justify-center rounded-full w-5 h-5  font-semibold  text-center text-xs',
+                    i > 3 ? 'bg-fill-tertiary' : 'bg-bg-spotlight text-white',
                   ]"
                 >
                   {{ i }}

@@ -50,7 +50,7 @@ const columns = ref([
   <a-card title="线上热门搜索" :bordered="false">
     <div class="flex gap-12 h-23.5">
       <div class="w-1/2 flex-col">
-        <div class="flex h-5.5 text-[var(--nm-color-text-secondary)]">
+        <div class="flex h-5.5 text-text-secondary">
           <div class="pr-2">搜索用户数</div>
           <a-tooltip>
             <v-icon name="ant-design-icon-info-circle-outlined"></v-icon>
@@ -66,7 +66,7 @@ const columns = ref([
         </div>
       </div>
       <div class="w-1/2 flex-col">
-        <div class="flex h-5.5 text-[var(--nm-color-text-secondary)]">
+        <div class="flex h-5.5 text-text-secondary">
           <div class="pr-2">人均搜索次数</div>
           <a-tooltip>
             <v-icon name="ant-design-icon-info-circle-outlined"></v-icon>

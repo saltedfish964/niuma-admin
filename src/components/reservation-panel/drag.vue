@@ -527,6 +527,9 @@ onMounted(() => {
   overflow: hidden;
 }
 .default-drag-content {
+  font-family: var(--nm-font-family);
+  line-height: var(--nm-line-height);
+  font-size: 14px;
   padding: 8px;
   height: 100%;
 }

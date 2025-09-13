@@ -16,6 +16,7 @@ import { mergeNewConfigToMenuConfig } from '@src/utils/config';
 import { addRoutes } from '@src/router/dynamic-routes';
 import projectConfig from '@src/config';
 import { toggleDarkMode } from '@src/utils/theme';
+import projectConfig from '@src/config';
 
 const layoutStore = useLayoutStore();
 const userStore = useUserStore();
@@ -48,7 +49,7 @@ async function onLogin() {
     <div class="background-img"></div>
     <div class="right-content">
       <div class="header">
-        <span class="title"> Niuma Admin </span>
+        <span class="title"> {{ projectConfig.projectName }} </span>
         <a-switch
           checked-children="深色"
           un-checked-children="浅色"

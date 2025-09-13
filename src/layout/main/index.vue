@@ -7,6 +7,7 @@ import { useLayoutStore } from '@src/store/modules/layout';
 import MainMenuItem from '@src/layout/main/main-menu-item.vue';
 import { findTreePathBFS } from '@src/utils/tree';
 import VIcon from '@src/components/icon/icon.vue';
+import projectConfig from '@src/config';
 import TabsController from './tabs.vue';
 import HeaderAvatar from './avatar.vue';
 import HeaderBreadcrumb from './breadcrumb.vue';
@@ -166,7 +167,7 @@ window.addEventListener('resize', () => {
         <div class="secondary-menu-title">
           <transition name="slide-up">
             <div v-if="!layoutStore.menuCollapsed" class="secondary-menu-title-text">
-              NiuMa Admin
+              {{ projectConfig.projectName }}
             </div>
             <div v-else class="collapsed-btn-container" @click="toggleMenuCollapsedHandler">
               <v-icon name="ant-design-icon-menu-unfold-outlined" size="20px"></v-icon>

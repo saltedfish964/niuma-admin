@@ -54,7 +54,7 @@ async function onLogin() {
     </div>
     <div class="right-content">
       <div class="header">
-        <span class="title"> Niuma Admin </span>
+        <span class="title"> {{ projectConfig.projectName }} </span>
         <a-switch
           checked-children="深色"
           un-checked-children="浅色"

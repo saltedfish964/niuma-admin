@@ -79,6 +79,7 @@ const themeColors = [
 ];
 
 export default {
+  projectName: 'Niuma Admin',
   homeRoutePath: '/overview',
   menu,
   iconsList,

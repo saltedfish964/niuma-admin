@@ -20,7 +20,13 @@ Niuma Admin 是一个免费开源的中后台模板，它采用了 Vue3、Vite�
 
 [文档地址](https://niuma-admin-doc.salted-fish.top/)
 
-## 使用
+## 脚手架创建
+
+```bash
+npm create niuma-admin@latest
+```
+
+## 克隆仓库使用
 
 ```bash
 # 克隆仓库

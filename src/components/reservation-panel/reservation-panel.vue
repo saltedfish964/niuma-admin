@@ -272,6 +272,7 @@ function onEventChange({ type, event }) {
       return newItem;
     }),
   );
+  emit('event-change', { type, event });
 }
 
 function filterEvents(events = []) {

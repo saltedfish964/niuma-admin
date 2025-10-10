@@ -381,8 +381,10 @@ function onHeightResizeMouseup() {
 function initDragItemStyle() {
   nextTick(() => {
     if (!itemsRef.value) return;
-    itemsRef.value.forEach((elItem, index) => {
-      const dragItem = currentEvents.value[index];
+    itemsRef.value.forEach((elItem) => {
+      const id = elItem.getAttribute('data-key');
+      const dragItem = currentEvents.value.find((item) => `${item.id}` === id);
+      if (!dragItem) return;
       const heightMinutes = getMinutesDiff(dragItem.startTime, dragItem.endTime);
       const topMinutes = getMinutesDiff(props.startTime, dragItem.startTime);
       let left = 0;

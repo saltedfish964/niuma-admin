@@ -44,9 +44,9 @@ function mitt(all) {
   };
 }
 
-const emitter = mitt();
-
 export function useEventBus() {
+  const emitter = mitt();
+
   function on(event, handler) {
     emitter.on(event, handler);
 

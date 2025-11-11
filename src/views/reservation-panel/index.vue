@@ -221,6 +221,20 @@ const headerHeight = ref(32);
               v-model:events="events"
             ></v-reservation-panel>
           </div>
+          <div class="h-180 w-full overflow-auto">
+            <v-reservation-panel
+              ref="reservationPanel"
+              :start-time="wordStartTime"
+              :end-time="wordEndTime"
+              :time-interval="timeInterval"
+              :resources="resources"
+              :cell-width="cellWidth"
+              :cell-height="cellHeight"
+              :show-time-line="showTimeLine"
+              :header-height="headerHeight"
+              v-model:events="events"
+            ></v-reservation-panel>
+          </div>
         </a-card>
       </a-col>
     </a-row>

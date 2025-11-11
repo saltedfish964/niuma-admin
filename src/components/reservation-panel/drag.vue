@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch, inject } from 'vue';
 import { useEventBus } from '@src/composables/use-event-bus';
 import { addMinutes, compareTime, getMinutesDiff } from './time';
 import { checkMissingFields } from './check-missing-fields';
@@ -83,7 +83,7 @@ let currentResizeItem = null;
 let startY = null;
 let startHeight = null;
 
-const bus = useEventBus();
+const bus = inject('bus');
 
 const itemsRef = useTemplateRef('items');
 

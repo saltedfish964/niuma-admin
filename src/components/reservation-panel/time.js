@@ -4,7 +4,7 @@
  * @returns {boolean} - 是否符合 HH:mm 格式
  */
 function validateTimeFormat(timeStr) {
-  const regex = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
+  const regex = /^((0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])|24:00)$/;
   return regex.test(timeStr);
 }
 

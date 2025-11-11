@@ -1,5 +1,5 @@
 <script setup>
-import { ref, useTemplateRef, onMounted, onBeforeUnmount, nextTick, watch } from 'vue';
+import { ref, useTemplateRef, onMounted, onBeforeUnmount, nextTick, watch, provide } from 'vue';
 import { cloneDeep, debounce } from 'lodash-es';
 import { useEventBus } from '@src/composables/use-event-bus';
 import VirtualGrid from './virtual-grid.vue';
@@ -129,6 +129,8 @@ const emit = defineEmits(['event-change', 'update:events']);
 let observer;
 
 const bus = useEventBus();
+
+provide('bus', bus);
 
 const containerRef = useTemplateRef('container');
 
